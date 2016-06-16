@@ -166,9 +166,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>2404</LineNumber>
+          <LineNumber>1328</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134229282</Address>
+          <Address>134270040</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\ProcessingData\stmdataprocess326.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\template\../ProcessingData/stmdataprocess326.c\1328</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>647</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134220936</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -177,39 +193,23 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\userVAinteraction.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\userVAinteraction.c\2404</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>349</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134275166</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Hardware\matrixkey.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\template\../Hardware/matrixkey.c\349</Expression>
+          <Expression>\\template\userVAinteraction.c\647</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>385</LineNumber>
+          <LineNumber>640</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134275194</Address>
+          <Address>134220892</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Hardware\matrixkey.c</Filename>
+          <Filename>.\userVAinteraction.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\../Hardware/matrixkey.c\385</Expression>
+          <Expression>\\template\userVAinteraction.c\640</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -231,222 +231,117 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SDADC_AINInit</ItemText>
+          <ItemText>SaveData</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SDADC1testread,0x0A</ItemText>
+          <ItemText>voltage_effective</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SaveData</ItemText>
+          <ItemText>voltage_mean</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>voltage_effective</ItemText>
+          <ItemText>funcstatus</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>voltage_mean</ItemText>
+          <ItemText>SDADC2_value</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RotaryKeyValue</ItemText>
+          <ItemText>current_mean_sum</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SoftKeyValue</ItemText>
+          <ItemText>SysValue</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>ShortKey_flag</ItemText>
+          <ItemText>current_effective</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>funcstatus</ItemText>
+          <ItemText>voltage_foudamental_effective</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SDADC2_value</ItemText>
+          <ItemText>current_foudamental_effective</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_mean_sum</ItemText>
+          <ItemText>power_foudamental_effective</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SysValue</ItemText>
+          <ItemText>current_mean,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_effective</ItemText>
+          <ItemText>current_effective,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>t,0x0A</ItemText>
+          <ItemText>SDADC2_value,0x10</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>phase_angle</ItemText>
+          <ItemText>CalA_data,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RAMsave</ItemText>
+          <ItemText>CalA_temp,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>1</WinNumber>
-          <ItemText>voltage_foudamental_effective</ItemText>
+          <ItemText>SaveData</ItemText>
         </Ww>
         <Ww>
           <count>20</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_foudamental_effective</ItemText>
+          <ItemText>SaveData.Value.cal_A_a1</ItemText>
         </Ww>
         <Ww>
           <count>21</count>
           <WinNumber>1</WinNumber>
-          <ItemText>power_foudamental_effective</ItemText>
+          <ItemText>SaveData.Value.cal_A_y0</ItemText>
         </Ww>
         <Ww>
           <count>22</count>
           <WinNumber>1</WinNumber>
-          <ItemText>THD</ItemText>
+          <ItemText>SaveData.Value.cal_A_t1</ItemText>
         </Ww>
         <Ww>
           <count>23</count>
           <WinNumber>1</WinNumber>
-          <ItemText>THD_r_voltage</ItemText>
+          <ItemText>current_mean_sum,0x10</ItemText>
         </Ww>
         <Ww>
           <count>24</count>
           <WinNumber>1</WinNumber>
-          <ItemText>THD_f_voltage</ItemText>
+          <ItemText>voltage_mean_sum</ItemText>
         </Ww>
         <Ww>
           <count>25</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_temp</ItemText>
-        </Ww>
-        <Ww>
-          <count>26</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>capture</ItemText>
-        </Ww>
-        <Ww>
-          <count>27</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>phasetimetemp</ItemText>
-        </Ww>
-        <Ww>
-          <count>28</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>THD_r_voltage</ItemText>
-        </Ww>
-        <Ww>
-          <count>29</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>THD_f_voltage</ItemText>
-        </Ww>
-        <Ww>
-          <count>30</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>THDV2sum</ItemText>
-        </Ww>
-        <Ww>
-          <count>31</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>funcstatus</ItemText>
-        </Ww>
-        <Ww>
-          <count>32</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>phasestatus</ItemText>
-        </Ww>
-        <Ww>
-          <count>33</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>rangestatus</ItemText>
-        </Ww>
-        <Ww>
-          <count>34</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>paramstatus</ItemText>
-        </Ww>
-        <Ww>
-          <count>35</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>holdstatus</ItemText>
-        </Ww>
-        <Ww>
-          <count>36</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>longparamstatus</ItemText>
-        </Ww>
-        <Ww>
-          <count>37</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>ShortKey_flag</ItemText>
-        </Ww>
-        <Ww>
-          <count>38</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>SoftKeyValue</ItemText>
-        </Ww>
-        <Ww>
-          <count>39</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>SoftKeyChanged_flag</ItemText>
-        </Ww>
-        <Ww>
-          <count>40</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>current_mean,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>41</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>current_temp,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>42</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>current_effective,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>43</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>SDADC2_value,0x10</ItemText>
-        </Ww>
-        <Ww>
-          <count>44</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>sdadc_value</ItemText>
-        </Ww>
-        <Ww>
-          <count>45</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>CalA_data,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>46</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>CalA_temp,0x0A</ItemText>
+          <ItemText>voltage_mean</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -634,7 +529,7 @@
 
   <Group>
     <GroupName>Core</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -842,7 +737,7 @@
 
   <Group>
     <GroupName>DSP_Lib</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

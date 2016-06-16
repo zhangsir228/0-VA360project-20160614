@@ -66,7 +66,7 @@ static void COMP_Config(void)
 	COMP_StructInit(&COMP_InitStructure);
   COMP_InitStructure.COMP_InvertingInput = COMP_InvertingInput_1_4VREFINT;//COMP_InvertingInput_VREFINT;//COMP_InvertingInput_1_4VREFINT;//COMP_InvertingInput_DAC1OUT1;;
   COMP_InitStructure.COMP_Output = COMP_Output_TIM2IC4 ;//| COMP_Output_None;
-	COMP_InitStructure.COMP_OutputPol=COMP_OutputPol_Inverted;
+	COMP_InitStructure.COMP_OutputPol=COMP_OutputPol_NonInverted;
   COMP_InitStructure.COMP_Mode = COMP_Mode_MediumSpeed ;
 	COMP_InitStructure.COMP_Hysteresis = COMP_Hysteresis_High;
 	COMP_Init(COMP_Selection_COMP2, &COMP_InitStructure);
@@ -76,7 +76,7 @@ static void COMP_Config(void)
 
   /* Enable COMP1: the higher threshold is set to VREFINT ~ 1.22 V */
   COMP_Cmd(COMP_Selection_COMP1, ENABLE);
-//	COMP_Cmd(COMP_Selection_COMP2, ENABLE);
+	//COMP_Cmd(COMP_Selection_COMP2, ENABLE);
 	
 }
 

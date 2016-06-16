@@ -1086,7 +1086,7 @@ u8 key=0,page=0;
 uint16_t t;
 uint8_t count=0;
 uint8_t fft_count=0;
-uint8_t addcount=3;//均值滤波窗口
+uint8_t addcount=5;//均值滤波窗口
 uint16_t datasize=1024;
 u16 inrush_current_100ms_count=0;
 /******************标志***********************/
@@ -1336,6 +1336,8 @@ void dealwith_information(void)
 					{
 						inrush_current_effective_100ms_sum += SDADC2_value[t] * SDADC2_value[t];//SDADC2_value[t];
 						inrush_current_100ms_count++;
+						
+						printf("%5f\r\n",SDADC2_value[t]); //20160615 test 测试 将浪涌电流数据传出
 					}
 					else if(inrush_current_100ms_count == 512)
 					{
@@ -1410,10 +1412,14 @@ void dealwith_information(void)
 			if(((RotaryKeyValue==KEY_VALUE_6) && (peakstatus != state0)) || ((RotaryKeyValue==KEY_VALUE_6) && (paramstatus == state3)))
 			{//VA档Peak档，VA档的CF档
 				//最大最小值换算
-				maxv_value = (float)maxv ;
-				minv_value = (float)minv ;
-				maxi_value = (float)maxi ;
-				mini_value = (float)mini ;
+//				maxv_value = (float)maxv ;
+//				minv_value = (float)minv ;
+//				maxi_value = (float)maxi ;
+//				mini_value = (float)mini ;
+				if(maxv > maxv_value)	maxv_value = maxv;
+				if(minv < minv_value)	minv_value = minv;
+				if(maxi > maxi_value)	maxi_value = maxi;
+				if(mini < mini_value)	mini_value = mini;
 				
 				//计算峰值，还要为了接着求电压、电流的波峰因数
 				if(maxv_value > fabs(minv_value))//峰值(2014-10-31注释：只求了正负两者中最大的值)
@@ -1508,6 +1514,7 @@ void dealwith_information(void)
 				if(voltage_foudamental_effective == 0)	THD_f_voltage=0;
 				//else	THD_f_voltage= sqrt((voltage_effective* voltage_effective- voltage_foudamental_effective* voltage_foudamental_effective)/(voltage_foudamental_effective* voltage_foudamental_effective));
 				else THD_f_voltage=sqrt(THDV2sum)/voltage_foudamental_effective;
+				
 				//电流总谐波畸变率(THD%r%f)
 				if(current_effective< current_foudamental_effective)
 					current_effective= current_foudamental_effective;
