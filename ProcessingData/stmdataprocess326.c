@@ -1296,8 +1296,7 @@ void dealwith_information(void)
 						SDADC1_value[t]=(float)((SDADC1_value[t]-SaveData.Value.cal_600VD_zero)*SaveData.Value.cal_600VD_gain);
 					}	
 			}
-			
-			
+				
 			//校正电流数据    这个用于没有钳头时模拟的一组数据
 			SDADC2_value[t]=/*sdadc2_sample100a[t];*/(SDADC2_value[t]-SaveData.Value.cal_A1_zero)*SaveData.Value.cal_A1_gain;
 			
