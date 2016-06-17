@@ -162,56 +162,7 @@
           <Name>-O207 -S0 -C0 -FO7  -FN1 -FC1000 -FD20000000 -FF0STM32F3xx_256 -FL040000 -FS08000000 -FP0($$Device:STM32F373CC$Flash\STM32F3xx_256.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>1328</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134270040</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\ProcessingData\stmdataprocess326.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\template\../ProcessingData/stmdataprocess326.c\1328</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>647</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134220936</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\userVAinteraction.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\template\userVAinteraction.c\647</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>640</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134220892</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\userVAinteraction.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\template\userVAinteraction.c\640</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -343,6 +294,21 @@
           <WinNumber>1</WinNumber>
           <ItemText>voltage_mean</ItemText>
         </Ww>
+        <Ww>
+          <count>26</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>count_for_ac,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>27</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>count_for_Standby,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>28</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>collect_finished</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -384,11 +350,6 @@
           <count>7</count>
           <WinNumber>2</WinNumber>
           <ItemText>command</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>ShortKey_flag</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

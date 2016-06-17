@@ -1051,7 +1051,10 @@ const float sdadc2_sample100a[1024]={//模拟钳头数据
  extern defSysValue SysValue ;//系统运行时的主要变量参数
  extern defFlashCal SaveData;	//保存于flash中的必要数据
  
- extern const u16 length;
+extern const u16 length;
+
+extern u16 count_for_Standby;//休眠计数  这里用于AC自动触发失效时 超时1秒触发一次AC采样
+uint16_t count_for_ac=0;
 /* ------------------------------------------------------------------- 
 * External Input and Output buffer Declarations for FFT Bin Example 
 * ------------------------------------------------------------------- */ 
@@ -1132,7 +1135,9 @@ float voltage_foudamental_phase=0,current_foudamental_phase=0,power_foudamental_
 
 float voltage_fundamental_frequency = 0 , current_fundamental_frequency = 0;
 float voltage_effective_sum=0,current_effective_sum=0,active_power_sum=0;//多次累加求和，以便均值处理
+
 float voltage_mean,current_mean;
+float voltage_mean_temp ,current_mean_temp;//2060616 新增用于电压电流平均值的滤波
 
 u8 timer_1s_blink;
 u16 powertimercounter;
@@ -1301,12 +1306,7 @@ void dealwith_information(void)
 				//SDADC2_value[t]+=Adj_V(SDADC2_value[t]); 
 				SDADC2_value[t] = Adj_Nline(SDADC2_value[t]);
 			}
-//			else
-//			{//非正常工作模式为此循环跳出后使用电流平均校正曲线参数
-//				
-//			}
-			//a_temp = SDADC2_value[t];
-			
+
 			
 			//求最大值//求最小值
 			if(t == 0)
@@ -1483,7 +1483,6 @@ void dealwith_information(void)
 			}
 		}
 			
-		
 		maxv=0;maxi=0;minv=0;mini=0;
 		voltage_sum=0;current_sum=0;power_sum=0;
 		voltage_mean_sum=0;current_mean_sum=0;//修改一个错误，之前是两个current_mean_sum=0;修改一个为voltage_mean_sum=0;
@@ -1558,6 +1557,13 @@ void dealwith_information(void)
 		}
 		//VadENA=0;//SDADC非使能标志传递到比较中中断，过零点开始ADC采集
 		//TIM_Cmd(TIM19, ENABLE);
+		
+		count_for_ac = count_for_Standby;
+	}
+	//超时开启一次AC采样（开定时器）    2S一次   由于数值被addcount滤波，所以数值更新会比较慢！
+	if(count_for_Standby-count_for_ac>=2)
+	{
+		TIM_Cmd(TIM19, ENABLE);
 	}
 }
 

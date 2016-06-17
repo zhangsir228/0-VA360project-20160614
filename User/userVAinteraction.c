@@ -745,6 +745,8 @@ void manipulate(void)
 							switch(phasestatus)
 							{
 								case state0://Õý³£Öµ
+									
+								
 								{
 									lcd_write_1bit(0x1B,3,DISABLE);//L1-L2-L3
 									lcd_write_1bit(0x18,3,ENABLE);//V£¨3£©ÁÁ

@@ -43,7 +43,9 @@
 //														2.新增通信
 //
 //
-//
+//20160616 lea 新增AC出发超时计量功能。： AC档由输入电压过零点通过比较器触发输入捕捉中断，使用睡眠计数变量，如果一个采样触发周期超过某个值
+//																			则立即启动一次SDADC采样。能保证在无输入型号或输入信号不满足要求时都能进行大致的测量，不至于保持零
+//																			值或上次的测量值不动，还能解决从某些特殊功能档回到正常测量过程中错过触发信号而导致不能正确开始的情况。
 //
 
 
@@ -84,7 +86,7 @@
 //		
 //};
 
-
+u16 count_for_Standby=0;
 defSysValue SysValue ;
 
 void start_configration(void)
@@ -124,9 +126,7 @@ int main(void)
 //	u8 len;	
 //	u16 times=0;
 //	float num;
-	u16 count_for_Standby=0;
 	start_configration();
-	
 	
 	//旋转开关位置预检测
 	EXTI->IMR &= ~Keyboard_EXTI_Line;//屏蔽来自线上的中断请求，防止在定时器扫描矩阵键盘时进入此中断
