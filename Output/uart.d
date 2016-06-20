@@ -1,12 +1,12 @@
 ..\output\uart.o: ..\Hardware\uart.c
 ..\output\uart.o: ..\Hardware\uart.h
 ..\output\uart.o: ..\Core\Include\stm32f37x.h
-..\output\uart.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
-..\output\uart.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdint.h
-..\output\uart.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
-..\output\uart.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
-..\output\uart.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
-..\output\uart.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
+..\output\uart.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+..\output\uart.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\uart.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+..\output\uart.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+..\output\uart.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+..\output\uart.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 ..\output\uart.o: ..\Core\Include\system_stm32f37x.h
 ..\output\uart.o: ..\User\stm32f37x_conf.h
 ..\output\uart.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_adc.h
@@ -33,5 +33,5 @@
 ..\output\uart.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_usart.h
 ..\output\uart.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_wwdg.h
 ..\output\uart.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_misc.h
-..\output\uart.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdio.h
-..\output\uart.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\output\uart.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\uart.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h

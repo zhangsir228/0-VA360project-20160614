@@ -1,11 +1,11 @@
 ..\output\timer.o: ..\Hardware\timer.c
 ..\output\timer.o: ..\Core\Include\stm32f37x.h
-..\output\timer.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
-..\output\timer.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdint.h
-..\output\timer.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
-..\output\timer.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
-..\output\timer.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
-..\output\timer.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
+..\output\timer.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+..\output\timer.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\timer.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+..\output\timer.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+..\output\timer.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+..\output\timer.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 ..\output\timer.o: ..\Core\Include\system_stm32f37x.h
 ..\output\timer.o: ..\User\stm32f37x_conf.h
 ..\output\timer.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_adc.h

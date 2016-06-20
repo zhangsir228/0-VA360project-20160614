@@ -1,11 +1,11 @@
 ..\output\matrixkey.o: ..\Hardware\matrixkey.c
 ..\output\matrixkey.o: ..\Core\Include\stm32f37x.h
-..\output\matrixkey.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
-..\output\matrixkey.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdint.h
-..\output\matrixkey.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
-..\output\matrixkey.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
-..\output\matrixkey.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
-..\output\matrixkey.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
+..\output\matrixkey.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+..\output\matrixkey.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\matrixkey.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+..\output\matrixkey.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+..\output\matrixkey.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+..\output\matrixkey.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 ..\output\matrixkey.o: ..\Core\Include\system_stm32f37x.h
 ..\output\matrixkey.o: ..\User\stm32f37x_conf.h
 ..\output\matrixkey.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_adc.h
