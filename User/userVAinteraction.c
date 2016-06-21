@@ -3249,6 +3249,7 @@ void display(void)
 				}
 				if(relstatus != state0)
 				{
+					lcd_show_num(showdata1,1,1);
 					;
 				}
 					
