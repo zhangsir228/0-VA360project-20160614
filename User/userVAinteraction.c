@@ -29,6 +29,8 @@ defSysflag Sysflag;//=(defSysflag){.Calonce = 0,.DTArange=0,.rangestatus=0}
 extern defSysValue SysValue ;//系统运行时的主要变量参数
 extern defFlashCal SaveData;//保存于flash中的必要数据
 
+extern float REL_value;//REL档位 相对参考值。
+
 extern __IO uint16_t CCR4_Val;//TIM58 周期定时脉冲个数
 
 u8 blink;
@@ -704,6 +706,7 @@ void manipulate(void)
 								{
 									rel_data1=voltage_effective-fabs(voltage_mean);
 									rel_data2=current_effective-fabs(current_mean);
+									REL_value = voltage_effective;
 								}
 								else if(funcstatus ==state1)//DC V+A
 								{
@@ -3247,6 +3250,16 @@ void display(void)
 						}
 					}
 				}
+				if(relstatus != state0)
+				{
+					
+					lcd_show_num(showdata1,1,1);
+					lcd_show_num(showdata2,2,3);
+					
+					
+
+				}
+					
 			}break;
 			case KEY_VALUE_7://W
 			{

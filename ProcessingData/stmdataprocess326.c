@@ -1117,6 +1117,8 @@ float kWh,kVAh,kVarh,KgCO2;
 float power_factor=0,d_power_factor=0;//功率因数[PF]、位移功率因数[DPF]
 float THD_r_voltage=0,THD_f_voltage=0,THD_r_current=0,THD_f_current=0,THD_r_power=0,THD_f_power=0;//总谐波畸变率，相对整个有效值（基波+谐波分量）[THD%r]/相对基波有效值[THD%f]
 
+float REL_value=0;//REL档位 相对参考值。
+
 ///******************计算中出现的中间量***********************/
 //float voltage_sum=0,current_sum=0,power_sum=0;//计算Vrms、Arms、有功功率
 //float voltage_temp=0,voltage_effective_before=0;

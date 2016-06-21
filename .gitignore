@@ -1,0 +1,17 @@
+.cproject
+*.S
+
+*.dump
+*.o
+*.out
+*.a
+!/lib/*.a
+*.d
+*.d.*
+*.bin_rep
+*.project
+.settings/org.eclipse.core.resources.prefs
+/output/*.o
+*.o
+*.o
+*.o
