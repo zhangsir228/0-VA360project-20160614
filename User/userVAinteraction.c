@@ -3247,6 +3247,11 @@ void display(void)
 						}
 					}
 				}
+				if(relstatus != state0)
+				{
+					;
+				}
+					
 			}break;
 			case KEY_VALUE_7://W
 			{
