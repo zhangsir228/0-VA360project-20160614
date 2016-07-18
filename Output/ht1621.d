@@ -1,11 +1,11 @@
 ..\output\ht1621.o: ..\Hardware\ht1621.c
 ..\output\ht1621.o: ..\Core\Include\stm32f37x.h
-..\output\ht1621.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
-..\output\ht1621.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-..\output\ht1621.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
-..\output\ht1621.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
-..\output\ht1621.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
-..\output\ht1621.o: d:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
+..\output\ht1621.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h
+..\output\ht1621.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdint.h
+..\output\ht1621.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmInstr.h
+..\output\ht1621.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\cmsis_armcc.h
+..\output\ht1621.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmFunc.h
+..\output\ht1621.o: E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cmSimd.h
 ..\output\ht1621.o: ..\Core\Include\system_stm32f37x.h
 ..\output\ht1621.o: ..\User\stm32f37x_conf.h
 ..\output\ht1621.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_adc.h
@@ -34,5 +34,5 @@
 ..\output\ht1621.o: ..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_misc.h
 ..\output\ht1621.o: ..\System\nvic_systick.h
 ..\output\ht1621.o: ..\Hardware\ht1621.h
-..\output\ht1621.o: d:\keil_V5\ARM\ARMCC\include\stdlib.h
-..\output\ht1621.o: d:\keil_V5\ARM\ARMCC\include\math.h
+..\output\ht1621.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\output\ht1621.o: E:\keil_V5\ARM\ARMCC\Bin\..\include\math.h
