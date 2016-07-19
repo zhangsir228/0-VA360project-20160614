@@ -202,112 +202,117 @@
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SDADC2_value</ItemText>
+          <ItemText>current_mean_sum</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_mean_sum</ItemText>
+          <ItemText>SysValue</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SysValue</ItemText>
+          <ItemText>current_effective</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_effective</ItemText>
+          <ItemText>voltage_foudamental_effective</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>voltage_foudamental_effective</ItemText>
+          <ItemText>current_foudamental_effective</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_foudamental_effective</ItemText>
+          <ItemText>power_foudamental_effective</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>power_foudamental_effective</ItemText>
+          <ItemText>current_mean,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_mean,0x0A</ItemText>
+          <ItemText>current_effective,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_effective,0x0A</ItemText>
+          <ItemText>SDADC2_value,0x10</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SDADC2_value,0x10</ItemText>
+          <ItemText>CalA_data,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>CalA_data,0x0A</ItemText>
+          <ItemText>CalA_temp,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>1</WinNumber>
-          <ItemText>CalA_temp,0x0A</ItemText>
+          <ItemText>SaveData</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SaveData</ItemText>
+          <ItemText>SaveData.Value.cal_A_a1</ItemText>
         </Ww>
         <Ww>
           <count>20</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SaveData.Value.cal_A_a1</ItemText>
+          <ItemText>SaveData.Value.cal_A_y0</ItemText>
         </Ww>
         <Ww>
           <count>21</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SaveData.Value.cal_A_y0</ItemText>
+          <ItemText>SaveData.Value.cal_A_t1</ItemText>
         </Ww>
         <Ww>
           <count>22</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SaveData.Value.cal_A_t1</ItemText>
+          <ItemText>current_mean_sum,0x10</ItemText>
         </Ww>
         <Ww>
           <count>23</count>
           <WinNumber>1</WinNumber>
-          <ItemText>current_mean_sum,0x10</ItemText>
+          <ItemText>voltage_mean_sum</ItemText>
         </Ww>
         <Ww>
           <count>24</count>
           <WinNumber>1</WinNumber>
-          <ItemText>voltage_mean_sum</ItemText>
+          <ItemText>voltage_mean</ItemText>
         </Ww>
         <Ww>
           <count>25</count>
           <WinNumber>1</WinNumber>
-          <ItemText>voltage_mean</ItemText>
+          <ItemText>count_for_ac,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>26</count>
           <WinNumber>1</WinNumber>
-          <ItemText>count_for_ac,0x0A</ItemText>
+          <ItemText>count_for_Standby,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>27</count>
           <WinNumber>1</WinNumber>
-          <ItemText>count_for_Standby,0x0A</ItemText>
+          <ItemText>collect_finished</ItemText>
         </Ww>
         <Ww>
           <count>28</count>
           <WinNumber>1</WinNumber>
-          <ItemText>collect_finished</ItemText>
+          <ItemText>SDADC1_value</ItemText>
+        </Ww>
+        <Ww>
+          <count>29</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>showdata1</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

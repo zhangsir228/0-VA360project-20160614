@@ -371,8 +371,8 @@ void USART1_IRQHandler(void)
 		if(dta_temp==dta_cs)//判断一下校验和CS：收到的数dta_temp与前面的和相等？是则再检查一下RDY电压，为低则返回dta_receive_flag= 1；为高则继续等待校验和到来。
 		{
 			if(Read_RDY() == RESET)//RDY引脚电压判断：DTA0660接收到有效的命令后会将RDY信号置为高电平（无效命令
-			{													//或校验出错则维持原电平状态），待返回数据发送完毕或状态准备好之后会将RDY
-				dta_receive_flag= 1;		//信号重新置为低电平。
+			{							//或校验出错则维持原电平状态），待返回数据发送完毕或状态准备好之后会将RDY
+				dta_receive_flag= 1;	//信号重新置为低电平。
 				dta_cs=0;
 				RxCounter=0;
 			}

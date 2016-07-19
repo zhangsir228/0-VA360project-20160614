@@ -5,6 +5,8 @@
 #include "flash_data.h"
 #include "dac.h"
 #include "CalA.h"	
+#include "dta0660.h"
+#include "buzzer_led.h"
 
 
 #define name_to_str(data)  (#data)
@@ -30,7 +32,7 @@ typedef struct
 } tempR_type;
 tempR_type tp;
 
-const char *CMDmap1[]={
+const char *CMDmap1[50]={
          // 系统命令 0~11
 				 "*idn",				"idn",//0
 					"rst",				"rst",//2
@@ -45,7 +47,14 @@ const char *CMDmap1[]={
 					"measurement","meas",//20
 					"config",     "conf",//22
 					"cala",								//24  大电流曲线校准  ex:  cala:1800  cala:2400
-		 };
+					"dta_calv",		//25校准DTA电压
+					"dta_read",		//26读取DTA配置参数	
+					"",
+					"",			
+					"",
+					"",	
+	
+			};
 
 const char *CMDmap2[100]={
           "mvoltage",		"mvol",//0
@@ -93,9 +102,9 @@ const char *CMDmap2[100]={
 			"cal1800a",				//79	设置在DC1800A处的电压值为大电流校准电压起始点
 			"cal_adjv",				//80
 			"daout",								//81 设置DAC输出电压
-			"",								//82
-			"",								//83
-			"",								//84
+			"up",								//82 向上校准DTA电压
+			"down",								//83 向下校准DTA电压
+			"five",								//84
 			"",								//85
 			"",								//86
 			"",								//87
@@ -247,7 +256,7 @@ void CMD_analyze_R(char * string)
 int8_t findCMD(char *szCommand) 
 {
 		uint8_t i;
-    for(i=0;i<30;i++) 
+    for(i=0;i<50;i++) 
         { 
                 if(strcmp(szCommand,CMDmap1[i])==0) 
                       return i; 
@@ -932,9 +941,79 @@ void Communicate(void)
 			break;
 		}
 				
+		
+		case 25://25校准DTA电压
+		{
+			Send(SetCalMode,0x55,SetCalMode+0x55);//进入校正模式
+			check_flag= CheckReceive(SetCalMode);
+			if(check_flag==1)
+			{
+				check_flag=0;
+				printf("\r\n开启校正:	%x	%x	%x	||",RxBuffer[0],RxBuffer[1],RxBuffer[2]);
+				printf("\r\n开启校正模式\r\n");
+			}
+			delay_ms(10000);//作为延时  没有这个延时校准不进去
+			
+			if(tempT1==82)//82 向上校准DTA电压			
+			{
+				Send(CalDataINC,CalDataINC);
+				while(dta_receive_flag==0)
+				{
+					printf("等待校准！\r\n");
+					delay_ms(1000);
+				}
+				check_flag= CheckReceive(CalDataINC);	
+			}
+			else if(tempT1==83)//83 向下校准DTA电压
+			{
+				Send(CalDataDEC,CalDataDEC);
+				while(dta_receive_flag==0)
+				{
+					printf("等待校准！\r\n");
+				}
+				check_flag= CheckReceive(CalDataDEC);	
+			}
+			else if(tempT1==84)//84 调整为5000
+			{
+				Send(CalSetData,0x88,0x13,CalSetData+0x88+0x13);
+				check_flag= CheckReceive(CalSetData);
+			}	
+			
+			if(check_flag==1)
+			{
+				check_flag=0;
+				printf("校准完成\r\n");
+				
+				BUZZER_Open(0);
+			}
+			else
+			{
+				printf("校准失败\r\n");
+			}
+			
+			Send(SetCalMode,0x00,SetCalMode);
+			check_flag= CheckReceive(SetCalMode);
+			if(check_flag==1)
+			{
+				check_flag=0;
+				printf("\r\n关闭校正:	%x	%x	%x	||",RxBuffer[0],RxBuffer[1],RxBuffer[2]);
+				printf("\r\n关闭校正模式\r\n");
+			}
+			
+			break;
+		}
+		
+		case 26:
+		{
+			
+			ReadEeprom();//26读取DTA配置参数
+			break;
+		}
+		
 		default:break;
 
 	}
+	
   strcat(str,"\r\n");
   printf(str);  
 }
@@ -964,6 +1043,13 @@ void Communication_Service()
 //			
 //		}
 //	}
+	
+}
+
+
+//主要用于DTA的校准指令
+void DTA_CAL(void)
+{
 	
 }
 

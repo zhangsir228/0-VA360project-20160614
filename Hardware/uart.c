@@ -95,7 +95,7 @@ void uart_init(u32 baudrate)
    
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);//开启接收中断
 #endif
-	USART_Cmd(USART2, ENABLE);//使能串口1
+	USART_Cmd(USART2, ENABLE);//使能串口2
 }
 
 

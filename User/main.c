@@ -132,8 +132,8 @@ int main(void)
 	EXTI->IMR &= ~Keyboard_EXTI_Line;//屏蔽来自线上的中断请求，防止在定时器扫描矩阵键盘时进入此中断
 	TIM_Cmd(TIM3, ENABLE);//打开定时器3，在定时器作用下开始扫描矩阵键盘
 	
-//	WriteEeprom();
-//	Self_Calibration();//在电阻档自检线路和放大器
+	//WriteEeprom();
+	//Self_Calibration();//在电阻档自检线路和放大器
 
 	
 //	//液晶全亮

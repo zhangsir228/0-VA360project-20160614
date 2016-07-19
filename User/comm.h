@@ -61,4 +61,6 @@ void Communicate(void);
 //通信处理汇总函数
 void Communication_Service(void);
 
+//主要用于DTA的校准指令
+void DTA_CAL(void);
 #endif

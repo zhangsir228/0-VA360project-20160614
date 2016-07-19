@@ -486,7 +486,7 @@ void WriteEeprom(void)
 ****************************************************************************/
 void ReadEeprom(void)
 {
-	u8 i=0;
+	u16 i=0;
 	//printf("*************Read from eeprom*************\r\n");
 	
 	Send(SetAddr,0x00,0x02,0x52);
@@ -501,7 +501,7 @@ void ReadEeprom(void)
 			if(check_flag==1)
 			{
 //				eeprom[i]=RxBuffer[1];														//记于10月5日：eeprom[]这个数组貌似可以不要，直接上变量得了//2015年3月18日注释
-				printf("%x-%x	|",0x200+i,RxBuffer[1]);//eeprom[i]);
+				printf("%02x-%02x	|",0x200+i,RxBuffer[1]);//eeprom[i]);
 			}
 			else
 			{

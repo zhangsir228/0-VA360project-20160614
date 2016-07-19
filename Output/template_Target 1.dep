@@ -1,5 +1,5 @@
 Dependencies for Project 'template', Target 'Target 1': (DO NOT MODIFY !)
-F (.\main.c)(0x57638C76)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
+F (.\main.c)(0x578D93A0)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
 I (..\Core\Include\stm32f37x.h)(0x5716FBE1)
 I (E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h)(0x5625B70C)
 I (E:\keil_V5\ARM\ARMCC\include\stdint.h)(0x569DEA3A)
@@ -47,7 +47,7 @@ I (..\ProcessingData\stmdataprocess.h)(0x57394FB5)
 I (..\Hardware\timer.h)(0x56932453)
 I (..\Hardware\powercontrol.h)(0x559C9005)
 I (..\System\stm32f37x_lp_modes.h)(0x5403E217)
-I (comm.h)(0x57173B86)
+I (comm.h)(0x578D8FC2)
 I (main.h)(0x57341424)
 I (..\DSP_Lib\arm_math.h)(0x5058C743)
 I (E:\keil_V5\ARM\ARMCC\include\string.h)(0x569DEA3A)
@@ -101,7 +101,7 @@ I (..\Hardware\buzzer_led.h)(0x55B99D5B)
 I (main.h)(0x57341424)
 I (..\Hardware\sdadc.h)(0x572C06A7)
 I (..\ProcessingData\flash_data.h)(0x575FB084)
-F (.\stm32f37x_it.c)(0x5760FC1B)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\stm32f37x_it.o --omf_browse ..\output\stm32f37x_it.crf --depend ..\output\stm32f37x_it.d)
+F (.\stm32f37x_it.c)(0x578D8B09)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\stm32f37x_it.o --omf_browse ..\output\stm32f37x_it.crf --depend ..\output\stm32f37x_it.d)
 I (stm32f37x_it.h)(0x53F40929)
 I (..\Core\Include\stm32f37x.h)(0x5716FBE1)
 I (E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h)(0x5625B70C)
@@ -178,7 +178,7 @@ I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_tim.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_usart.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_wwdg.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_misc.h)(0x5058CC08)
-F (.\comm.c)(0x575E8309)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\comm.o --omf_browse ..\output\comm.crf --depend ..\output\comm.d)
+F (.\comm.c)(0x578DBAEF)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\comm.o --omf_browse ..\output\comm.crf --depend ..\output\comm.d)
 I (E:\keil_V5\ARM\ARMCC\include\string.h)(0x569DEA3A)
 I (main.h)(0x57341424)
 I (..\Core\Include\stm32f37x.h)(0x5716FBE1)
@@ -214,7 +214,7 @@ I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_usart.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_wwdg.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_misc.h)(0x5058CC08)
 I (..\ProcessingData\stmdataprocess.h)(0x57394FB5)
-I (comm.h)(0x57173B86)
+I (comm.h)(0x578D8FC2)
 I (..\Hardware\sdadc.h)(0x572C06A7)
 I (E:\keil_V5\ARM\ARMCC\include\math.h)(0x569DEA3A)
 I (..\Hardware\comp.h)(0x5754E985)
@@ -226,6 +226,8 @@ I (..\ProcessingData\flash_data.h)(0x575FB084)
 I (..\System\nvic_systick.h)(0x5508EC4F)
 I (..\Hardware\dac.h)(0x556463C7)
 I (CalA.h)(0x575FB084)
+I (..\Hardware\dta0660.h)(0x55DAD7BC)
+I (..\Hardware\buzzer_led.h)(0x55B99D5B)
 F (.\CalA.c)(0x575FB084)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\cala.o --omf_browse ..\output\cala.crf --depend ..\output\cala.d)
 I (CalA.h)(0x575FB084)
 I (E:\keil_V5\ARM\ARMCC\include\math.h)(0x569DEA3A)
@@ -990,7 +992,7 @@ I (..\System\nvic_systick.h)(0x5508EC4F)
 I (..\Hardware\ht1621.h)(0x57562BB1)
 I (E:\keil_V5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (E:\keil_V5\ARM\ARMCC\include\math.h)(0x569DEA3A)
-F (..\Hardware\dta0660.c)(0x571492CB)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\dta0660.o --omf_browse ..\output\dta0660.crf --depend ..\output\dta0660.d)
+F (..\Hardware\dta0660.c)(0x578DB73B)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\dta0660.o --omf_browse ..\output\dta0660.crf --depend ..\output\dta0660.d)
 I (..\Hardware\dta0660.h)(0x55DAD7BC)
 I (..\Core\Include\stm32f37x.h)(0x5716FBE1)
 I (E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h)(0x5625B70C)
@@ -1100,7 +1102,7 @@ I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_tim.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_usart.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_wwdg.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_misc.h)(0x5058CC08)
-F (..\Hardware\sdadc.c)(0x575D20A4)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\sdadc.o --omf_browse ..\output\sdadc.crf --depend ..\output\sdadc.d)
+F (..\Hardware\sdadc.c)(0x578C92A8)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\sdadc.o --omf_browse ..\output\sdadc.crf --depend ..\output\sdadc.d)
 I (..\Hardware\sdadc.h)(0x572C06A7)
 I (..\Core\Include\stm32f37x.h)(0x5716FBE1)
 I (E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h)(0x5625B70C)
@@ -1136,7 +1138,7 @@ I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_wwdg.h)(0x5058CC08)
 I (..\STM32F37X_StdPeriph_Driver\inc\stm32f37x_misc.h)(0x5058CC08)
 I (..\System\nvic_systick.h)(0x5508EC4F)
 I (..\ProcessingData\stmdataprocess.h)(0x57394FB5)
-F (..\Hardware\uart.c)(0x5716F501)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\uart.o --omf_browse ..\output\uart.crf --depend ..\output\uart.d)
+F (..\Hardware\uart.c)(0x578C8A70)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I ..\Core\Include -I ..\STM32F37X_StdPeriph_Driver\inc -I ..\User -I ..\Hardware -I ..\DSP_Lib -I ..\System -I ..\ProcessingData -I d:\keil_V5\ARM\ARMCC\include-I "E:\zhangyu\2016work\VA360\project\0-VA360project 20160614\User\RTE"-I E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I E:\keil_V5\ARM\PACK\Keil\STM32F3xx_DFP\1.3.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32F373xC -DUSE_STDPERIPH_DRIVER -DSTM32F37X -D__FPU_PRESENT="1" -DARM_MATH_CM4 -D__CC_ARM-o ..\output\uart.o --omf_browse ..\output\uart.crf --depend ..\output\uart.d)
 I (..\Hardware\uart.h)(0x5514B8C7)
 I (..\Core\Include\stm32f37x.h)(0x5716FBE1)
 I (E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include\core_cm4.h)(0x5625B70C)

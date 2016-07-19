@@ -154,10 +154,10 @@ u8 SDADC1_Config(void)
   /* Selects the reference voltage: The reference voltage selection is available
      only in SDADC1 and therefore to select the VREF for SDADC2/SDADC3, SDADC1
      clock must be already enabled */
-  //SDADC_VREFSelect(SDADC_VREF_VDDA);//SDADC_VREF_Ext
+     //SDADC_VREFSelect(SDADC_VREF_VDDA);//SDADC_VREF_Ext
 	
-	SDADC_VREFSelect(SDADC_VREF_Ext);//现在使用外部参考  修改需将外部电路断开
-	//SDADC_VREFSelect(SDADC_VREF_VREFINT1);//SDADC_VREF_Ext
+	//SDADC_VREFSelect(SDADC_VREF_Ext);//现在使用外部参考  修改需将外部电路断开
+	SDADC_VREFSelect(SDADC_VREF_VREFINT1);//SDADC_VREF_Ext
   /* Insert delay equal to ~10 ms (4 ms required) */
 	
   delay_ms(50);

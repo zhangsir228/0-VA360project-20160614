@@ -48,3 +48,5 @@
 ..\output\comm.o: ..\System\nvic_systick.h
 ..\output\comm.o: ..\Hardware\dac.h
 ..\output\comm.o: CalA.h
+..\output\comm.o: ..\Hardware\dta0660.h
+..\output\comm.o: ..\Hardware\buzzer_led.h
