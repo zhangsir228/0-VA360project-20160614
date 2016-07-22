@@ -27,96 +27,7 @@ Project File Date:  06/13/2016
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'E:\keil_V5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-compiling comm.c...
-CalA.h(22): warning:  #1295-D: Deprecated declaration Adj_EXP - give arg types
-  float Adj_EXP();
-comm.c(172): warning:  #68-D: integer conversion resulted in a change of sign
-              tp.type[j]=-3;
-comm.c(179): warning:  #68-D: integer conversion resulted in a change of sign
-            tp.type[j]=-3;
-comm.c(194): warning:  #68-D: integer conversion resulted in a change of sign
-              tp.type[j]=-1;
-comm.c(208): warning:  #68-D: integer conversion resulted in a change of sign
-            tp.type[j]=-2;
-comm.c(214): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-              tp.numb_f[j]*=0.1;
-comm.c(231): warning:  #514-D: pointless comparison of unsigned integer with a negative constant
-        if(tp.f_CMD3[j]==-2)
-comm.c(233): warning:  #68-D: integer conversion resulted in a change of sign
-          tp.type[j]=-3;
-comm.c(374): warning:  #223-D: function "tolower" declared implicitly
-  	  Buf_temp[i]=tolower(Buf_temp[i]);
-comm.c(602): warning:  #223-D: function "printf" declared implicitly
-  						printf("%.4f\r\n",(float)(SDADC2_value[i]));
-comm.c(610): warning:  #223-D: function "printf" declared implicitly
-  						printf("%.4f\r\n",(float)(SDADC1_value[i]));
-comm.c(619): warning:  #223-D: function "sprintf" declared implicitly
-  					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-comm.c(625): warning:  #223-D: function "sprintf" declared implicitly
-  					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-comm.c(631): warning:  #223-D: function "sprintf" declared implicitly
-  					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-comm.c(654): warning:  #223-D: function "sprintf" declared implicitly
-  					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-comm.c(663): warning:  #223-D: function "sprintf" declared implicitly
-  					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-comm.c(672): warning:  #223-D: function "sprintf" declared implicitly
-  					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-comm.c(730): warning:  #223-D: function "sprintf" declared implicitly
-  						sprintf(chardata, "set 600VA_zero %.4f", SaveData.Value.cal_600VA_zero);
-comm.c(741): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  						SaveData.Value.cal_600VA_gain=5.0/(voltage_effective*10-SaveData.Value.cal_600VA_zero);
-comm.c(742): warning:  #223-D: function "sprintf" declared implicitly
-  						sprintf(chardata, "set 600VA_gain %.4f", SaveData.Value.cal_600VA_gain);
-comm.c(825): warning:  #177-D: variable "ttpp" was declared but never referenced
-  					char *ttpp;
-comm.c(836): warning:  #177-D: variable "ttpp" was declared but never referenced
-  					char *ttpp;
-comm.c(939): warning:  #223-D: function "sprintf" declared implicitly
-  			sprintf(chardata, "Set CalA_data[%d]= %.4f",((i-1600)/200),SysValue.curr_now);
-comm.c(951): warning:  #188-D: enumerated type mixed with another type
-  				check_flag=0;
-comm.c(952): warning:  #223-D: function "printf" declared implicitly
-  				printf("\r\n开??校??:	%x	%x	%x	||",RxBuffer[0],RxBuffer[1],RxBuffer[2]);
-comm.c(962): warning:  #223-D: function "printf" declared implicitly
-  					printf("?却?校准！\r\n");
-comm.c(972): warning:  #223-D: function "printf" declared implicitly
-  					printf("?却?校准！\r\n");
-comm.c(984): warning:  #188-D: enumerated type mixed with another type
-  				check_flag=0;
-comm.c(985): warning:  #223-D: function "printf" declared implicitly
-  				printf("校准?瓿?\r\n");
-comm.c(991): warning:  #223-D: function "printf" declared implicitly
-  				printf("校准失??\r\n");
-comm.c(998): warning:  #188-D: enumerated type mixed with another type
-  				check_flag=0;
-comm.c(999): warning:  #223-D: function "printf" declared implicitly
-  				printf("\r\n?乇?校??:	%x	%x	%x	||",RxBuffer[0],RxBuffer[1],RxBuffer[2]);
-comm.c(1018): warning:  #223-D: function "printf" declared implicitly
-    printf(str);  
-comm.c(316): warning:  #550-D: variable "tempQ" was set but never used
-    uint8_t tempQ=0;
-comm.c(319): warning:  #550-D: variable "tempT2" was set but never used
-    int8_t tempT2=-1;
-comm.c(1023): warning:  #177-D: variable "Ostr" was declared but never referenced
-  	char Ostr[120]="\0";
-comm.c(1024): warning:  #177-D: variable "chardata" was declared but never referenced
-  	char    chardata[10];
-comm.c(1025): warning:  #177-D: variable "Data" was declared but never referenced
-  	float Data=0;
-comm.c(1026): warning:  #177-D: variable "temp" was declared but never referenced
-  	float temp=0;	
-comm.c(1027): warning:  #177-D: variable "temp_nm" was declared but never referenced
-  	uint8_t temp_nm[12];
-comm.c(1028): warning:  #177-D: variable "i" was declared but never referenced
-  	uint8_t i=0,j=0;
-comm.c(1028): warning:  #177-D: variable "j" was declared but never referenced
-  	uint8_t i=0,j=0;
-comm.c: 42 warnings, 0 errors
-linking...
-Program Size: Code=83934 RO-data=37370 RW-data=1352 ZI-data=28544  
-FromELF: creating hex file...
-"..\Output\template.axf" - 0 Error(s), 42 Warning(s).
+"..\Output\template.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -134,7 +45,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:4.3.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

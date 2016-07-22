@@ -117,6 +117,7 @@ void start_configration(void)
 	Dac1_Set_Vol(1800);
 	
 	TIM13_Config_1s_Standby();//内含1s中断，计数1800次为30min，进入Standby模式
+	
 }
 
 

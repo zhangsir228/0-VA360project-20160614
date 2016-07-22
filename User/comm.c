@@ -1003,7 +1003,7 @@ void Communicate(void)
 			break;
 		}
 		
-		case 26:
+		case 26://读取DTA0660 eeprom配置参数
 		{
 			
 			ReadEeprom();//26读取DTA配置参数

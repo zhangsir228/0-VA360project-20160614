@@ -1297,7 +1297,7 @@ void dealwith_information(void)
 					}	
 			}
 				
-			//校正电流数据    这个用于没有钳头时模拟的一组数据
+			//校正电流数据    这个用于没有钳头时模拟的一组数据      小电流时采样线性校准方式
 			SDADC2_value[t]=/*sdadc2_sample100a[t];*/(SDADC2_value[t]-SaveData.Value.cal_A1_zero)*SaveData.Value.cal_A1_gain;
 			
 			if(SaveData.Value.cal_adjv==1)//是否进行大电流时的数值校正，可修改门限 确定调整的起始电流。目前为1600A,需要调小

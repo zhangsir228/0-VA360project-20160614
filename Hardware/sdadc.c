@@ -157,7 +157,7 @@ u8 SDADC1_Config(void)
      //SDADC_VREFSelect(SDADC_VREF_VDDA);//SDADC_VREF_Ext
 	
 	//SDADC_VREFSelect(SDADC_VREF_Ext);//现在使用外部参考  修改需将外部电路断开
-	SDADC_VREFSelect(SDADC_VREF_VREFINT1);//SDADC_VREF_Ext
+	SDADC_VREFSelect(SDADC_VREF_VREFINT2);//SDADC_VREF_Ext
   /* Insert delay equal to ~10 ms (4 ms required) */
 	
   delay_ms(50);
