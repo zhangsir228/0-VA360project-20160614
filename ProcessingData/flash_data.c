@@ -91,14 +91,14 @@ void Default_flash(void)
 //		2600, //2800 以下两组数据未经测量
 //		2750, //3000
 //	};
-	SaveData.Value.CalA_data[0]=1604.61;
-	SaveData.Value.CalA_data[1]=1796.3;
-	SaveData.Value.CalA_data[2]=1980.4;
-	SaveData.Value.CalA_data[3]=2158.21;
-	SaveData.Value.CalA_data[4]=2317.46;
-	SaveData.Value.CalA_data[5]=2441.77;
-	SaveData.Value.CalA_data[6]=2600;
-	SaveData.Value.CalA_data[7]=2750;
+	SaveData.Value.CalA_data[0]=1604.11;
+	SaveData.Value.CalA_data[1]=1796.22;
+	SaveData.Value.CalA_data[2]=1980.33;
+	SaveData.Value.CalA_data[3]=2158.44;
+	SaveData.Value.CalA_data[4]=2317.55;
+	SaveData.Value.CalA_data[5]=2441.66;
+	SaveData.Value.CalA_data[6]=2600.77;
+	SaveData.Value.CalA_data[7]=2750.88;
 		
 	updata_flash();	
 }	

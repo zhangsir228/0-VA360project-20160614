@@ -1137,7 +1137,12 @@ float voltage_fundamental_frequency = 0 , current_fundamental_frequency = 0;
 float voltage_effective_sum=0,current_effective_sum=0,active_power_sum=0;//多次累加求和，以便均值处理
 
 float voltage_mean,current_mean;
-float voltage_mean_temp ,current_mean_temp;//2060616 新增用于电压电流平均值的滤波
+float voltage_mean_temp ,current_mean_temp;//20160616 新增用于电压电流平均值的滤波
+
+float voltage_effective_tab[5]={0},current_effective_tab[5]={0},active_power_tab[5]={0}; //2016-07-25 lea  换用窗口滤波 加快数值更新速度 
+float voltage_mean_tab[20]={0},current_mean_tab[5]={0};
+char  Window_num=5;//窗口滤波大小;
+
 
 u8 timer_1s_blink;
 u16 powertimercounter;
@@ -1159,7 +1164,7 @@ void dealwith_information(void)
 	float v_temp,a_temp;
 	
 	char    chardata[32];
-	uint16_t   	Tloop=0;
+	uint16_t   	Tloop=0,Tab_i=0;
 	float temp_mean=0;
 
 	/*********************************************
@@ -1351,9 +1356,7 @@ void dealwith_information(void)
 					
 				}
 			}
-			
-			
-			
+
 			//下面计算功率瞬时值 由瞬时值的均值得到有功功率
 			POWER_value[t] = SDADC1_value[t] * SDADC2_value[t];
 			
@@ -1371,7 +1374,10 @@ void dealwith_information(void)
 		voltage_mean = voltage_mean_sum / datasize;
 		current_mean = current_mean_sum / datasize;
 		
-		
+		//窗口滤波电流平均值
+		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num);
+		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num);
+
 
 		
 		//电压、电流、功率有效值计算，再算另一部分——求均、开根（V/A）、求均（W）
@@ -1384,25 +1390,30 @@ void dealwith_information(void)
 //		printf("v,c:%.4f,%.4f",voltage_temp,current_temp);
 //		printf("vm,cm:%.4f,%.4f\r\n",voltage_mean,current_mean);
 /*************************************************************************************************************************/
-		//累计addcount次，便于后面addcount次到来后求平均值
-		voltage_effective_sum += voltage_temp;
-		current_effective_sum += current_temp;
-		active_power_sum += power_temp;
-	
+//		//累计addcount次，便于后面addcount次到来后求平均值
+//		voltage_effective_sum += voltage_temp;
+//		current_effective_sum += current_temp;
+//		active_power_sum += power_temp;		
+
 		if(SaveData.Value.cal_adjv==0)//
 		{//0 校准模式下电流校正显示 
 			current_mean = Adj_Nline(current_mean);
 		}
 		
-		count++;
+		count=5;
+		//count++;
 		//计数addcount后，已经得到经过均值滤波后的电压和电流有效值、有功功率
 		if(count == addcount)
-		{
-			//addcount次的均值处理，得到电压、电流、功率有效值
-			voltage_effective=voltage_effective_sum / addcount;
-			current_effective=current_effective_sum / addcount;
-			active_power=active_power_sum / addcount;//平均后的 有功功率值
+		{			
+//			//addcount次的均值处理，得到电压、电流、功率有效值
+//			voltage_effective=voltage_effective_sum / 5;//addcount;
+//			current_effective=current_effective_sum / 5;//addcount;
+//			active_power=active_power_sum / 5;//addcount;//平均后的 有功功率值
 			
+			voltage_effective = Windows_Filter(voltage_temp,voltage_effective_tab,Window_num);
+			current_effective = Windows_Filter(current_temp,current_effective_tab,Window_num);
+			active_power 	  = Windows_Filter(power_temp,  active_power_tab,     Window_num);
+
 			//printf("ve,ce:%.4f,%.4f\r\n",voltage_effective,current_effective);
 			
 			if(((RotaryKeyValue==KEY_VALUE_6) && ((paramstatus == state1) || (paramstatus == state2))) || ((RotaryKeyValue==KEY_VALUE_7) && (longparamstatus == state0)))
@@ -1452,11 +1463,11 @@ void dealwith_information(void)
 				power_factor = active_power / apparent_power;//功率因数(PF)
 				if(power_factor > 1)	power_factor = 1;
 			}
-			count=0;
+			//count=0;//窗口滤波不清零该计数值，只作为最开始的五次填充数值
 			voltage_effective_sum = 0;
 			current_effective_sum = 0;
 			active_power_sum = 0;
-		}
+		}//基本运算结束 由addcount计数满足后开始
 			
 		if((RotaryKeyValue==KEY_VALUE_7) && (longparamstatus != state0))
 		{//W档计算电能
@@ -1845,5 +1856,50 @@ uint8_t get_formed1024(void)
 	return 1;
 
 }
+
+
+/***************************************************************************************************/
+//将一个浮点数传给一个浮点数组并返回平均值
+//特殊情况：若该浮点数与数组中第一个数[0]的差值大于 [0]*0.2  则用该数值填充当前数组
+//输入参数：	New_Data 新传入的参数。
+//			Data_tab 当前数据所在的窗口数组
+//			num  窗口大小（数组大小）
+//
+//函数返回：	窗口滤波值
+/****************************************************************************************************/
+float Windows_Filter(float New_Data,float *Data_tab,char num)
+{
+	char i=0;
+	float value=0;
+	
+	if(abs(New_Data-Data_tab[0])>abs(Data_tab[0]*0.2))//若偏差值较大则填充滤波寄存器
+	{
+		for(i=0;i<num;i++)
+		{
+			Data_tab[i]=New_Data;
+		}
+	}
+	else	//将新值移动到窗口中
+	{
+		for(i=(num-1);i>0;i--)
+		{
+			Data_tab[i] = Data_tab[i-1];
+		}	
+		Data_tab[0]=New_Data;
+	}
+	
+	for(i=0;i<num;i++)
+	{
+		value +=Data_tab[i];
+	}
+	
+	return value/num;
+}
+
+
+
+
+
+
 
 

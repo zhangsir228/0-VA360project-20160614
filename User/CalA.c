@@ -39,7 +39,7 @@ float Adj_Nline(float Value)
 	float new_value=0;
 	uint8_t i=0;
 	
-	if(Value>1600)
+	if(Value>1500)
 	{
 		for(i=0;i<8;i++)
 		{

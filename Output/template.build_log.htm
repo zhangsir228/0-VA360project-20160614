@@ -27,7 +27,34 @@ Project File Date:  06/13/2016
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'E:\keil_V5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-"..\Output\template.axf" - 0 Error(s), 0 Warning(s).
+compiling stmdataprocess326.c...
+..\User\CalA.h(22): warning:  #1295-D: Deprecated declaration Adj_EXP - give arg types
+  float Adj_EXP();
+..\ProcessingData\stmdataprocess326.c(1159): warning:  #177-D: variable "voltage_effective_before" was declared but never referenced
+  	float voltage_temp=0,voltage_effective_before=0;
+..\ProcessingData\stmdataprocess326.c(1160): warning:  #177-D: variable "current_effective_before" was declared but never referenced
+  	float current_temp=0,current_effective_before=0;
+..\ProcessingData\stmdataprocess326.c(1161): warning:  #177-D: variable "active_power_before" was declared but never referenced
+  	float power_temp=0,active_power_before=0;
+..\ProcessingData\stmdataprocess326.c(1164): warning:  #177-D: variable "v_temp" was declared but never referenced
+  	float v_temp,a_temp;
+..\ProcessingData\stmdataprocess326.c(1164): warning:  #177-D: variable "a_temp" was declared but never referenced
+  	float v_temp,a_temp;
+..\ProcessingData\stmdataprocess326.c(1167): warning:  #177-D: variable "Tab_i" was declared but never referenced
+  	uint16_t   	Tloop=0,Tab_i=0;
+..\ProcessingData\stmdataprocess326.c(1585): warning:  #550-D: variable "fundamental_flag" was set but never used
+  	uint8_t fundamental_flag=0;
+..\ProcessingData\stmdataprocess326.c(1590): warning:  #550-D: variable "status" was set but never used
+    arm_status status;
+..\ProcessingData\stmdataprocess326.c(1875): warning:  #223-D: function "abs" declared implicitly
+  	if(abs(New_Data-Data_tab[0])>abs(Data_tab[0]*0.2))//??ƫ??ֵ?ϴ????�??˲��Ĵ???
+..\ProcessingData\stmdataprocess326.c(1875): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  	if(abs(New_Data-Data_tab[0])>abs(Data_tab[0]*0.2))//??ƫ??ֵ?ϴ????�??˲��Ĵ???
+..\ProcessingData\stmdataprocess326.c: 11 warnings, 0 errors
+linking...
+Program Size: Code=84246 RO-data=37370 RW-data=1352 ZI-data=28704  
+FromELF: creating hex file...
+"..\Output\template.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -45,7 +72,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:4.3.0
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

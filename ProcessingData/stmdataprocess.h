@@ -64,4 +64,5 @@ void FFT(void);
 //void Test_FFT(void) ;
 float Adj_V(float sdadc_value);
 uint8_t get_formed1024(void);
+float Windows_Filter(float New_Data,float *Data_tab,char num);
 #endif

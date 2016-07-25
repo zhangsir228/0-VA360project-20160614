@@ -21,10 +21,10 @@ void PowerControl_Init(void)
 	
 //	/*PA5-POWERCTRL0(电压),PA6-POWERCTRL1(BT)*/
 //	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5|GPIO_Pin_6;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; 		 
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//IO口速度为50MHz
-//	GPIO_InitStructure.GPIO_OType=GPIO_OType_PP;//推挽输出
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; 		 
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//IO口速度为50MHz
+	GPIO_InitStructure.GPIO_OType=GPIO_OType_PP;//推挽输出
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 //	GPIO_Init(GPIOA, &GPIO_InitStructure);
 //	GPIO_SetBits(GPIOA,GPIO_Pin_5);//电压电源关
 ////	GPIO_ResetBits(GPIOA,GPIO_Pin_5);//电压电源开

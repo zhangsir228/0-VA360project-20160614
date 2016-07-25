@@ -8,16 +8,16 @@
 
 ***校准步奏说明：
 	A.DTA功能档
-		1.电压档校准：调到对应手动档位输入值，然后通过串口2发送 dta_calv:five 此命令自动校准5000计数
-			如校准5V  切换到手动挡5V,外部输入5V  发送指令dta_calv:five 
+		1.电压档校准：*调到对应手动档位输入值，然后通过串口2发送 dta_calv:five 此命令自动校准5000计数
+			*如校准5V  切换到手动挡5V,外部输入5V  发送指令dta_calv:five 
 
-	B.373 电压测量校准：如校准5VDC   先叫输入短接，校准零点 指令：cal:cal_6vd_zero  返回set 6VD_zero xxxxx
-				再输入5VDC 校准增益    指令：cal:cal_6vd_gain	返回set 6VD_gain xxxx
+	B.373 电压测量校准：如校准5VDC   *先叫输入短接，校准零点 指令：cal:cal_6vd_zero  返回set 6VD_zero xxxxx
+				*再输入5VDC 校准增益    指令：cal:cal_6vd_gain	返回set 6VD_gain xxxx
 
-	C。钳头电流校准：切换到直流 先在500A处校准一个偏置 cal:cal_a_zero 500   这里外部输入0A  参数无意义，可为任何大于零的数 
-					再在1300A处校准增益  cal:cal_a_gain 1300
-				先关闭大电流调整，准备进行大电流多段校准。指令：cal:cal_adjv 0
-				再分别再以下点处校准多段线 float CalA_point[8]={1600,1800,2000,2200,2400,2600,2800,3000};
+	C。钳头电流校准：切换到直流 * 外部输入0A  指令：cal:cal_a_zero 500   （参数无意义，可为任何大于零的数 ）
+				*再在1300A处校准增益  cal:cal_a_gain 1300
+				*先关闭大电流调整，准备进行大电流多段校准。指令：cal:cal_adjv 0
+				*再分别再以下点处校准多段线 float CalA_point[8]={1600,1800,2000,2200,2400,2600,2800,3000};
 					指令cala:ma 1600 
 					cala:ma 1800
-				开启大电流调整 cal:cal_adjv 1
+				*开启大电流调整 cal:cal_adjv 1

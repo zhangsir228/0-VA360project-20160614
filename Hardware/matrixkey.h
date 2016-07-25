@@ -78,6 +78,8 @@ extern u8 SoftKeyValue,SoftKeyValue_before;
 #ifdef Interrupt_Scan
 void Init_Keyboard_Interrupt(void); //键盘初始化为——外部中断进入后，关闭外部中断并定时器扫描——相配合的模式
 #endif
+u8 OnceSoftKey(void);
+
 u8 OnceRotaryKey(void);
 u8 ScanKey(void);
 void KEY_LINE_write_high_all(void);

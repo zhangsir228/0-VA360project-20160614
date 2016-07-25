@@ -206,7 +206,7 @@ void Init_Keyboard_Interrupt(void)
 * 注意事项: 1、编码0x0F(KEY_NULL)表示没有按键被按下
 *						2、本函数扫描按键没有进行消抖，下面的ScanKey()函数在本函数的基础上进行了基于状态机机制的机械消抖操作
 ****************************************************************************************************************/
-static u8 OnceSoftKey(void)
+u8 OnceSoftKey(void)
 {
 	u8 i = 0;
 	u8 keytemp=KEY_NULL;

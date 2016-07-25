@@ -138,7 +138,7 @@
 /** @addtogroup STM32F37x_System_Private_Variables
   * @{
   */
-uint32_t SystemCoreClock    = 72000000;
+uint32_t SystemCoreClock    = 24000000;//72000000;
 __I uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 
 /**
@@ -333,10 +333,11 @@ static void SetSysClock(void)
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
     
     
-    /*  PLL configuration: PLLCLK = HSE * 6 = 72 MHz */
+    /*  PLL configuration: PLLCLK = HSE * 6 = 72 MHz   */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
                                         RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLMULL6);
+    //RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLMULL6);
+	  RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_PREDIV1 | RCC_CFGR_PLLMULL2);/* PLL configuration: PLLCLK = HSE * 2 = 24 MHz */
 
     /* Enable PLL */
     RCC->CR |= RCC_CR_PLLON;
