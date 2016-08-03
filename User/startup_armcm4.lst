@@ -1,0 +1,928 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;/******************************************************
+                       ********************//**
+    2 00000000         ; * @file     startup_ARMCM4.s
+    3 00000000         ; * @brief    CMSIS Core Device Startup File for
+    4 00000000         ; *           ARMCM4 Device Series
+    5 00000000         ; * @version  V1.08
+    6 00000000         ; * @date     03. February 2012
+    7 00000000         ; *
+    8 00000000         ; * @note
+    9 00000000         ; * Copyright (C) 2012 ARM Limited. All rights reserved.
+                       
+   10 00000000         ; *
+   11 00000000         ; * @par
+   12 00000000         ; * ARM Limited (ARM) is supplying this software for use
+                        with Cortex-M 
+   13 00000000         ; * processor based microcontrollers.  This file can be 
+                       freely distributed 
+   14 00000000         ; * within development tools that are supporting such AR
+                       M based processors. 
+   15 00000000         ; *
+   16 00000000         ; * @par
+   17 00000000         ; * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, W
+                       HETHER EXPRESS, IMPLIED
+   18 00000000         ; * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED
+                        WARRANTIES OF
+   19 00000000         ; * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+                        APPLY TO THIS SOFTWARE.
+   20 00000000         ; * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR S
+                       PECIAL, INCIDENTAL, OR
+   21 00000000         ; * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+   22 00000000         ; *
+   23 00000000         ; ******************************************************
+                       ************************/
+   24 00000000         ;/*
+   25 00000000         ;//-------- <<< Use Configuration Wizard in Context Menu
+                        >>> ------------------
+   26 00000000         ;*/
+   27 00000000         
+   28 00000000         
+   29 00000000         ; <h> Stack Configuration
+   30 00000000         ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   31 00000000         ; </h>
+   32 00000000         
+   33 00000000 00000400 
+                       Stack_Size
+                               EQU              0x00000400
+   34 00000000         
+   35 00000000                 AREA             STACK, NOINIT, READWRITE, ALIGN
+=3
+   36 00000000         Stack_Mem
+                               SPACE            Stack_Size
+   37 00000400         __initial_sp
+   38 00000400         
+   39 00000400         
+   40 00000400         ; <h> Heap Configuration
+   41 00000400         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   42 00000400         ; </h>
+   43 00000400         
+   44 00000400 00000C00 
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                       Heap_Size
+                               EQU              0x00000C00
+   45 00000400         
+   46 00000400                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
+3
+   47 00000000         __heap_base
+   48 00000000         Heap_Mem
+                               SPACE            Heap_Size
+   49 00000C00         __heap_limit
+   50 00000C00         
+   51 00000C00         
+   52 00000C00                 PRESERVE8
+   53 00000C00                 THUMB
+   54 00000C00         
+   55 00000C00         
+   56 00000C00         ; Vector Table Mapped to Address 0 at Reset
+   57 00000C00         
+   58 00000C00                 AREA             RESET, DATA, READONLY
+   59 00000000                 EXPORT           __Vectors
+   60 00000000                 EXPORT           __Vectors_End
+   61 00000000                 EXPORT           __Vectors_Size
+   62 00000000         
+   63 00000000 00000000 
+                       __Vectors
+                               DCD              __initial_sp ; Top of Stack
+   64 00000004 00000000        DCD              Reset_Handler ; Reset Handler
+   65 00000008 00000000        DCD              NMI_Handler ; NMI Handler
+   66 0000000C 00000000        DCD              HardFault_Handler ; Hard Fault 
+                                                            Handler
+   67 00000010 00000000        DCD              MemManage_Handler 
+                                                            ; MPU Fault Handler
+                                                            
+   68 00000014 00000000        DCD              BusFault_Handler 
+                                                            ; Bus Fault Handler
+                                                            
+   69 00000018 00000000        DCD              UsageFault_Handler ; Usage Faul
+                                                            t Handler
+   70 0000001C 00000000        DCD              0           ; Reserved
+   71 00000020 00000000        DCD              0           ; Reserved
+   72 00000024 00000000        DCD              0           ; Reserved
+   73 00000028 00000000        DCD              0           ; Reserved
+   74 0000002C 00000000        DCD              SVC_Handler ; SVCall Handler
+   75 00000030 00000000        DCD              DebugMon_Handler ; Debug Monito
+                                                            r Handler
+   76 00000034 00000000        DCD              0           ; Reserved
+   77 00000038 00000000        DCD              PendSV_Handler ; PendSV Handler
+                                                            
+   78 0000003C 00000000        DCD              SysTick_Handler 
+                                                            ; SysTick Handler
+   79 00000040         
+   80 00000040         ; External Interrupts
+   81 00000040 00000000        DCD              WDT_IRQHandler ;  0:  Watchdog 
+                                                            Timer
+   82 00000044 00000000        DCD              RTC_IRQHandler ;  1:  Real Time
+                                                             Clock
+   83 00000048 00000000        DCD              TIM0_IRQHandler ;  2:  Timer0 /
+                                                             Timer1
+   84 0000004C 00000000        DCD              TIM2_IRQHandler ;  3:  Timer2 /
+                                                             Timer3
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   85 00000050 00000000        DCD              MCIA_IRQHandler ;  4:  MCIa
+   86 00000054 00000000        DCD              MCIB_IRQHandler ;  5:  MCIb
+   87 00000058 00000000        DCD              UART0_IRQHandler ;  6:  UART0 -
+                                                             DUT FPGA
+   88 0000005C 00000000        DCD              UART1_IRQHandler ;  7:  UART1 -
+                                                             DUT FPGA
+   89 00000060 00000000        DCD              UART2_IRQHandler ;  8:  UART2 -
+                                                             DUT FPGA
+   90 00000064 00000000        DCD              UART4_IRQHandler ;  9:  UART4 -
+                                                             not connected
+   91 00000068 00000000        DCD              AACI_IRQHandler 
+                                                            ; 10: AACI / AC97
+   92 0000006C 00000000        DCD              CLCD_IRQHandler ; 11: CLCD Comb
+                                                            ined Interrupt
+   93 00000070 00000000        DCD              ENET_IRQHandler ; 12: Ethernet
+   94 00000074 00000000        DCD              USBDC_IRQHandler 
+                                                            ; 13: USB Device
+   95 00000078 00000000        DCD              USBHC_IRQHandler ; 14: USB Host
+                                                             Controller
+   96 0000007C 00000000        DCD              CHLCD_IRQHandler 
+                                                            ; 15: Character LCD
+                                                            
+   97 00000080 00000000        DCD              FLEXRAY_IRQHandler 
+                                                            ; 16: Flexray
+   98 00000084 00000000        DCD              CAN_IRQHandler ; 17: CAN
+   99 00000088 00000000        DCD              LIN_IRQHandler ; 18: LIN
+  100 0000008C 00000000        DCD              I2C_IRQHandler 
+                                                            ; 19: I2C ADC/DAC
+  101 00000090 00000000        DCD              0           ; 20: Reserved
+  102 00000094 00000000        DCD              0           ; 21: Reserved
+  103 00000098 00000000        DCD              0           ; 22: Reserved
+  104 0000009C 00000000        DCD              0           ; 23: Reserved
+  105 000000A0 00000000        DCD              0           ; 24: Reserved
+  106 000000A4 00000000        DCD              0           ; 25: Reserved
+  107 000000A8 00000000        DCD              0           ; 26: Reserved
+  108 000000AC 00000000        DCD              0           ; 27: Reserved
+  109 000000B0 00000000        DCD              CPU_CLCD_IRQHandler ; 28: Reser
+                                                            ved - CPU FPGA CLCD
+                                                            
+  110 000000B4 00000000        DCD              0           ; 29: Reserved - CP
+                                                            U FPGA
+  111 000000B8 00000000        DCD              UART3_IRQHandler ; 30: UART3   
+                                                             - CPU FPGA
+  112 000000BC 00000000        DCD              SPI_IRQHandler ; 31: SPI Touchs
+                                                            creen - CPU FPGA
+  113 000000C0         __Vectors_End
+  114 000000C0         
+  115 000000C0 000000C0 
+                       __Vectors_Size
+                               EQU              __Vectors_End - __Vectors
+  116 000000C0         
+  117 000000C0                 AREA             |.text|, CODE, READONLY
+  118 00000000         
+  119 00000000         
+  120 00000000         ; Reset Handler
+  121 00000000         
+  122 00000000         Reset_Handler
+                               PROC
+  123 00000000                 EXPORT           Reset_Handler             [WEAK
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+]
+  124 00000000                 IMPORT           SystemInit
+  125 00000000                 IMPORT           __main
+  126 00000000 4809            LDR              R0, =SystemInit
+  127 00000002 4780            BLX              R0
+  128 00000004 4809            LDR              R0, =__main
+  129 00000006 4700            BX               R0
+  130 00000008                 ENDP
+  131 00000008         
+  132 00000008         
+  133 00000008         ; Dummy Exception Handlers (infinite loops which can be 
+                       modified)
+  134 00000008         
+  135 00000008         NMI_Handler
+                               PROC
+  136 00000008                 EXPORT           NMI_Handler               [WEAK
+]
+  137 00000008 E7FE            B                .
+  138 0000000A                 ENDP
+  140 0000000A         HardFault_Handler
+                               PROC
+  141 0000000A                 EXPORT           HardFault_Handler         [WEAK
+]
+  142 0000000A E7FE            B                .
+  143 0000000C                 ENDP
+  145 0000000C         MemManage_Handler
+                               PROC
+  146 0000000C                 EXPORT           MemManage_Handler         [WEAK
+]
+  147 0000000C E7FE            B                .
+  148 0000000E                 ENDP
+  150 0000000E         BusFault_Handler
+                               PROC
+  151 0000000E                 EXPORT           BusFault_Handler          [WEAK
+]
+  152 0000000E E7FE            B                .
+  153 00000010                 ENDP
+  155 00000010         UsageFault_Handler
+                               PROC
+  156 00000010                 EXPORT           UsageFault_Handler        [WEAK
+]
+  157 00000010 E7FE            B                .
+  158 00000012                 ENDP
+  159 00000012         SVC_Handler
+                               PROC
+  160 00000012                 EXPORT           SVC_Handler               [WEAK
+]
+  161 00000012 E7FE            B                .
+  162 00000014                 ENDP
+  164 00000014         DebugMon_Handler
+                               PROC
+  165 00000014                 EXPORT           DebugMon_Handler          [WEAK
+]
+  166 00000014 E7FE            B                .
+  167 00000016                 ENDP
+  168 00000016         PendSV_Handler
+                               PROC
+  169 00000016                 EXPORT           PendSV_Handler            [WEAK
+]
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  170 00000016 E7FE            B                .
+  171 00000018                 ENDP
+  172 00000018         SysTick_Handler
+                               PROC
+  173 00000018                 EXPORT           SysTick_Handler           [WEAK
+]
+  174 00000018 E7FE            B                .
+  175 0000001A                 ENDP
+  176 0000001A         
+  177 0000001A         Default_Handler
+                               PROC
+  178 0000001A         
+  179 0000001A                 EXPORT           WDT_IRQHandler            [WEAK
+]
+  180 0000001A                 EXPORT           RTC_IRQHandler            [WEAK
+]
+  181 0000001A                 EXPORT           TIM0_IRQHandler           [WEAK
+]
+  182 0000001A                 EXPORT           TIM2_IRQHandler           [WEAK
+]
+  183 0000001A                 EXPORT           MCIA_IRQHandler           [WEAK
+]
+  184 0000001A                 EXPORT           MCIB_IRQHandler           [WEAK
+]
+  185 0000001A                 EXPORT           UART0_IRQHandler          [WEAK
+]
+  186 0000001A                 EXPORT           UART1_IRQHandler          [WEAK
+]
+  187 0000001A                 EXPORT           UART2_IRQHandler          [WEAK
+]
+  188 0000001A                 EXPORT           UART3_IRQHandler          [WEAK
+]
+  189 0000001A                 EXPORT           UART4_IRQHandler          [WEAK
+]
+  190 0000001A                 EXPORT           AACI_IRQHandler           [WEAK
+]
+  191 0000001A                 EXPORT           CLCD_IRQHandler           [WEAK
+]
+  192 0000001A                 EXPORT           ENET_IRQHandler           [WEAK
+]
+  193 0000001A                 EXPORT           USBDC_IRQHandler          [WEAK
+]
+  194 0000001A                 EXPORT           USBHC_IRQHandler          [WEAK
+]
+  195 0000001A                 EXPORT           CHLCD_IRQHandler          [WEAK
+]
+  196 0000001A                 EXPORT           FLEXRAY_IRQHandler        [WEAK
+]
+  197 0000001A                 EXPORT           CAN_IRQHandler            [WEAK
+]
+  198 0000001A                 EXPORT           LIN_IRQHandler            [WEAK
+]
+  199 0000001A                 EXPORT           I2C_IRQHandler            [WEAK
+]
+  200 0000001A                 EXPORT           CPU_CLCD_IRQHandler       [WEAK
+]
+  201 0000001A                 EXPORT           SPI_IRQHandler            [WEAK
+]
+  202 0000001A         
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  203 0000001A         WDT_IRQHandler
+  204 0000001A         RTC_IRQHandler
+  205 0000001A         TIM0_IRQHandler
+  206 0000001A         TIM2_IRQHandler
+  207 0000001A         MCIA_IRQHandler
+  208 0000001A         MCIB_IRQHandler
+  209 0000001A         UART0_IRQHandler
+  210 0000001A         UART1_IRQHandler
+  211 0000001A         UART2_IRQHandler
+  212 0000001A         UART3_IRQHandler
+  213 0000001A         UART4_IRQHandler
+  214 0000001A         AACI_IRQHandler
+  215 0000001A         CLCD_IRQHandler
+  216 0000001A         ENET_IRQHandler
+  217 0000001A         USBDC_IRQHandler
+  218 0000001A         USBHC_IRQHandler
+  219 0000001A         CHLCD_IRQHandler
+  220 0000001A         FLEXRAY_IRQHandler
+  221 0000001A         CAN_IRQHandler
+  222 0000001A         LIN_IRQHandler
+  223 0000001A         I2C_IRQHandler
+  224 0000001A         CPU_CLCD_IRQHandler
+  225 0000001A         SPI_IRQHandler
+  226 0000001A E7FE            B                .
+  227 0000001C         
+  228 0000001C                 ENDP
+  229 0000001C         
+  230 0000001C         
+  231 0000001C                 ALIGN
+  232 0000001C         
+  233 0000001C         
+  234 0000001C         ; User Initial Stack & Heap
+  235 0000001C         
+  236 0000001C                 IF               :DEF:__MICROLIB
+  243 0000001C         
+  244 0000001C                 IMPORT           __use_two_region_memory
+  245 0000001C                 EXPORT           __user_initial_stackheap
+  246 0000001C         
+  247 0000001C         __user_initial_stackheap
+                               PROC
+  248 0000001C 4804            LDR              R0, =  Heap_Mem
+  249 0000001E 4905            LDR              R1, =(Stack_Mem + Stack_Size)
+  250 00000020 4A05            LDR              R2, = (Heap_Mem +  Heap_Size)
+  251 00000022 4B06            LDR              R3, = Stack_Mem
+  252 00000024 4770            BX               LR
+  253 00000026                 ENDP
+  254 00000026         
+  255 00000026 00 00           ALIGN
+  256 00000028         
+  257 00000028                 ENDIF
+  258 00000028         
+  259 00000028         
+  260 00000028                 END
+              00000000 
+              00000000 
+              00000000 
+              00000400 
+              00000C00 
+              00000000 
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=..\ou
+tput\startup_armcm4.d -o..\output\startup_armcm4.o -IC:\Keil\ARM\RV31\INC -IC:\
+Keil\ARM\CMSIS\Include -IC:\Keil\ARM\Inc\ST\STM32F37x --list=.\startup_armcm4.l
+st ..\DSP_Lib\startup_ARMCM4.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+STACK 00000000
+
+Symbol: STACK
+   Definitions
+      At line 35 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: STACK unused
+Stack_Mem 00000000
+
+Symbol: Stack_Mem
+   Definitions
+      At line 36 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 249 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 251 in file ..\DSP_Lib\startup_ARMCM4.s
+
+__initial_sp 00000400
+
+Symbol: __initial_sp
+   Definitions
+      At line 37 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 63 in file ..\DSP_Lib\startup_ARMCM4.s
+Comment: __initial_sp used once
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+HEAP 00000000
+
+Symbol: HEAP
+   Definitions
+      At line 46 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: HEAP unused
+Heap_Mem 00000000
+
+Symbol: Heap_Mem
+   Definitions
+      At line 48 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 248 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 250 in file ..\DSP_Lib\startup_ARMCM4.s
+
+__heap_base 00000000
+
+Symbol: __heap_base
+   Definitions
+      At line 47 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: __heap_base unused
+__heap_limit 00000C00
+
+Symbol: __heap_limit
+   Definitions
+      At line 49 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: __heap_limit unused
+4 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 58 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 63 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 59 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 115 in file ..\DSP_Lib\startup_ARMCM4.s
+
+__Vectors_End 000000C0
+
+Symbol: __Vectors_End
+   Definitions
+      At line 113 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 60 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 115 in file ..\DSP_Lib\startup_ARMCM4.s
+
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 117 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: .text unused
+AACI_IRQHandler 0000001A
+
+Symbol: AACI_IRQHandler
+   Definitions
+      At line 214 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 91 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 190 in file ..\DSP_Lib\startup_ARMCM4.s
+
+BusFault_Handler 0000000E
+
+Symbol: BusFault_Handler
+   Definitions
+      At line 150 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 68 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 151 in file ..\DSP_Lib\startup_ARMCM4.s
+
+CAN_IRQHandler 0000001A
+
+Symbol: CAN_IRQHandler
+   Definitions
+      At line 221 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 98 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 197 in file ..\DSP_Lib\startup_ARMCM4.s
+
+CHLCD_IRQHandler 0000001A
+
+Symbol: CHLCD_IRQHandler
+   Definitions
+      At line 219 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 96 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 195 in file ..\DSP_Lib\startup_ARMCM4.s
+
+CLCD_IRQHandler 0000001A
+
+Symbol: CLCD_IRQHandler
+   Definitions
+      At line 215 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 92 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 191 in file ..\DSP_Lib\startup_ARMCM4.s
+
+CPU_CLCD_IRQHandler 0000001A
+
+Symbol: CPU_CLCD_IRQHandler
+   Definitions
+      At line 224 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 109 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 200 in file ..\DSP_Lib\startup_ARMCM4.s
+
+DebugMon_Handler 00000014
+
+Symbol: DebugMon_Handler
+   Definitions
+      At line 164 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 75 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 165 in file ..\DSP_Lib\startup_ARMCM4.s
+
+Default_Handler 0000001A
+
+Symbol: Default_Handler
+   Definitions
+      At line 177 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: Default_Handler unused
+ENET_IRQHandler 0000001A
+
+Symbol: ENET_IRQHandler
+   Definitions
+      At line 216 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 93 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 192 in file ..\DSP_Lib\startup_ARMCM4.s
+
+FLEXRAY_IRQHandler 0000001A
+
+Symbol: FLEXRAY_IRQHandler
+   Definitions
+      At line 220 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 97 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 196 in file ..\DSP_Lib\startup_ARMCM4.s
+
+HardFault_Handler 0000000A
+
+Symbol: HardFault_Handler
+   Definitions
+      At line 140 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 66 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 141 in file ..\DSP_Lib\startup_ARMCM4.s
+
+I2C_IRQHandler 0000001A
+
+Symbol: I2C_IRQHandler
+   Definitions
+      At line 223 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 100 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 199 in file ..\DSP_Lib\startup_ARMCM4.s
+
+LIN_IRQHandler 0000001A
+
+Symbol: LIN_IRQHandler
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 222 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 99 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 198 in file ..\DSP_Lib\startup_ARMCM4.s
+
+MCIA_IRQHandler 0000001A
+
+Symbol: MCIA_IRQHandler
+   Definitions
+      At line 207 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 85 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 183 in file ..\DSP_Lib\startup_ARMCM4.s
+
+MCIB_IRQHandler 0000001A
+
+Symbol: MCIB_IRQHandler
+   Definitions
+      At line 208 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 86 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 184 in file ..\DSP_Lib\startup_ARMCM4.s
+
+MemManage_Handler 0000000C
+
+Symbol: MemManage_Handler
+   Definitions
+      At line 145 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 67 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 146 in file ..\DSP_Lib\startup_ARMCM4.s
+
+NMI_Handler 00000008
+
+Symbol: NMI_Handler
+   Definitions
+      At line 135 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 65 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 136 in file ..\DSP_Lib\startup_ARMCM4.s
+
+PendSV_Handler 00000016
+
+Symbol: PendSV_Handler
+   Definitions
+      At line 168 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 77 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 169 in file ..\DSP_Lib\startup_ARMCM4.s
+
+RTC_IRQHandler 0000001A
+
+Symbol: RTC_IRQHandler
+   Definitions
+      At line 204 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 82 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 180 in file ..\DSP_Lib\startup_ARMCM4.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Reset_Handler 00000000
+
+Symbol: Reset_Handler
+   Definitions
+      At line 122 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 64 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 123 in file ..\DSP_Lib\startup_ARMCM4.s
+
+SPI_IRQHandler 0000001A
+
+Symbol: SPI_IRQHandler
+   Definitions
+      At line 225 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 112 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 201 in file ..\DSP_Lib\startup_ARMCM4.s
+
+SVC_Handler 00000012
+
+Symbol: SVC_Handler
+   Definitions
+      At line 159 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 74 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 160 in file ..\DSP_Lib\startup_ARMCM4.s
+
+SysTick_Handler 00000018
+
+Symbol: SysTick_Handler
+   Definitions
+      At line 172 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 78 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 173 in file ..\DSP_Lib\startup_ARMCM4.s
+
+TIM0_IRQHandler 0000001A
+
+Symbol: TIM0_IRQHandler
+   Definitions
+      At line 205 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 83 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 181 in file ..\DSP_Lib\startup_ARMCM4.s
+
+TIM2_IRQHandler 0000001A
+
+Symbol: TIM2_IRQHandler
+   Definitions
+      At line 206 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 84 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 182 in file ..\DSP_Lib\startup_ARMCM4.s
+
+UART0_IRQHandler 0000001A
+
+Symbol: UART0_IRQHandler
+   Definitions
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 209 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 87 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 185 in file ..\DSP_Lib\startup_ARMCM4.s
+
+UART1_IRQHandler 0000001A
+
+Symbol: UART1_IRQHandler
+   Definitions
+      At line 210 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 88 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 186 in file ..\DSP_Lib\startup_ARMCM4.s
+
+UART2_IRQHandler 0000001A
+
+Symbol: UART2_IRQHandler
+   Definitions
+      At line 211 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 89 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 187 in file ..\DSP_Lib\startup_ARMCM4.s
+
+UART3_IRQHandler 0000001A
+
+Symbol: UART3_IRQHandler
+   Definitions
+      At line 212 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 111 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 188 in file ..\DSP_Lib\startup_ARMCM4.s
+
+UART4_IRQHandler 0000001A
+
+Symbol: UART4_IRQHandler
+   Definitions
+      At line 213 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 90 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 189 in file ..\DSP_Lib\startup_ARMCM4.s
+
+USBDC_IRQHandler 0000001A
+
+Symbol: USBDC_IRQHandler
+   Definitions
+      At line 217 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 94 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 193 in file ..\DSP_Lib\startup_ARMCM4.s
+
+USBHC_IRQHandler 0000001A
+
+Symbol: USBHC_IRQHandler
+   Definitions
+      At line 218 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 95 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 194 in file ..\DSP_Lib\startup_ARMCM4.s
+
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Relocatable symbols
+
+UsageFault_Handler 00000010
+
+Symbol: UsageFault_Handler
+   Definitions
+      At line 155 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 69 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 156 in file ..\DSP_Lib\startup_ARMCM4.s
+
+WDT_IRQHandler 0000001A
+
+Symbol: WDT_IRQHandler
+   Definitions
+      At line 203 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 81 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 179 in file ..\DSP_Lib\startup_ARMCM4.s
+
+__user_initial_stackheap 0000001C
+
+Symbol: __user_initial_stackheap
+   Definitions
+      At line 247 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 245 in file ..\DSP_Lib\startup_ARMCM4.s
+Comment: __user_initial_stackheap used once
+36 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+Heap_Size 00000C00
+
+Symbol: Heap_Size
+   Definitions
+      At line 44 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 48 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 250 in file ..\DSP_Lib\startup_ARMCM4.s
+
+Stack_Size 00000400
+
+Symbol: Stack_Size
+   Definitions
+      At line 33 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 36 in file ..\DSP_Lib\startup_ARMCM4.s
+      At line 249 in file ..\DSP_Lib\startup_ARMCM4.s
+
+__Vectors_Size 000000C0
+
+Symbol: __Vectors_Size
+   Definitions
+      At line 115 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 61 in file ..\DSP_Lib\startup_ARMCM4.s
+Comment: __Vectors_Size used once
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+SystemInit 00000000
+
+Symbol: SystemInit
+   Definitions
+      At line 124 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 126 in file ..\DSP_Lib\startup_ARMCM4.s
+Comment: SystemInit used once
+__main 00000000
+
+Symbol: __main
+   Definitions
+      At line 125 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      At line 128 in file ..\DSP_Lib\startup_ARMCM4.s
+Comment: __main used once
+__use_two_region_memory 00000000
+
+Symbol: __use_two_region_memory
+   Definitions
+      At line 244 in file ..\DSP_Lib\startup_ARMCM4.s
+   Uses
+      None
+Comment: __use_two_region_memory unused
+3 symbols
+387 symbols in table
