@@ -625,20 +625,20 @@ void Communicate(void)
 					//SaveData.Value.cal_A_y0=64.17008;
 				case 60://				"a1"//60
 				{
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-					strcat(str,chardata);
+					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
+					//strcat(str,chardata);
 					break;
 				}
 				case 61://					"t1"//61
 				{
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-					strcat(str,chardata);
+					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
+					//strcat(str,chardata);
 					break;
 				}
 				case 62://					"y0"//62
 				{
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-					strcat(str,chardata);
+					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
+					//strcat(str,chardata);
 					break;
 				}
 				default:	break;	
@@ -1001,7 +1001,7 @@ void Communicate(void)
 					if(rangestatus==state4)//1000V档校准
 					{																		
 						//Send(CalSetData,0xf4,0x01,CalSetData+0xf4+0x01);//这里校准好像有问题，目前1000V档没有校准好
-						Send(CalSetData,0xE8,0x03,CalSetData+0xf4+0x01);//校准1000V
+						Send(CalSetData,0xE8,0x03,CalSetData+0xE8+0x03);//校准1000V
 						check_flag= CheckReceive(CalSetData);
 					}
 					else

@@ -273,8 +273,13 @@ void dealwith_information(void)
 						SDADC1_value[t]=(float)((SDADC1_value[t]-SaveData.Value.cal_600VD_zero)*SaveData.Value.cal_600VD_gain);
 					}	
 			}
-				
-			//校正电流数据    这个用于没有钳头时模拟的一组数据      小电流时采样线性校准方式
+						
+			//校正电流数据  小于600A电流时采用线性校准方式
+			if(SDADC2->CONFCHR2 == 0x01)//
+			{
+				SDADC2_value[t] = (SDADC2_value[t]-SaveData.Value.cal_600A_zero)*SaveData.Value.cal_600A_gain;
+			
+			}
 			SDADC2_value[t]=/*sdadc2_sample100a[t];*/(SDADC2_value[t]-SaveData.Value.cal_A1_zero)*SaveData.Value.cal_A1_gain;
 			
 			if(SaveData.Value.cal_adjv==1)//是否进行大电流时的数值校正，可修改门限 确定调整的起始电流。目前为1600A,需要调小
@@ -784,31 +789,31 @@ void FFT(void)
 *调整公式为 y=a1*exp(x/t1)+y0;
 * 0.00137*exp(x/(206.147))+1.5688
 */
-float Adj_V(float sdadc_value)
-{
-	float new_value=0;
-	
-	if(sdadc_value>1500.0f)
-	{
-		//SaveData.Value.cal_A_a1=0.000640519;
-		//SaveData.Value.cal_A_t1=1484.56402;
-		//SaveData.Value.cal_A_y0=64.17008;
-		
-		//new_value=0.00064*exp((sdadc_value/1484.56402))+64.17008;
-		new_value=SaveData.Value.cal_A_a1*exp((sdadc_value/SaveData.Value.cal_A_t1))+SaveData.Value.cal_A_y0;
-		return new_value;
-	}
-	else if((sdadc_value<-1500.0f))
-	{
-		sdadc_value*=-1;
-		new_value=SaveData.Value.cal_A_a1*exp((sdadc_value/SaveData.Value.cal_A_t1))+SaveData.Value.cal_A_y0;
-		return new_value*-1;
-	}
-	else 
-	{
-		return 0;
-	}			
-}
+//float Adj_V(float sdadc_value)
+//{
+//	float new_value=0;
+//	
+//	if(sdadc_value>1500.0f)
+//	{
+//		//SaveData.Value.cal_A_a1=0.000640519;
+//		//SaveData.Value.cal_A_t1=1484.56402;
+//		//SaveData.Value.cal_A_y0=64.17008;
+//		
+//		//new_value=0.00064*exp((sdadc_value/1484.56402))+64.17008;
+//		new_value=SaveData.Value.cal_A_a1*exp((sdadc_value/SaveData.Value.cal_A_t1))+SaveData.Value.cal_A_y0;
+//		return new_value;
+//	}
+//	else if((sdadc_value<-1500.0f))
+//	{
+//		sdadc_value*=-1;
+//		new_value=SaveData.Value.cal_A_a1*exp((sdadc_value/SaveData.Value.cal_A_t1))+SaveData.Value.cal_A_y0;
+//		return new_value*-1;
+//	}
+//	else 
+//	{
+//		return 0;
+//	}			
+//}
 
 
 /*********************************************/

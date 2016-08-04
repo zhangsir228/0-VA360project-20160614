@@ -193,17 +193,17 @@ u8 SDADC1_Config(void)
   SDADC_AINStructure.SDADC_CommonMode = SDADC_CommonMode_VSSA;
   SDADC_AINStructure.SDADC_Offset = 0;
   SDADC_AINInit(SDADC1, SDADC_Conf_0, &SDADC_AINStructure);
-	SDADC_AINInit(SDADC2, SDADC_Conf_0, &SDADC_AINStructure);
+	//SDADC_AINInit(SDADC2, SDADC_Conf_0, &SDADC_AINStructure);
   /*****************///单独修该电流通道增益
-	SDADC_AINStructure.SDADC_Gain = SDADC_Gain_4;
+	SDADC_AINStructure.SDADC_Gain = SDADC_Gain_2;
 	SDADC_AINInit(SDADC2, SDADC_Conf_1, &SDADC_AINStructure);
   /********************/
   /* select SDADC channel to use conf0 */
-  SDADC_ChannelConfig(SDADC1, SDADC_Channel_6, SDADC_Conf_0);
+	SDADC_ChannelConfig(SDADC1, SDADC_Channel_6, SDADC_Conf_0);
 	SDADC_ChannelConfig(SDADC2, SDADC_Channel_8, SDADC_Conf_1);
 	
 	/* select SDADC Channel */
-  SDADC_InjectedChannelSelect(SDADC1, SDADC_Channel_6 );
+	SDADC_InjectedChannelSelect(SDADC1, SDADC_Channel_6 );
 	SDADC_InjectedChannelSelect(SDADC2, SDADC_Channel_8 );
 	
   /* Select an external trigger */	/*TIM19_OC2*/
@@ -263,6 +263,22 @@ u8 SDADC1_Config(void)
 //  }	
 	
 	return 0;
+}
+
+//用于修改SDADC2 前置放大倍数
+//conf0 是不放大  con1 是两倍
+void SDADC2_Gain(uint32_t SDADC2_Gain)
+{
+	SDADC_InitModeCmd(SDADC2, ENABLE);
+	SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, DISABLE);			
+	SDADC_FastConversionCmd(SDADC2,DISABLE);
+	
+	SDADC_ChannelConfig(SDADC2, SDADC_Channel_8, SDADC2_Gain);
+	
+	SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, ENABLE);			
+	SDADC_FastConversionCmd(SDADC2,ENABLE);
+	SDADC_InitModeCmd(SDADC2, DISABLE);
+
 }
 
 /**************************************************end file**************************************************/

@@ -19,7 +19,7 @@ extern defFlashCal SaveData;
 
 float Adj_Nline(float Value);
 
-//float Adj_EXP();
+float Adj_EXP();
 
 float MyEXP(float inputA);
 

@@ -1,7 +1,7 @@
 #include<string.h>
 
 #include "flash_data.h"
-
+#include "ht1621.h"
 
 defFlashCal SaveData;
 
@@ -36,6 +36,8 @@ void Init_flash(void)
 void Default_flash(void)
 {
 	uint8_t i=0;
+	uint8_t show_buf[4]={EE,EE,EE,EE};
+	
 	FLASH_Unlock();
 	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR); 
 	NbrOfPage = (FLASH_USER_END_ADDR - FLASH_USER_START_ADDR) / FLASH_PAGE_SIZE;
@@ -61,9 +63,9 @@ void Default_flash(void)
 	SaveData.Value.cal_600VD_zero=0;
 	SaveData.Value.cal_600VD_gain=1;
 	
-
-	SaveData.Value.cal_A_a1=0.00137;
-	SaveData.Value.cal_A_t1=206.147;
+	
+	SaveData.Value.cal_600A_zero=0;
+	SaveData.Value.cal_600A_gain=1;
 	SaveData.Value.cal_A_y0=1.5688;
 	
 	SaveData.Value.cal_A1_zero=0;
@@ -118,8 +120,12 @@ void Default_flash(void)
 		SaveData.Value.Cal_Cap_zero[i] = 0;
 		SaveData.Value.Cal_Cap_gain[i] = 1;
 	}
-		
+
 	updata_flash();	
+	
+	lcd_clr();	
+	lcd_show_data(show_buf,1);//显示EEEE,表示内部EEPROM被清空	
+	delay_ms(2000);
 }	
 //更新数据至flash
 void updata_flash(void)

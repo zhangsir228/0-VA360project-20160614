@@ -139,6 +139,15 @@ void MeasureFunctionSelection(void)
 				
 				default:break;
 			}
+			
+			if(rangestatus < 3)
+			{
+				SDADC2_Gain(1);
+			}
+			else
+			{
+				SDADC2_Gain(0);
+			}
 		}
 		break;
 		
@@ -228,7 +237,7 @@ void DataProcessing(void)
 			case KEY_VALUE_6://旋钮VA档:
 			{
 				rangenum = ReadDTAValue(ReadRange);
-				receive_f= ReadDTAValue(ReadResult);	
+				receive_f= ReadDTAValue(ReadResult);					
 				
 				/*进行DC、AC电压电流计算，THD、CF、Inrush、Peak+-、Phase运算*/
 				dealwith_information();
@@ -841,6 +850,14 @@ void manipulate(void)
 									}break;//600.0V/2000A变为6.000V/600.0A
 									default:break;
 								}
+							}
+							if(rangestatus < 3)
+							{
+								SDADC2_Gain(1);
+							}
+							else
+							{
+								SDADC2_Gain(0);
 							}
 							
 							display_range_state();
@@ -2595,6 +2612,8 @@ void manipulate(void)
 /*显示*/
 void display(void)
 {
+	SoftKeystatus rangestatus_old=state0;
+	
 	if(holdstatus==state0)
 	{
 		LowPowerDetect();//低电压检测
@@ -2618,6 +2637,9 @@ void display(void)
 						
 						showdata1=deal_1(readstmdata1,1);
 						showdata2=deal_1(readstmdata2,2);
+						
+						rangestatus_old = rangestatus;//20160804用于钳头600A档位时调整SDADC2前置放大倍数
+						
 						switch(rangestatus)
 						{
 							case state0://6.000V/600.0A
@@ -2797,6 +2819,17 @@ void display(void)
 								}
 							}break;
 							default:break;
+						}
+						if(rangestatus_old != rangestatus)
+						{
+							if(rangestatus < 3)
+							{
+								SDADC2_Gain(1);
+							}
+							else
+							{
+								SDADC2_Gain(0);
+							}
 						}
 					}
 					else if(funcstatus ==state1)//DC V+A

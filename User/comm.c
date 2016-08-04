@@ -625,20 +625,20 @@ void Communicate(void)
 					//SaveData.Value.cal_A_y0=64.17008;
 				case 60://				"a1"//60
 				{
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-					strcat(str,chardata);
+					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
+					//strcat(str,chardata);
 					break;
 				}
 				case 61://					"t1"//61
 				{
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-					strcat(str,chardata);
+					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
+					//strcat(str,chardata);
 					break;
 				}
 				case 62://					"y0"//62
 				{
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-					strcat(str,chardata);
+					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
+					//strcat(str,chardata);
 					break;
 				}
 				default:	break;	
@@ -658,29 +658,29 @@ void Communicate(void)
 				}	
 				case 60://				"a1"//60
 				{
-					CMD_analyze_R(tempR);
-					SaveData.Value.cal_A_a1=tp.numb_f[0];
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-					strcat(str,chardata);
-					updata_flash();
+//					CMD_analyze_R(tempR);
+//					SaveData.Value.cal_A_a1=tp.numb_f[0];
+//					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
+//					strcat(str,chardata);
+//					updata_flash();
 					break;
 				}
 				case 61://					"t1"//61
 				{
-					CMD_analyze_R(tempR);
-					SaveData.Value.cal_A_t1=tp.numb_f[0];
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-					strcat(str,chardata);
-					updata_flash();
+//					CMD_analyze_R(tempR);
+//					SaveData.Value.cal_A_t1=tp.numb_f[0];
+//					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
+//					strcat(str,chardata);
+//					updata_flash();
 					break;
 				}
 				case 62://					"y0"//62
 				{
-					CMD_analyze_R(tempR);
-					SaveData.Value.cal_A_y0=tp.numb_f[0];
-					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-					strcat(str,chardata);
-					updata_flash();
+//					CMD_analyze_R(tempR);
+//					SaveData.Value.cal_A_y0=tp.numb_f[0];
+//					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
+//					strcat(str,chardata);
+//					updata_flash();
 					break;
 				}
 				case 64://6 zero

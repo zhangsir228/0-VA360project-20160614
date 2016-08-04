@@ -265,4 +265,19 @@ u8 SDADC1_Config(void)
 	return 0;
 }
 
+//用于修改SDADC2 前置放大倍数
+void SDADC2_Gain(uint32_t SDADC2_Gain)
+{
+	SDADC_InitModeCmd(SDADC2, ENABLE);
+	SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, DISABLE);			
+	SDADC_FastConversionCmd(SDADC2,DISABLE);
+	
+	SDADC_ChannelConfig(SDADC2, SDADC_Channel_8, SDADC2_Gain);
+	
+	SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, ENABLE);			
+	SDADC_FastConversionCmd(SDADC2,ENABLE);
+	SDADC_InitModeCmd(SDADC2, DISABLE);
+
+}
+
 /**************************************************end file**************************************************/

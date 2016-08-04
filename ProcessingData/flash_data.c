@@ -63,13 +63,13 @@ void Default_flash(void)
 	SaveData.Value.cal_600VD_zero=0;
 	SaveData.Value.cal_600VD_gain=1;
 	
-
-	SaveData.Value.cal_A_a1=0.00137;
-	SaveData.Value.cal_A_t1=206.147;
+	
+	SaveData.Value.cal_600A_zero=-55.3647194; 
+	SaveData.Value.cal_600A_gain=0.0724787936;
 	SaveData.Value.cal_A_y0=1.5688;
 	
-	SaveData.Value.cal_A1_zero=0;
-	SaveData.Value.cal_A1_gain=1;
+	SaveData.Value.cal_A1_zero=-55.3647194;
+	SaveData.Value.cal_A1_gain=0.0724787936;
 	SaveData.Value.cal_A2_zero=0;
 	SaveData.Value.cal_A2_gain=1;
 	
