@@ -143,8 +143,8 @@ int main(void)
 				StandbyMode_Measure();//进入休眠
 //				Power_Off_VDD();
 			}
-			//测试用于修改SDADC2 前置放大倍数
-			else if(count_for_Standby==20)
+			
+			else if(count_for_Standby==20)//测试用于修改SDADC2 前置放大倍数
 			{ 	
 				SDADC_InitModeCmd(SDADC2, ENABLE);
 				SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, DISABLE);			

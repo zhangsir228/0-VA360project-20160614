@@ -284,6 +284,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>rangestatus</ItemText>
         </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>SDADC2-&gt;CONFCHR2</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>LeaTest</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

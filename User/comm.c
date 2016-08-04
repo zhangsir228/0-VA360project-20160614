@@ -88,7 +88,7 @@ const char *CMDmap2[100]={
 			"sn",				"ver",//54序列号  55版本号  
 			"calmode",	"normode",//56校准模式  57正常模式
 			"setkey",			"tcx",//58置位一次按键值
-			"a1","t1",//60  	//61
+			"cal_600A_zero","cal_600A_gain",//60  	//61
 			"y0","sdadc1",	//62	//63
 			"cal_6va_zero",		"cal_6va_gain",		//64	//65
 			"cal_60va_zero",	"cal_60va_gain",	//66	//67
@@ -655,23 +655,29 @@ void Communicate(void)
 				{
 					
 					break;
-				}	
-				case 60://				"a1"//60
+				}								
+				case 60://				//60 cal_600A_zero
 				{
-//					CMD_analyze_R(tempR);
-//					SaveData.Value.cal_A_a1=tp.numb_f[0];
-//					sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-//					strcat(str,chardata);
-//					updata_flash();
+					CMD_analyze_R(tempR); 
+					input_data=tp.numb_f[0];
+					if((input_data>0)&&(input_data<200))
+					{													
+						SaveData.Value.cal_600A_zero=SysValue.curr_now/SaveData.Value.cal_600A_gain+SaveData.Value.cal_600A_zero;					
+						updata_flash();
+						strcat(str,"cal 600A zero");
+					}
 					break;
 				}
-				case 61://					"t1"//61
+				case 61://					//61 cal_600A_gain
 				{
-//					CMD_analyze_R(tempR);
-//					SaveData.Value.cal_A_t1=tp.numb_f[0];
-//					sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-//					strcat(str,chardata);
-//					updata_flash();
+					CMD_analyze_R(tempR);
+					input_data=tp.numb_f[0];
+					if((input_data>200)&&(input_data<600))
+					{										
+						SaveData.Value.cal_600A_gain=input_data/(SysValue.curr_now/SaveData.Value.cal_600A_gain);
+						updata_flash();
+						strcat(str,"cal curr gain");
+					}			
 					break;
 				}
 				case 62://					"y0"//62

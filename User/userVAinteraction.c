@@ -64,6 +64,7 @@ float 	ohm_value=0;
 float	Cap_value=0;
 float	temp_value=0;
 
+uint8_t LeaTest=0;
 
 void Data_init(void)
 {
@@ -822,43 +823,42 @@ void manipulate(void)
 									{
 										rangestatus = state1;
 										RangeSet(state1);
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}break;//6.000V/600.0A变为60.00V/600.0A
 									case state1:
 									{
 										rangestatus = state2;
 										RangeSet(state2);
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}break;//60.00V/600.0A变为600.0V/600.0A
 									case state2:
 									{
 										rangestatus = state3;
 										RangeSet(state0);
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}break;//600.0V/600.0A变为6.000V/2000A
 									case state3:
 									{
 										rangestatus = state4;
 										RangeSet(state1);
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}break;//6.000V/2000A变为60.00V/2000A
 									case state4:
 									{
 										rangestatus = state5;
 										RangeSet(state2);
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}break;//60.00V/2000A变为600.0V/2000A
 									case state5:
 									{
 										rangestatus = state0;
 										RangeSet(state0);
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}break;//600.0V/2000A变为6.000V/600.0A
 									default:break;
 								}
 							}
-							if(rangestatus < 3)
-							{
-								SDADC2_Gain(1);
-							}
-							else
-							{
-								SDADC2_Gain(0);
-							}
+							
 							
 							display_range_state();
 							display_rel_state();
@@ -2637,9 +2637,7 @@ void display(void)
 						
 						showdata1=deal_1(readstmdata1,1);
 						showdata2=deal_1(readstmdata2,2);
-						
-						rangestatus_old = rangestatus;//20160804用于钳头600A档位时调整SDADC2前置放大倍数
-						
+				
 						switch(rangestatus)
 						{
 							case state0://6.000V/600.0A
@@ -2662,6 +2660,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;//加档
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2693,6 +2692,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;//加档
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2722,6 +2722,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;//加档
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2750,6 +2751,7 @@ void display(void)
 										lcd_show_Line(2);
 //										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2781,6 +2783,7 @@ void display(void)
 										lcd_show_Line(2);
 //										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2810,6 +2813,7 @@ void display(void)
 										lcd_show_Line(2);
 //										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2819,18 +2823,7 @@ void display(void)
 								}
 							}break;
 							default:break;
-						}
-						if(rangestatus_old != rangestatus)
-						{
-							if(rangestatus < 3)
-							{
-								SDADC2_Gain(1);
-							}
-							else
-							{
-								SDADC2_Gain(0);
-							}
-						}
+						}					
 					}
 					else if(funcstatus ==state1)//DC V+A
 					{
@@ -2864,6 +2857,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2896,6 +2890,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2925,6 +2920,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2952,6 +2948,7 @@ void display(void)
 									{
 										lcd_show_Line(2);
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -2982,6 +2979,7 @@ void display(void)
 									{
 										lcd_show_Line(2);
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3010,6 +3008,7 @@ void display(void)
 									{
 										lcd_show_Line(2);
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3055,6 +3054,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3086,6 +3086,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3115,6 +3116,7 @@ void display(void)
 										lcd_show_Line(2);
 										lcd_write_1bit(0x11,0,ENABLE);//.亮
 										rangestatus+=3;
+										SDADC2_Gain(0);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3142,6 +3144,7 @@ void display(void)
 									{
 										lcd_show_Line(2);
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3172,6 +3175,7 @@ void display(void)
 									{
 										lcd_show_Line(2);
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡
@@ -3200,6 +3204,7 @@ void display(void)
 									{
 										lcd_show_Line(2);
 										rangestatus-=3;//减档
+										SDADC2_Gain(1);//修改SDADC2前置增益
 									}
 								}
 								else//手动挡

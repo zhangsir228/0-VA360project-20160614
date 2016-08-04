@@ -142,20 +142,7 @@ int main(void)
 				lcd_clr();
 				StandbyMode_Measure();//进入休眠
 //				Power_Off_VDD();
-			}
-			
-			else if(count_for_Standby==20)//测试用于修改SDADC2 前置放大倍数
-			{ 	
-				SDADC_InitModeCmd(SDADC2, ENABLE);
-				SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, DISABLE);			
-				SDADC_FastConversionCmd(SDADC2,DISABLE);
-				
-				SDADC_ChannelConfig(SDADC2, SDADC_Channel_8, SDADC_Conf_0);
-				
-				SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, ENABLE);			
-				SDADC_FastConversionCmd(SDADC2,ENABLE);
-				SDADC_InitModeCmd(SDADC2, DISABLE);
-			}
+			}						
 		}
 		if((RotaryKeyChanged_flag == 1) || (SoftKeyChanged_flag == 1))//有按键
 		{
