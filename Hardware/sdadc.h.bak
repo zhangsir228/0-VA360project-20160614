@@ -18,12 +18,10 @@
 
 extern uint16_t SAMPLING_FREQ;
 extern int32_t InjectedConvData[];
-extern uint16_t DMA2_MEM_LEN;
+extern uint16_t DMA2_MEM_LEN; 
 
-void TIM19_Config(void);
 u8 SDADC1_Config(void);
-//用于修改SDADC2 前置放大倍数
-void SDADC2_Gain(uint32_t SDADC2_Gain);
+void TIM19_Config(void);
 
 #endif
 

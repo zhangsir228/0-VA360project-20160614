@@ -193,17 +193,17 @@ u8 SDADC1_Config(void)
   SDADC_AINStructure.SDADC_CommonMode = SDADC_CommonMode_VSSA;
   SDADC_AINStructure.SDADC_Offset = 0;
   SDADC_AINInit(SDADC1, SDADC_Conf_0, &SDADC_AINStructure);
-	SDADC_AINInit(SDADC2, SDADC_Conf_0, &SDADC_AINStructure);
+	//SDADC_AINInit(SDADC2, SDADC_Conf_0, &SDADC_AINStructure);
   /*****************///单独修该电流通道增益
-	SDADC_AINStructure.SDADC_Gain = SDADC_Gain_1;
+	SDADC_AINStructure.SDADC_Gain = SDADC_Gain_2;
 	SDADC_AINInit(SDADC2, SDADC_Conf_1, &SDADC_AINStructure);
   /********************/
   /* select SDADC channel to use conf0 */
-  SDADC_ChannelConfig(SDADC1, SDADC_Channel_6, SDADC_Conf_0);
+	SDADC_ChannelConfig(SDADC1, SDADC_Channel_6, SDADC_Conf_0);
 	SDADC_ChannelConfig(SDADC2, SDADC_Channel_8, SDADC_Conf_1);
 	
 	/* select SDADC Channel */
-  SDADC_InjectedChannelSelect(SDADC1, SDADC_Channel_6 );
+	SDADC_InjectedChannelSelect(SDADC1, SDADC_Channel_6 );
 	SDADC_InjectedChannelSelect(SDADC2, SDADC_Channel_8 );
 	
   /* Select an external trigger */	/*TIM19_OC2*/

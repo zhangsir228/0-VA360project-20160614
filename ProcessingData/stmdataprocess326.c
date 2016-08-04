@@ -111,8 +111,8 @@ float voltage_effective_sum=0,current_effective_sum=0,active_power_sum=0;//¶à´ÎÀ
 float voltage_mean,current_mean;
 float voltage_mean_temp ,current_mean_temp;//20160616 ĞÂÔöÓÃÓÚµçÑ¹µçÁ÷Æ½¾ùÖµµÄÂË²¨
 
-float voltage_effective_tab[5]={0},current_effective_tab[5]={0},active_power_tab[5]={0}; //2016-07-25 lea  »»ÓÃ´°¿ÚÂË²¨ ¼Ó¿ìÊıÖµ¸üĞÂËÙ¶È 
-float voltage_mean_tab[20]={0},current_mean_tab[5]={0};
+float voltage_effective_tab[20]={0},current_effective_tab[20]={0},active_power_tab[20]={0}; //2016-07-25 lea  »»ÓÃ´°¿ÚÂË²¨ ¼Ó¿ìÊıÖµ¸üĞÂËÙ¶È 
+float voltage_mean_tab[20]={0},current_mean_tab[20]={0};
 char  Window_num=10;//´°¿ÚÂË²¨´óĞ¡;
 
 
@@ -336,7 +336,7 @@ void dealwith_information(void)
 			
 			voltage_sum += SDADC1_value[t] * SDADC1_value[t];//* SDADC_CAL_COEF2;//²î·ÖÊäÈëÊ±£¬¼ÆËãµçÑ¹
 			current_sum += SDADC2_value[t] * SDADC2_value[t];//* SDADC_CAL_COEF2;//²î·ÖÊäÈëÊ±£¬¼ÆËãµçÁ÷
-																																		//20160419 lea  ĞÂÔöµçÁ÷Ç¯Í·²¿·Ö  
+																				//20160419 lea  ĞÂÔöµçÁ÷Ç¯Í·²¿·Ö  
 			power_sum += SDADC1_value[t] * SDADC2_value[t];//ÇóÓĞ¹¦¹¦ÂÊ //Æ½¾ù¹¦ÂÊ
 			
 			voltage_mean_sum += SDADC1_value[t] ;//* SDADC_CAL_COEF;
@@ -350,8 +350,8 @@ void dealwith_information(void)
 		current_mean = current_mean_sum / datasize;
 		
 		//´°¿ÚÂË²¨µçÁ÷Æ½¾ùÖµ
-		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,10);
-		current_mean = Windows_Filter(current_mean,current_mean_tab,10);
+		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num);
+		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num);
 
 		
 		//µçÑ¹¡¢µçÁ÷¡¢¹¦ÂÊÓĞĞ§Öµ¼ÆËã£¬ÔÙËãÁíÒ»²¿·Ö¡ª¡ªÇó¾ù¡¢¿ª¸ù£¨V/A£©¡¢Çó¾ù£¨W£©
