@@ -287,10 +287,7 @@ void dealwith_information(void)
 					SDADC2_value[t] = Adj_Nline(SDADC2_value[t]);
 				}	
 			}
-			
-			
-
-			
+	
 			//求最大值//求最小值
 			if(t == 0)
 			{
@@ -555,7 +552,7 @@ void dealwith_information(void)
 		
 		count_for_ac = count_for_Standby;
 	}
-	//超时开启一次AC采样（开定时器）    2S一次   由于数值被addcount滤波，所以数值更新会比较慢！
+	//超时开启一次AC采样（开定时器）    2S一次
 	if(count_for_Standby-count_for_ac>=2)
 	{
 		TIM_Cmd(TIM19, ENABLE);
@@ -570,12 +567,9 @@ void FFT(void)
 	uint8_t fundamental_flag=0;
 	float temp_frequency;
 	
-	
-	
   arm_status status;
   arm_cfft_radix4_instance_f32 S;  
-	
-     
+	 
   status = ARM_MATH_SUCCESS;
    
   /* Initialize the CFFT/CIFFT module */  
@@ -785,37 +779,6 @@ void FFT(void)
 		}
 	}
 }
-/************************************************************************************************
-*调整测量到的输入电流对应的电压值
-*超过调整门限后即开始调整
-*调整公式为 y=a1*exp(x/t1)+y0;
-* 0.00137*exp(x/(206.147))+1.5688
-*/
-//float Adj_V(float sdadc_value)
-//{
-//	float new_value=0;
-//	
-//	if(sdadc_value>1500.0f)
-//	{
-//		//SaveData.Value.cal_A_a1=0.000640519;
-//		//SaveData.Value.cal_A_t1=1484.56402;
-//		//SaveData.Value.cal_A_y0=64.17008;
-//		
-//		//new_value=0.00064*exp((sdadc_value/1484.56402))+64.17008;
-//		new_value=SaveData.Value.cal_A_a1*exp((sdadc_value/SaveData.Value.cal_A_t1))+SaveData.Value.cal_A_y0;
-//		return new_value;
-//	}
-//	else if((sdadc_value<-1500.0f))
-//	{
-//		sdadc_value*=-1;
-//		new_value=SaveData.Value.cal_A_a1*exp((sdadc_value/SaveData.Value.cal_A_t1))+SaveData.Value.cal_A_y0;
-//		return new_value*-1;
-//	}
-//	else 
-//	{
-//		return 0;
-//	}			
-//}
 
 
 /*********************************************/

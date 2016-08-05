@@ -722,11 +722,11 @@ ARM Macro Assembler    Page 12
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=..\output\startup_stm32f37x.d -o..\output\startup_stm32f37x.o -
-I"C:\Users\Administrator\OneDrive\¹¤×÷ÎÄµµ\0-VA360project 20160614\User\RTE" -I
-E:\keil_V5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include -IE:\keil_V5\ARM\PACK\Keil\ST
-M32F3xx_DFP\1.3.0\Device\Include --predefine="__MICROLIB SETA 1" --predefine="_
-_UVISION_VERSION SETA 518" --predefine="_RTE_ SETA 1" --predefine="STM32F373xC 
-SETA 1" --list=.\startup_stm32f37x.lst ..\Core\Source\startup_stm32f37x.s
+I"G:\ZY\2016WORK\VA360\project\0-VA360project 20160614\User\RTE" -Id:\Keil_v5\A
+RM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include -Id:\Keil_v5\ARM\PACK\Keil\STM32F3xx_DFP\
+1.3.0\Device\Include --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VER
+SION SETA 518" --predefine="_RTE_ SETA 1" --predefine="STM32F373xC SETA 1" --li
+st=.\startup_stm32f37x.lst ..\Core\Source\startup_stm32f37x.s
 
 
 

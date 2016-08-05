@@ -64,12 +64,12 @@ void Default_flash(void)
 	SaveData.Value.cal_600VD_gain=1;
 	
 	
-	SaveData.Value.cal_600A_zero=-55.3647194; 
-	SaveData.Value.cal_600A_gain=0.0724787936;
+	SaveData.Value.cal_600A_zero=-90; //600A档校准线
+	SaveData.Value.cal_600A_gain=0.0360;
 	SaveData.Value.cal_A_y0=1.5688;
 	
-	SaveData.Value.cal_A1_zero=-55.3647194;
-	SaveData.Value.cal_A1_gain=0.0724787936;
+	SaveData.Value.cal_A1_zero=-44;	 //2000A档校准线
+	SaveData.Value.cal_A1_gain=0.072;
 	SaveData.Value.cal_A2_zero=0;
 	SaveData.Value.cal_A2_gain=1;
 	
@@ -94,14 +94,14 @@ void Default_flash(void)
 //		2600, //2800 以下两组数据未经测量
 //		2750, //3000
 //	};
-	SaveData.Value.CalA_data[0]=1604.11;
-	SaveData.Value.CalA_data[1]=1796.22;
-	SaveData.Value.CalA_data[2]=1980.33;
-	SaveData.Value.CalA_data[3]=2158.44;
-	SaveData.Value.CalA_data[4]=2317.55;
-	SaveData.Value.CalA_data[5]=2441.66;
-	SaveData.Value.CalA_data[6]=2600.77;
-	SaveData.Value.CalA_data[7]=2750.88;
+	SaveData.Value.CalA_data[0]=1593.57;
+	SaveData.Value.CalA_data[1]=1782.27;
+	SaveData.Value.CalA_data[2]=1961.04;
+	SaveData.Value.CalA_data[3]=2085.61;
+	SaveData.Value.CalA_data[4]=2238.41;
+	SaveData.Value.CalA_data[5]=2330.60;
+	SaveData.Value.CalA_data[6]=2409.98;
+	SaveData.Value.CalA_data[7]=2469.98;
 		
 	
 	//处事换DTA0660相关校准档位参数

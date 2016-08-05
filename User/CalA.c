@@ -41,23 +41,25 @@ float Adj_Nline(float Value)
 	
 	if(Value>1500)
 	{
-		for(i=0;i<8;i++)
+//		for(i=0;i<8;i++)
+//		{
+//			if(CalA_data[i]<=0){break;}
+//			else if(Value<CalA_data[i])
+//			{
+//				new_value=CalA_point[i-1]+((Value-CalA_data[i-1])/(CalA_data[i]-CalA_data[i-1]))*(CalA_point[i]-CalA_point[i-1]);
+//				return new_value;
+//			}
+//		}
+		//20160805 重新组织逻辑
+		for(i=6;i>=0;i--)
 		{
-			if(CalA_data[i]<=0){break;}
-			else if(Value<CalA_data[i])
+			if(CalA_data[i]<=0){continue;}
+			else if(Value>CalA_data[i])
 			{
-				new_value=CalA_point[i-1]+((Value-CalA_data[i-1])/(CalA_data[i]-CalA_data[i-1]))*(CalA_point[i]-CalA_point[i-1]);
+				new_value=CalA_point[i]+((Value-CalA_data[i])/(CalA_data[i+1]-CalA_data[i]))*(CalA_point[i+1]-CalA_point[i]);
 				return new_value;
 			}
 		}
-//		while(Value<CalA_data[i])
-//		{
-//			i++;
-//			if(CalA_data[i]==0)break;//
-//		}
-//		new_value=CalA_point[i]+((Value-CalA_data[i-1])/(CalA_data[i]-CalA_data[i-1]))*(CalA_point[i]-CalA_point[i-1]);
-//	
-//		return new_value;
 	}
 	return Value;
 }

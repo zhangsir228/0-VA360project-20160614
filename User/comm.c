@@ -88,7 +88,7 @@ const char *CMDmap2[100]={
 			"sn",				"ver",//54序列号  55版本号  
 			"calmode",	"normode",//56校准模式  57正常模式
 			"setkey",			"tcx",//58置位一次按键值
-			"cal_600A_zero","cal_600A_gain",//60  	//61
+			"cal_600a_zero","cal_600a_gain",//60  	//61
 			"y0","sdadc1",	//62	//63
 			"cal_6va_zero",		"cal_6va_gain",		//64	//65
 			"cal_60va_zero",	"cal_60va_gain",	//66	//67
@@ -1015,9 +1015,7 @@ void Communicate(void)
 						Send(CalSetData,0x88,0x13,CalSetData+0x88+0x13);
 						check_flag= CheckReceive(CalSetData);
 					}	
-				}
-									
-				
+				}		
 			}	
 			
 			if(check_flag==1)

@@ -366,7 +366,7 @@ void USART1_IRQHandler(void)
 	{
 	  /* Read one byte from the receive data register */
 		dta_temp= USART_ReceiveData(USART1)&0xFF;
-		RxBuffer[RxCounter++] = dta_temp;
+    RxBuffer[RxCounter++] = dta_temp;
 
 		if(dta_temp==dta_cs)//判断一下校验和CS：收到的数dta_temp与前面的和相等？是则再检查一下RDY电压，为低则返回dta_receive_flag= 1；为高则继续等待校验和到来。
 		{
@@ -377,10 +377,10 @@ void USART1_IRQHandler(void)
 				RxCounter=0;
 			}
 			else
-			dta_cs+= dta_temp;
+				dta_cs+= dta_temp;
 		}
 		else
-		dta_cs+= dta_temp;//只要收到数据，就计算当前值与之前所有数的和。
+			dta_cs+= dta_temp;//只要收到数据，就计算当前值与之前所有数的和。
 	}
 	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 }

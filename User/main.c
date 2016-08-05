@@ -83,11 +83,9 @@ void start_configration(void)
 	PowerControl_Init();
 	
 	DAC_Config();//新增DAC输出驱动钳头
-	Dac1_Set_Vol(1800);
+	Dac1_Set_Vol(1400);
 	
 	TIM13_Config_1s_Standby();//内含1s中断，计数1800次为30min，进入Standby模式
-	
-	
 }
 
 

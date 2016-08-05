@@ -158,7 +158,7 @@ void MeasureFunctionSelection(void)
 		}
 		break;
 		
-		case KEY_VALUE_8:
+		case KEY_VALUE_8://旋钮DCV/ACV档：
 		{
 			switch(funcstatus)
 			{
@@ -170,8 +170,10 @@ void MeasureFunctionSelection(void)
 				{
 					if(paramstatus == state0)
 						FunctionSet(ACV);//设定功能：交流电压
+						//FunctionSet(ACVmV);
 					else//Hz_Duty
-						FunctionSet(Hz_Duty);//设定功能：Hz_Duty
+						//FunctionSet(Hz_Duty);//设定功能：Hz_Duty
+						FunctionSet(ACV);//设定功能：交流电压
 				}
 				break;
 				
@@ -180,7 +182,7 @@ void MeasureFunctionSelection(void)
 		}
 		break;
 		
-		case KEY_VALUE_9:
+		case KEY_VALUE_9://旋钮通断、二极管档：
 		{
 			switch(funcstatus)
 			{
@@ -197,7 +199,7 @@ void MeasureFunctionSelection(void)
 		}
 		break;
 		
-		case KEY_VALUE_10:
+		case KEY_VALUE_10://旋钮欧姆、电容、温度、频率档：
 		{
 			switch(funcstatus)
 			{
@@ -459,23 +461,18 @@ float deal_M(float read_data,u8 n)
 }
 
 void LowPowerDetect(void)/*开始时认为：低电压位在内部RAM的LCD的BUFFER：0x41H地址的第低4位——0000,1000*/
-{//20160312-2257发现：0x42H的最低位才是低电压显示位
-	Send(SetAddr,0x42,0x00,SetAddr+0x42);//定位到LCD的BUFFER：0x42H——最后检测发现是分压电阻选择不对，只有当电压>9.4V时，MES_BAT才会小于1.2V
+{
+	Send(SetAddr,0x41,0x00,SetAddr+0x41);
 	check_flag= CheckReceive(SetAddr);
-	if(check_flag==1)//定位到0x42H成功
+	if(check_flag==1)//定位到0x41H成功
 	{
 		check_flag= 0;
 		Send(Read,Read);
 		check_flag= CheckReceive(Read);
-		if(check_flag==1)//读当前地址0x42H成功
+		if(check_flag==1)//读当前地址0x41H成功
 		{
 			check_flag= 0;
-			
-//			lcd_clr();//20160312时检测是否收到LCD的Buffer时暂时写就
-//			lcd_show_dta_num((RxBuffer[1] & 0xF0)>>4,1);
-//			lcd_show_dta_num((RxBuffer[1] & 0x0F),2);
-			
-			if((RxBuffer[1] & 0x01) != 0)
+			if((RxBuffer[1] & 0x08) != 0)
 				lcd_write_1bit(0x1D,3,ENABLE);//电池亮
 			else
 				lcd_write_1bit(0x1D,3,DISABLE);//电池灭
@@ -1953,14 +1950,30 @@ void manipulate(void)
 					{	
 						if(Is_Cal_Mode == 1)//校准模式下hold作为VmV校准功能
 						{
-							if(VmV_value<1000)//0 
+							if(rangestatus==state4)//1000V档有点不一样 满值是1000
 							{
-								SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];
+								if(VmV_value<200)//0 
+								{
+									SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];
+								}
+								else if(VmV_value>500)//500
+								{
+									SaveData.Value.Cal_VmV_gain[rangestatus]= 1000*SaveData.Value.Cal_VmV_gain[rangestatus]/VmV_value;
+								}
 							}
-							else if(VmV_value>3500)//5000
+							else
 							{
-								SaveData.Value.Cal_VmV_gain[rangestatus]= 5000*SaveData.Value.Cal_VmV_gain[rangestatus]/VmV_value;
+								if(VmV_value<1000)//0 
+								{
+									SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];
+								}
+								else if(VmV_value>3500)//5000
+								{
+									SaveData.Value.Cal_VmV_gain[rangestatus]= 5000*SaveData.Value.Cal_VmV_gain[rangestatus]/VmV_value;
+								}
 							}
+							
+							
 							updata_flash();	//保存数据	
 						}
 						else//正常状态
@@ -2247,22 +2260,22 @@ void manipulate(void)
 								{																		
 									switch(rangestatus)//电容值校准
 									{										
-										case 1://60.00nF  校准50nF
+										case 1://60.00nF  校准50nF 零点
 										{
 											SaveData.Value.Cal_Cap_zero[0]=Cap_value/SaveData.Value.Cal_Cap_gain[0]+SaveData.Value.Cal_Cap_zero[0];										
 											break;
 										}										
-										case 3://6.000uF 校准5uF
+										case 3://6.000uF 校准5uF 零点
 										{
 											SaveData.Value.Cal_Cap_zero[1]=Cap_value/SaveData.Value.Cal_Cap_gain[1]+SaveData.Value.Cal_Cap_zero[1];
 											break;
 										}										
-										case 5://600.0uF 校准500uF
+										case 5://600.0uF 校准500uF 零点
 										{
 											SaveData.Value.Cal_Cap_zero[2]=Cap_value/SaveData.Value.Cal_Cap_gain[2]+SaveData.Value.Cal_Cap_zero[2];
 											break;
 										}
-										case 6://6.000mF 校准5mF
+										case 6://6.000mF 校准5mF 零点
 										{
 											SaveData.Value.Cal_Cap_zero[3]=Cap_value/SaveData.Value.Cal_Cap_gain[0]+SaveData.Value.Cal_Cap_zero[3];
 											break;

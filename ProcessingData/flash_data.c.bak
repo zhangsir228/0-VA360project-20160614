@@ -64,12 +64,12 @@ void Default_flash(void)
 	SaveData.Value.cal_600VD_gain=1;
 	
 	
-	SaveData.Value.cal_600A_zero=0;
-	SaveData.Value.cal_600A_gain=1;
+	SaveData.Value.cal_600A_zero=-90; //600A档校准线
+	SaveData.Value.cal_600A_gain=0.0360;
 	SaveData.Value.cal_A_y0=1.5688;
 	
-	SaveData.Value.cal_A1_zero=0;
-	SaveData.Value.cal_A1_gain=1;
+	SaveData.Value.cal_A1_zero=-44;	 //2000A档校准线
+	SaveData.Value.cal_A1_gain=0.072;
 	SaveData.Value.cal_A2_zero=0;
 	SaveData.Value.cal_A2_gain=1;
 	
