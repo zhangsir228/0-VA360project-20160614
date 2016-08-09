@@ -71,7 +71,7 @@ void start_configration(void)
 	lcd_full_test();
 	Init_Keyboard_Interrupt();//内含TIM3-按键10ms检测中断、EXTI9_5-按键外部中断
 	BUZZER_LED_Init();		//TIM4驱动
-	uart_init(115200);//内含USART2与上位机通信串口中断9600
+	uart_init(9600);//内含USART2与上位机通信串口中断9600
 	delay_ms(500);
 	sdadc_cali_flag=SDADC1_Config();//采样配置，内含DMA2-SDADC数据DMA中断
 	TIM19_Config();//采样触发、采样频率配置

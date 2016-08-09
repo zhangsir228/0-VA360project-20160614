@@ -681,60 +681,27 @@ void Communicate(void)
 					break;
 				}
 				case 62://					"y0"//62
-				{
-//					CMD_analyze_R(tempR);
-//					SaveData.Value.cal_A_y0=tp.numb_f[0];
-//					sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-//					strcat(str,chardata);
-//					updata_flash();
+				{			
 					break;
 				}
 				case 64://6 zero
 				{
-//					if(rangenum == 0)
-//					{
-//						SaveData.Value.cal_6VA_zero=voltage_effective*10;
-//						sprintf(chardata, "set 6VA_zero %.4f", SaveData.Value.cal_6VA_zero);
-//						strcat(str,chardata);
-//						updata_flash();
-//					}
-						Sysflag.Calonce	=1;
+					Sysflag.Calonce	=1;
 					break;
 				}
 				case 65://6 gain
 				{
-//					if(rangenum == 0)
-//					{
-//						SaveData.Value.cal_6VA_gain=5.0/(voltage_effective*10-SaveData.Value.cal_6VA_zero);
-//						sprintf(chardata, "set 6VA_gain %.4f", SaveData.Value.cal_6VA_gain);
-//						strcat(str,chardata);
-//						updata_flash();
-//					}
-						Sysflag.Calonce	=1;
+					Sysflag.Calonce	=1;
 					break;
 				}	
 				case 66://60 zero
 				{
-//					if(rangenum == 1)
-//					{
-//						SaveData.Value.cal_60VA_zero=voltage_effective*10;
-//						sprintf(chardata, "set 60VA_zero %.4f", SaveData.Value.cal_60VA_zero);
-//						strcat(str,chardata);
-//						updata_flash();
-//					}
-						Sysflag.Calonce	=1;		
+					Sysflag.Calonce	=1;		
 					break;
 				}
 				case 67://60 gain
 				{
-//					if(rangenum == 1)
-//					{
-//						SaveData.Value.cal_60VA_gain=5.0/(voltage_effective*10-SaveData.Value.cal_60VA_zero);
-//						sprintf(chardata, "set 60VA_gain %.4f", SaveData.Value.cal_60VA_gain);
-//						strcat(str,chardata);
-//						updata_flash();
-//					}
-						Sysflag.Calonce	=1;
+					Sysflag.Calonce	=1;
 					break;
 				}	
 				case 68://600 zero

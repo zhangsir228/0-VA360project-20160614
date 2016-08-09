@@ -166,25 +166,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>496</LineNumber>
+          <LineNumber>28</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>134288190</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\userVAinteraction.c</Filename>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>C:\Users\Administrator\OneDrive\宸ヤ綔鏂囨。\0-VA360project 20160614\Hardware\powercontrol.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\template\../Hardware/powercontrol.c\28</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>501</LineNumber>
+          <LineNumber>2604</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134219992</Address>
+          <Address>134230592</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -193,7 +193,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>C:\Users\Administrator\OneDrive\宸ヤ綔鏂囨。\0-VA360project 20160614\User\userVAinteraction.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\userVAinteraction.c\501</Expression>
+          <Expression>\\template\userVAinteraction.c\2604</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
