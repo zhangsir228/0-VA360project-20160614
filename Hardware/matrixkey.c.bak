@@ -71,9 +71,9 @@ static void KEY_LINE_write_high(uint8_t i)
 	KEY_LINE_write_low_all();
 	if(i == 0)
 		GPIO_SetBits(Keyboard_Line_Port_1 ,Keyboard_Line_1);
-	else if(i == 1)
+	if(i == 1)
 		GPIO_SetBits(Keyboard_Line_Port_2 ,Keyboard_Line_2);
-	else if(i == 2)
+	if(i == 2)
 		GPIO_SetBits(Keyboard_Line_Port_3 ,Keyboard_Line_3);
 }
 /*读取所有行的值(PB6-PB9)，并输出为0x0F(低四位)格式
@@ -293,7 +293,7 @@ u8 OnceRotaryKey(void)
 				break;
 			case (8 & 0x0F)://PB9按下
 			{
-				//if(i<2)
+				if(i<2)
 					keytemp = 9 + i;
 			}
 				break;
@@ -301,7 +301,7 @@ u8 OnceRotaryKey(void)
 				keytemp = 0x0F;break;
 		}
 	
-		if((keytemp <= 0x0B) && (keytemp >= 0x06))
+		if((keytemp < 0x0B) && (keytemp >= 0x06))
 		{
 			return keytemp;
 		}

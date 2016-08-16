@@ -53,14 +53,23 @@
 
 
 uint8_t Is_Cal_Mode = 0;//2016-07-22 Lea 定义全局校准模式标志  为了将校准功能步奏都集成到按键操作上
-
+uint8_t OnOffState = 0; //开关机状态 0：关机休眠状态   1：开机运行状态
 
 u16 count_for_Standby=0;
 defSysValue SysValue ;
 
+void RCC_Conf(void)
+{
+	SystemInit();
+}
+
+
 void start_configration(void)
 {
 	uint8_t sdadc_cali_flag=0;//SDADC配置成功与否标志，0-成功，1-INITRDY未置位，2-EOCAL未置位
+	
+	RCC_Conf();
+	
 	
 	Init_flash();//初始化一些参数
 		
@@ -72,20 +81,38 @@ void start_configration(void)
 	Init_Keyboard_Interrupt();//内含TIM3-按键10ms检测中断、EXTI9_5-按键外部中断
 	BUZZER_LED_Init();		//TIM4驱动
 	uart_init(9600);//内含USART2与上位机通信串口中断9600
-	delay_ms(500);
+	delay_ms(20);
 	sdadc_cali_flag=SDADC1_Config();//采样配置，内含DMA2-SDADC数据DMA中断
 	TIM19_Config();//采样触发、采样频率配置
 	TIM5_2_Compare_Capture_Init();//COMP比较器、定时器配置，用于基频捕获，内含TIM5比较器捕获中断
+	
 	DTA0660_Init();//内含Usart1-DTA0660通信串口中断，用于单片机与DTA通信
 	TIM12_Config_1s();//1s定时器，内含TIM12-1s中断：秒表显示闪烁
 	TIM14_Config_0_5s();//0.5s定时器，内含TIM14-0.5s中断：相序测量闪烁
 
-	PowerControl_Init();
+	PowerControl_Init(); //总电源，蓝牙电源，钳头供电电源；换挡间隙的外部中断
+	
+	
 	
 	DAC_Config();//新增DAC输出驱动钳头
 	Dac1_Set_Vol(1400);
 	
 	TIM13_Config_1s_Standby();//内含1s中断，计数1800次为30min，进入Standby模式
+	
+	//2016-07-25 增加内部校准  启动时的按键检测  确定是否进入校准模式
+	SoftKeyValue = OnceSoftKey();//无消抖的获取按键值  ScanKey();//
+	if(SoftKeyValue==KEY_VALUE_5)//启动检测到func按键 置位校准标志位
+	{
+		SoftKeyValue = KEY_NULL;		
+		Is_Cal_Mode = 1;
+		
+		lcd_clr();
+		lcd_show_Cal(1);delay_ms(2000);//显示CAL进入校准状态
+	}
+	
+	//旋转开关位置预检测
+	EXTI->IMR &= ~Keyboard_EXTI_Line;//屏蔽来自线上的中断请求，防止在定时器扫描矩阵键盘时进入此中断
+	TIM_Cmd(TIM3, ENABLE);//打开定时器3，在定时器作用下开始扫描矩阵键盘
 }
 
 
@@ -96,29 +123,9 @@ int main(void)
 //	u16 times=0;
 //	float num;
 	start_configration();
-	
-	//2016-07-25 增加内部校准  启动时的按键检测
-	SoftKeyValue = OnceSoftKey();//无消抖的获取按键值  ScanKey();//
-	if(SoftKeyValue==KEY_VALUE_5)//启动检测到func按键 置位校准标志位
-	{
-		SoftKeyValue = KEY_NULL;		
-		Is_Cal_Mode = 1;
-		
-		lcd_clr();
-		lcd_show_Cal(1);delay_ms(2000);//显示CAL进入校准状态
-//		BUZZER_Open(0);delay_ms(1000);
-//		BUZZER_Open(0);delay_ms(1000);
-//		BUZZER_Open(0);delay_ms(1000);
-//		BUZZER_Open(0);delay_ms(1000);
-	}
-	
-	//旋转开关位置预检测
-	EXTI->IMR &= ~Keyboard_EXTI_Line;//屏蔽来自线上的中断请求，防止在定时器扫描矩阵键盘时进入此中断
-	TIM_Cmd(TIM3, ENABLE);//打开定时器3，在定时器作用下开始扫描矩阵键盘
-	
+			
 	//WriteEeprom();
 	//Self_Calibration();//在电阻档自检线路和放大器
-
 	
 //	//液晶全亮
 //	Send(SetAddr,0x3B,0x00,0x8B);//设置LCD地址
@@ -134,16 +141,18 @@ int main(void)
 		if(timer_1s_flag_for_Standby==1)//用于休眠计时
 		{
 			timer_1s_flag_for_Standby=0;
-			count_for_Standby++;//休眠计时+1s;
-			if(count_for_Standby==5000)//5min-300,10min-600,15min-900,20min-1200,25min-1500,30min-1800
-			{
-				lcd_clr();
+			count_for_Standby++;//休眠计时+1s;              //OFF档
+			if((count_for_Standby==5000)||(RotaryKeyValue==KEY_VALUE_11))//5min-300,10min-600,15min-900,20min-1200,25min-1500,30min-1800
+			{//长时间无操作或者 打到关机档 则进入休眠状态
+				
 				StandbyMode_Measure();//进入休眠
-//				Power_Off_VDD();
+				count_for_Standby = 0;			
 			}						
 		}
 		if((RotaryKeyChanged_flag == 1) || (SoftKeyChanged_flag == 1))//有按键
 		{
+			if(RotaryKeyValue==KEY_VALUE_11){}//OFF 档位
+							
 			count_for_Standby=0;//休眠计时清零
 			manipulate();
 		}
@@ -151,10 +160,12 @@ int main(void)
 		DataProcessing();//根据相应功能档配置DTA0660,并做当前档位的数据处理。  
 		display();//液晶显示
 		
-		Communication_Service();//蓝牙串口服务函数
+		Communication_Service();//蓝牙串口服务函数	
 	}
 	return 0;
 }
+
+
 
 
 /**************************************************end file**************************************************/

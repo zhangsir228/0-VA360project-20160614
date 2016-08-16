@@ -70,7 +70,6 @@ void StandbyMode_Measure(void)
 //  PWR_WakeUpPinCmd(PWR_WakeUpPin_1,ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR,ENABLE);
 	
-	lcd_clr();
 	
 	Power_Off_Voltage();//PA5=0
 	Power_Off_Current();//PC15=0

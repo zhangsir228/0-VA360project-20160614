@@ -77,8 +77,8 @@ void uart_init(u32 baudrate)
 	
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;                 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; 
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;//20160815 蓝牙模块发布进来数据 GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;//GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;//20160815 蓝牙模块发布进来数据 GPIO_PuPd_UP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
 	GPIO_Init(GPIOB, &GPIO_InitStructure);        
 	

@@ -7,7 +7,7 @@
 #include "CalA.h"	
 #include "dta0660.h"
 #include "buzzer_led.h"
-
+#include "stm32f37x_lp_modes.h"
 
 #define name_to_str(data)  (#data)
 
@@ -50,8 +50,8 @@ const char *CMDmap1[50]={
 					"dta_calv",		//25校准DTA电压
 					"dta_eeprom_read",		//26读取DTA配置参数		
 					"dta_eeprom_write", //27初始化DTA配置参数
-					"",			
-					"",
+					"sleep",			//28 进入休眠模式
+					"dta0660_poweroff",//29  DTA0660待机
 					"",	
 	
 			};
@@ -1020,8 +1020,16 @@ void Communicate(void)
 			WriteEeprom();			
 			break;
 		}
-		
-		
+		case 28://sleep
+		{
+			StandbyMode_Measure();//进入休眠();			
+			break;
+		}
+		case 29://DTA0660待机
+		{
+			Send(PowerOff,PowerOff);		
+			break;
+		}
 		
 		default:break;
 

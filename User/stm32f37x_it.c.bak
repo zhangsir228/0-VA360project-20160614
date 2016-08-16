@@ -366,7 +366,7 @@ void USART1_IRQHandler(void)
 	{
 	  /* Read one byte from the receive data register */
 		dta_temp= USART_ReceiveData(USART1)&0xFF;
-    RxBuffer[RxCounter++] = dta_temp;
+		RxBuffer[RxCounter++] = dta_temp;
 
 		if(dta_temp==dta_cs)//判断一下校验和CS：收到的数dta_temp与前面的和相等？是则再检查一下RDY电压，为低则返回dta_receive_flag= 1；为高则继续等待校验和到来。
 		{
@@ -377,10 +377,10 @@ void USART1_IRQHandler(void)
 				RxCounter=0;
 			}
 			else
-				dta_cs+= dta_temp;
+			dta_cs+= dta_temp;
 		}
 		else
-			dta_cs+= dta_temp;//只要收到数据，就计算当前值与之前所有数的和。
+		dta_cs+= dta_temp;//只要收到数据，就计算当前值与之前所有数的和。
 	}
 	USART_ClearITPendingBit(USART1, USART_IT_RXNE);
 }
@@ -401,14 +401,17 @@ void USART2_IRQHandler(void)
 	  USART_ClearFlag(USART2,USART_FLAG_RXNE);  
 }
 
+/**********************************************************/
 /*旋钮旋动间中断，主要用于休眠唤醒*/
+/*********************************************/
+
 void EXTI2_TS_IRQHandler(void)
 {
 	uint16_t i=0;
 	
 	EXTI_ClearITPendingBit(EXTI_Line2);//清除外部中断标志
 	
-	for(i=0;i<3;i++)
+	for(i=0;i<1;i++)
 	{
 		;
 	}
@@ -543,16 +546,16 @@ void TIM4_IRQHandler(void)
 		Rx2Reset--;if(Rx2Reset<=0){Rx2Reset=0;Rx2Counter=0;}//用于无通信时重置接收计数器
 		if(longshort==0)
 		{
-			if(buzzer_counter<500)
-			{
-				BUZZER_Toggle();
-				buzzer_counter++;
-			}
-			else
-			{
-				BUZZER_Close();
-				buzzer_counter=0;
-			}
+//			if(buzzer_counter<500)
+//			{
+//				BUZZER_Toggle();
+//				buzzer_counter++;
+//			}
+//			else
+//			{
+//				BUZZER_Close();
+//				buzzer_counter=0;
+//			}
 		}
 		else if(longshort==1)
 		{

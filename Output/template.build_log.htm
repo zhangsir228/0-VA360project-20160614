@@ -27,16 +27,59 @@ Project File Date:  08/03/2016
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'E:\keil_V5\ARM\ARMCC\Bin'
 Build target 'Target 1'
+compiling dta0660.c...
+..\Hardware\dta0660.c(159): warning:  #177-D: variable "len" was declared but never referenced
+  	u16 len;	
+..\Hardware\dta0660.c(160): warning:  #177-D: variable "times" was declared but never referenced
+  	u16 times=0;
+..\Hardware\dta0660.c(181): warning:  #188-D: enumerated type mixed with another type
+  		dta_receive_flag=0;
+..\Hardware\dta0660.c(233): warning:  #1256-D: "u8" would have been promoted to "int" when passed through the ellipsis parameter; use the latter type instead
+  		nArgValue= 
+a_arg(arg_ptr,u8); 		//?Ãµ???Ò»?ö¿É±ä²??ýµ?Öµ
+..\Hardware\dta0660.c(265): warning:  #188-D: enumerated type mixed with another type
+  				dta_receive_flag=0;
+..\Hardware\dta0660.c(267): warning:  #188-D: enumerated type mixed with another type
+  					return 1;//???Õµ½µ??ý¾????Ö½?Îª?????????Ö·?????
+..\Hardware\dta0660.c(274): warning:  #188-D: enumerated type mixed with another type
+  	dta_receive_flag=0;
+..\Hardware\dta0660.c(277): warning:  #188-D: enumerated type mixed with another type
+  	return 0;
+..\Hardware\dta0660.c(295): warning:  #188-D: enumerated type mixed with another type
+  		check_flag= 0;
+..\Hardware\dta0660.c(459): warning:  #188-D: enumerated type mixed with another type
+  		check_flag=0;
+..\Hardware\dta0660.c(495): warning:  #188-D: enumerated type mixed with another type
+  		check_flag=0;
+..\Hardware\dta0660.c(508): warning:  #188-D: enumerated type mixed with another type
+  				dta_receive_flag=0;
+..\Hardware\dta0660.c(534): warning:  #188-D: enumerated type mixed with another type
+  		check_flag=0;
+..\Hardware\dta0660.c(556): warning:  #188-D: enumerated type mixed with another type
+  		check_flag=0;
+..\Hardware\dta0660.c(595): warning:  #188-D: enumerated type mixed with another type
+  			check_flag=0;
+..\Hardware\dta0660.c(622): warning:  #188-D: enumerated type mixed with another type
+  			check_flag=0;
+..\Hardware\dta0660.c(659): warning:  #192-D: unrecognized character escape sequence
+  	printf("\r\n\%x		1	2	3	4	5	6	7	8	9	10			µµÎ»	Hex	Dec	·µ??Öµ",funcnum);
+..\Hardware\dta0660.c(698): warning:  #188-D: enumerated type mixed with another type
+  		check_flag=0;
+..\Hardware\dta0660.c(710): warning:  #188-D: enumerated type mixed with another type
+  		check_flag=0;
+..\Hardware\dta0660.c(550): warning:  #177-D: function "Off_CalMode" was declared but never referenced
+  static u8 Off_CalMode(void)
+..\Hardware\dta0660.c: 20 warnings, 0 errors
 compiling main.c...
-main.c(63): warning:  #550-D: variable "sdadc_cali_flag" was set but never used
+main.c(69): warning:  #550-D: variable "sdadc_cali_flag" was set but never used
   	uint8_t sdadc_cali_flag=0;//SDADC???Ã³É¹??ë·ñ±?Ö¾£¬0-?É¹¦£?1-INITRDYÎ´??Î»£¬2-EOCALÎ´??Î»
-main.c(156): warning:  #111-D: statement is unreachable
+main.c(165): warning:  #111-D: statement is unreachable
   	return 0;
 main.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=84294 RO-data=37290 RW-data=1392 ZI-data=29032  
+Program Size: Code=84366 RO-data=37318 RW-data=1392 ZI-data=29032  
 FromELF: creating hex file...
-"..\Output\template.axf" - 0 Error(s), 2 Warning(s).
+"..\Output\template.axf" - 0 Error(s), 22 Warning(s).
 
 <h2>Software Packages used:</h2>
 

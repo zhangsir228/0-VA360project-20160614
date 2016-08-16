@@ -104,7 +104,7 @@ void MeasureModeChange(void)
 		}
 		else if((RotaryKeyValue >= 0x08) && (RotaryKeyValue != KEY_NULL))//DTA0660测量，关闭STM32相应外设
 		{
-			Power_Off_Voltage();//PA5=1
+			Power_Off_Voltage();//PA5=0
 			Power_Off_Current();//PC15=0
 			
 			SDADC_Cmd(SDADC1, DISABLE);

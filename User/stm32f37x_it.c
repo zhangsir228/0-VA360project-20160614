@@ -401,14 +401,17 @@ void USART2_IRQHandler(void)
 	  USART_ClearFlag(USART2,USART_FLAG_RXNE);  
 }
 
+/**********************************************************/
 /*旋钮旋动间中断，主要用于休眠唤醒*/
+/*********************************************/
+
 void EXTI2_TS_IRQHandler(void)
 {
 	uint16_t i=0;
 	
 	EXTI_ClearITPendingBit(EXTI_Line2);//清除外部中断标志
 	
-	for(i=0;i<3;i++)
+	for(i=0;i<1;i++)
 	{
 		;
 	}
