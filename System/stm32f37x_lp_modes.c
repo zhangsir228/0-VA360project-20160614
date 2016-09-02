@@ -126,10 +126,10 @@ void StandbyMode_Measure(void)
   GPIO_Init(GPIOF, &GPIO_InitStructure);
   GPIO_Init(GPIOE, &GPIO_InitStructure);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All&~GPIO_Pin_6&~GPIO_Pin_13&~GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All&~GPIO_Pin_6&~GPIO_Pin_13&~GPIO_Pin_14;//JTAG引脚
   GPIO_Init(GPIOA, &GPIO_InitStructure); 
   
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All&~GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All&~GPIO_Pin_2;//换挡间外部触发唤醒引脚
   GPIO_Init(GPIOB, &GPIO_InitStructure);
   
   /* Disable GPIOs clock */

@@ -199,7 +199,7 @@ void TIM5_2_Compare_Capture_Init(void)
 //	TIM_ITConfig(TIM2, TIM_IT_Update|TIM_IT_CC4, ENABLE);
 	
   /* TIM enable counter */
-  TIM_Cmd(TIM5, ENABLE);
+  TIM_Cmd(TIM5, ENABLE);//8-20注释，把使能关掉，在main.c中有按键按下才打开
 //	TIM_Cmd(TIM2, ENABLE);
 	
   /* Reset the flags */

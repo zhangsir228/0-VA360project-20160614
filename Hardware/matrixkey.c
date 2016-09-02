@@ -363,7 +363,7 @@ u8 ScanKey(void)
 		}
 		break;
 		
-		case KEY_STATE_LONG://3
+		case KEY_STATE_LONG://3 
 		{
 			
 			if(KEY_NULL != (KeyTemp))//有按键按下
@@ -374,6 +374,7 @@ u8 ScanKey(void)
 					KeyTemp |= KEY_LONG;//保存按键长按标志(0x40)，KeyTemp的8位数为：0100####
 					LastKey = KeyTemp;//保存键值和长按标志，以便在释放状态返回键值
 //					KeyState = KEY_STATE_CONTINUE;//进入按键连发状态（意思是一直长按着，比长按时间长）
+					KeyState = KEY_STATE_INIT;//20160830 Lea 长按计数达到后就初始化计数变量
 				}
 			}
 			else

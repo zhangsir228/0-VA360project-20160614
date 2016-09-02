@@ -92,7 +92,7 @@ void start_configration(void)
 
 	PowerControl_Init(); //总电源，蓝牙电源，钳头供电电源；换挡间隙的外部中断
 	
-	
+
 	
 	DAC_Config();//新增DAC输出驱动钳头
 	Dac1_Set_Vol(1400);

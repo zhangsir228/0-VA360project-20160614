@@ -59,7 +59,7 @@ void TIM19_Config(void)
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; 
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;                
 //  TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Disable;                  
-  TIM_OCInitStructure.TIM_Pulse = SystemCoreClock/100/SAMPLING_FREQ/2;	//保证从0向上计数时，在TIM_Period/2处产生一个上升沿,保证在定时器频率下，
+  TIM_OCInitStructure.TIM_Pulse = SystemCoreClock/(15+1)/SAMPLING_FREQ/2;	//保证从0向上计数时，在TIM_Period/2处产生一个上升沿,保证在定时器频率下，
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;        			//每个周期触发SDADC一次，触发频率为SAMPLING_FREQ
   TIM_OC2Init(TIM19, &TIM_OCInitStructure);
 	
@@ -271,14 +271,11 @@ void SDADC2_Gain(uint32_t SDADC2_Gain)
 {
 	TIM_Cmd(TIM19, DISABLE);
 	TIM_SetCounter(TIM19,0);
-\
 	
 	SDADC_InitModeCmd(SDADC2, ENABLE);
 	SDADC_FastConversionCmd(SDADC2,DISABLE);
 	
-	SDADC_InjectedSynchroSDADC1(SDADC2,DISABLE);
-	
-	SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, DISABLE);			
+	SDADC_InjectedSynchroSDADC1(SDADC2,DISABLE);				
 	
 	delay_ms(50);
 	SDADC_ChannelConfig(SDADC2, SDADC_Channel_8, SDADC2_Gain);//修改增益
@@ -286,9 +283,7 @@ void SDADC2_Gain(uint32_t SDADC2_Gain)
 	SDADC_InjectedSynchroSDADC1(SDADC2,ENABLE);
 	SDADC_FastConversionCmd(SDADC2,ENABLE);
 	
-	DMA_ClearITPendingBit(DMA2_IT_GL3);//清空DMA中断
-	
-	SDADC_DMAConfig(SDADC1, SDADC_DMATransfer_Injected, ENABLE);			
+	//DMA_ClearITPendingBit(DMA2_IT_GL3);//清空DMA中断			
 	
 	SDADC_InitModeCmd(SDADC2, DISABLE);
 	

@@ -14,6 +14,9 @@
 #include "main.h"
 #include "sdadc.h"
 #include "flash_data.h"
+#include "comm.h"
+
+
 SoftKeystatus funcstatus=state0,btstatus=state0;			//子功能档位状态，蓝牙开关状态
 SoftKeystatus max_minstatus=state0,peakstatus=state0;	//最值	，	峰值
 SoftKeystatus relstatus=state0,phasestatus=state0;		//			，	相序功能
@@ -30,6 +33,8 @@ extern defSysValue SysValue ;//系统运行时的主要变量参数
 extern defFlashCal SaveData;//保存于flash中的必要数据
 
 extern __IO uint16_t CCR4_Val;//TIM58 周期定时脉冲个数
+
+extern char  Tstr[128];//待发送数组  在userVAinteraction中根据显示部分填充。
 
 u8 blink;
 float max_data1,min_data1,max_data2,min_data2,rel_data1,rel_data2;
@@ -59,14 +64,14 @@ float REL_current_mean=0;
 
 /*20160801 新增全局各档位最终值变量*/
 float  	Hz_value=0;
-float	VmV_value=0;
+float		VmV_value=0;
 float 	ohm_value=0;
-float	Cap_value=0;
-float	temp_value=0;
+float		Cap_value=0;
+float		temp_value=0;
 
 uint8_t LeaTest=0;
 
-void Data_init(void)
+void Data_init(void)//包含MCU测量电流电压值传递给相对值
 {
 	REL_voltage_effective=voltage_effective;
 	REL_voltage_mean=voltage_mean;
@@ -91,12 +96,15 @@ void MeasureModeChange(void)
 {
 		if(RotaryKeyValue <= 0x07)//STM32测量，开启STM32相应外设
 		{
-			Power_On_Voltage();//PA5=0
 			Power_On_Current();//PC15=1
 			
 			SDADC_Cmd(SDADC1, ENABLE);
-			SDADC_Cmd(SDADC2, ENABLE);
+			SDADC_Cmd(SDADC2, ENABLE);	
 			TIM_Cmd(TIM19, ENABLE);
+			
+			TIM_Cmd(TIM5, ENABLE);//输入捕获定时器
+			TIM_ITConfig(TIM5, TIM_IT_CC4, ENABLE);
+			
 //			COMP_Cmd(COMP_Selection_COMP1, DISABLE);//2015-4-28注释，将ENABLE改为DISABLE,在有PHASE测量功能时打开
 //			COMP_Cmd(COMP_Selection_COMP2, DISABLE);
 //			TIM_Cmd(TIM5, DISABLE);//输入捕获定时器
@@ -104,7 +112,6 @@ void MeasureModeChange(void)
 		}
 		else if((RotaryKeyValue >= 0x08) && (RotaryKeyValue != KEY_NULL))//DTA0660测量，关闭STM32相应外设
 		{
-			Power_Off_Voltage();//PA5=0
 			Power_Off_Current();//PC15=0
 			
 			SDADC_Cmd(SDADC1, DISABLE);
@@ -112,7 +119,11 @@ void MeasureModeChange(void)
 			TIM_Cmd(TIM19, DISABLE);//采样时钟
 //			COMP_Cmd(COMP_Selection_COMP1, DISABLE);//比较器
 //			COMP_Cmd(COMP_Selection_COMP2, DISABLE);
+			
 			TIM_Cmd(TIM5, DISABLE);//输入捕获定时器
+			TIM_ITConfig(TIM5, TIM_IT_CC4, DISABLE);
+			TIM_ClearITPendingBit(TIM5, TIM_IT_CC4);
+			
 //			TIM_Cmd(TIM2, DISABLE);
 		}
 }
@@ -544,7 +555,11 @@ void manipulate(void)
 	/*当有软按钮改变时*/
 	if(SoftKeyChanged_flag == 1)//当有软按钮改变
 	{
-		Data_init();
+		if((SoftKeyValue != KEY_VALUE_5) && (SoftKeyValue != KEY_VALUE_1))
+		{
+			Data_init();
+		}
+		
 		SoftKeyChanged_flag = 0;
 		BUZZER_Open(0);
 		switch(RotaryKeyValue)
@@ -724,12 +739,12 @@ void manipulate(void)
 							display_rel_state();
 							display_max_min_state();	
 							
-							if(relstatus != state0)//在相对值状态读一个测量值   //20160727 lea 这里的测量值都使用的临时传递变量，其他档位的还没有做相应的修改，留意以下！！！
+							if(relstatus != state0)//在相对值状态读一个测量值   //20160727 lea 这里的测量值都使用的临时传递变量，其他档位的还没有做相应的修改，留意一下！！！
 							{
 								if(funcstatus ==state0)//AC V+A
 								{
-									rel_data1=REL_voltage_effective-fabs(REL_voltage_mean);
-									rel_data2=REL_current_effective-fabs(REL_current_mean);
+									rel_data1=REL_voltage_effective-REL_voltage_mean;//fabs(REL_voltage_mean);//20160901
+									rel_data2=REL_current_effective-REL_current_mean;//fabs(REL_current_mean);
 								}
 								else if(funcstatus ==state1)//DC V+A
 								{
@@ -1037,10 +1052,10 @@ void manipulate(void)
 								switch(lightstatus)
 								{
 									case state0://亮灯
-									{
+									{ LED_Open();
 									}break;
 									case state1://灭灯
-									{
+									{ LED_Close();
 									}break;
 									default:break;
 								}
@@ -1636,10 +1651,10 @@ void manipulate(void)
 							switch(lightstatus)
 							{
 								case state0://亮灯
-								{
+								{ LED_Open();
 								}break;
 								case state1://灭灯
-								{
+								{ LED_Close();
 								}break;
 								default:break;
 							}
@@ -1739,7 +1754,28 @@ void manipulate(void)
 							display_max_min_state();
 							
 							if(relstatus != state0)//在相对值状态读一个测量值
-								rel_data1 = receive_f;//ReadDTAValue(ReadFreq);//从DTA0660读取数据
+								//rel_data1 = receive_f;//20160808这里直接获取该值并不能抵消校正以后的显示值，注意每个档位都存在这个问题。需要修改
+							{
+								if(paramstatus == state0)
+								{
+									if(funcstatus ==state0)//DCVmV
+									{
+										rel_data1 = (receive_f-SaveData.Value.Cal_VmV_zero[rangestatus])*SaveData.Value.Cal_VmV_gain[rangestatus];
+									}
+									else if(funcstatus ==state1)//ACV
+									{
+										rel_data1 = (receive_f-SaveData.Value.Cal_VmV_zero[rangestatus+1])*SaveData.Value.Cal_VmV_gain[rangestatus+1];
+									}
+								}
+								else if(paramstatus == state1)
+								{//Hz档
+									rel_data1 = receive_f;//receive_f= ReadDTAValue(ReadFreq);
+								}
+								else if(paramstatus == state2)
+								{//Duty档
+									rel_data2 = receive_f;//receive_f1= ReadDTAValue(ReadDuty);
+								}
+							}
 						}
 					}break;
 					case KEY_VALUE_3://RANGE
@@ -2016,10 +2052,10 @@ void manipulate(void)
 								switch(lightstatus)
 								{
 									case state0://亮灯
-									{
+									{ LED_Open();
 									}break;
 									case state1://灭灯
-									{
+									{ LED_Close();
 									}break;
 									default:break;
 								}
@@ -2157,10 +2193,10 @@ void manipulate(void)
 							switch(lightstatus)
 							{
 								case state0://亮灯
-								{
+								{ LED_Open();
 								}break;
 								case state1://灭灯
-								{
+								{ LED_Close();
 								}break;
 								default:break;
 							}
@@ -2570,10 +2606,10 @@ void manipulate(void)
 								switch(lightstatus)
 								{
 									case state0://亮灯
-									{
+									{ LED_Open();
 									}break;
 									case state1://灭灯
-									{
+									{  LED_Close();
 									}break;
 									default:break;
 								}
@@ -2623,8 +2659,11 @@ void manipulate(void)
 }
 
 /*显示*/
+//20160826 在显示函数中加入待发送通信字符串，用于读取当前机器数值
 void display(void)
 {
+	char tempStr[64];
+	
 	SoftKeystatus rangestatus_old=state0;
 	
 	if(holdstatus==state0)
@@ -2645,8 +2684,8 @@ void display(void)
 				{//当在正常V+A状态（不在Param、Inrush、Peak、Phase状态）
 					if(funcstatus ==state0)//AC V+A
 					{												
-						readstmdata1=voltage_effective-fabs(voltage_mean);
-						readstmdata2=current_effective-fabs(current_mean);																			
+						readstmdata1=voltage_effective-voltage_mean;//fabs(voltage_mean);//20160901根据MAX-MIN中的操作将这里的绝对值改为真实值
+						readstmdata2=current_effective-current_mean;//fabs(current_mean);																			
 						
 						showdata1=deal_1(readstmdata1,1);
 						showdata2=deal_1(readstmdata2,2);
@@ -2658,7 +2697,7 @@ void display(void)
 								if(autostatus==state1)//自动挡
 								{
 									if(readstmdata1<=6)
-										propershow=lcd_show_num(showdata1,1,1);
+										propershow=lcd_show_num(showdata1,1,1); 
 									else
 									{
 										lcd_show_Line(1);
@@ -2667,7 +2706,7 @@ void display(void)
 									}
 									
 									if(readstmdata2<=600)
-										propershow=lcd_show_num(showdata2,2,3);
+										propershow=lcd_show_num(showdata2,2,3);																							
 									else
 									{
 										lcd_show_Line(2);
@@ -2681,6 +2720,16 @@ void display(void)
 										propershow=lcd_show_num(showdata1,1,1);
 										propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," ACA\r\n");	
+								
 							}break;
 							case state1://60.00V/600.0A
 							{
@@ -2713,6 +2762,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,2);
 									propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," ACA\r\n");	
 							}break;
 							case state2://600.0V/600.0A
 							{
@@ -2743,6 +2801,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,3);
 									propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," ACA\r\n");	
 							}break;
 							case state3://6.000V/2000A
 							{
@@ -2772,6 +2839,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,1);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," ACA\r\n");	
 							}break;
 							case state4://60.00V/2000A
 							{
@@ -2804,6 +2880,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,2);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," ACA\r\n");	
 							}break;
 							case state5://600.0V/2000A
 							{
@@ -2834,6 +2919,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,3);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," ACA\r\n");	
 							}break;
 							default:break;
 						}					
@@ -2879,6 +2973,15 @@ void display(void)
 										propershow=lcd_show_num(showdata1,1,1);
 										propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," DCA\r\n");	
 							}break;
 							case state1://60.00V/600.0A
 							{
@@ -2911,6 +3014,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,2);
 									propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," DCA\r\n");	
 							}break;
 							case state2://600.0V/600.0A
 							{
@@ -2941,6 +3053,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,3);
 									propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," DCA\r\n");	
 							}break;
 							case state3://6.000V/2000A
 							{
@@ -2969,6 +3090,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,1);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," DCA\r\n");	
 							}break;
 							case state4://60.00V/2000A
 							{
@@ -3000,6 +3130,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,2);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," DCA\r\n");	
 							}break;
 							case state5://600.0V/2000A
 							{
@@ -3029,13 +3168,19 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,3);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," DCA\r\n");	
 							}break;
 							default:break;
 						}
-//						if(abs_readstmdata1>50)
-//							lcd_write_1bit(0x0,3,ENABLE);//闪电符号亮
-//						else
-//							lcd_write_1bit(0x0,3,DISABLE);//闪电符号灭
+
 					}
 					else if(funcstatus ==state2)//AC+DC V+A
 					{						
@@ -3075,6 +3220,15 @@ void display(void)
 										propershow=lcd_show_num(showdata1,1,1);
 										propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," AC+DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," AC+DCA\r\n");	
 							}break;
 							case state1://60.00V/600.0A
 							{
@@ -3107,6 +3261,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,2);
 									propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," AC+DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," AC+DCA\r\n");	
 							}break;
 							case state2://600.0V/600.0A
 							{
@@ -3137,6 +3300,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,3);
 									propershow=lcd_show_num(showdata2,2,3);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," AC+DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.1f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," AC+DCA\r\n");	
 							}break;
 							case state3://6.000V/2000A
 							{
@@ -3165,6 +3337,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,1);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," AC+DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," AC+DCA\r\n");	
 							}break;
 							case state4://60.00V/2000A
 							{
@@ -3196,6 +3377,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,2);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," AC+DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," AC+DCA\r\n");	
 							}break;
 							case state5://600.0V/2000A
 							{
@@ -3225,6 +3415,15 @@ void display(void)
 									propershow=lcd_show_num(showdata1,1,3);
 									propershow=lcd_show_num(showdata2,2,4);
 								}
+								
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," AC+DCV\r\n");
+								strcat(Tstr,"S ");
+								sprintf(tempStr,"%.0f",showdata2);
+								strcat(Tstr,tempStr);
+								strcat(Tstr," AC+DCA\r\n");	
 							}break;
 							default:break;
 						}
@@ -3243,6 +3442,15 @@ void display(void)
 							readstmdata2=THD_f_current;
 							showdata2=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata2,2,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," THD%f_V\r\n");
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.3f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," THD%f_A\r\n");	
 						}break;
 						case state2://THD%r
 						{
@@ -3253,6 +3461,15 @@ void display(void)
 							readstmdata2=THD_r_current;
 							showdata2=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata2,2,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," THD%f_V\r\n");
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.3f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," THD%f_A\r\n");	
 						}break;
 						case state3://CF
 						{
@@ -3263,11 +3480,20 @@ void display(void)
 							readstmdata2=current_cf;
 							showdata2=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata2,2,2);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," CF_V\r\n");
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.3f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," CF_A\r\n");	
 						}break;
 						default:break;
 					}
 				}
-				else if(longparamstatus != state0)
+				else if(longparamstatus != state0) //w无串口数据输出
 				{//当在Inrush状态
 					if(inrush_trigger_flag == 2)//无需判断是600A还是2000A，在按键RANGE时就确定了
 					{//采集到100ms内的RMS值。蜂鸣一声，并显示在主显示区上。
@@ -3287,6 +3513,15 @@ void display(void)
 							readstmdata2=maxi_value;
 							showdata2=readstmdata2;//deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata2,2,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," MAX_V\r\n");
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.3f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," MAX_A\r\n");	
 						}break;
 						case state2://Peak-
 						{
@@ -3297,6 +3532,15 @@ void display(void)
 							readstmdata2=mini_value;
 							showdata2=readstmdata2;//deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata2,2,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," MIN_V\r\n");
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.3f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," MIN_A\r\n");	
 						}break;
 						default:break;
 					}
@@ -3450,12 +3694,7 @@ void display(void)
 			case KEY_VALUE_7://W
 			{
 				temp_for_over_voltage=voltage_effective;
-//				if(rangenum == 0)
-//					temp_for_over_voltage*=10;
-//				else if(rangenum == 1)
-//					temp_for_over_voltage*=100;
-//				else if(rangenum == 2)
-//					temp_for_over_voltage*=1000;
+
 				if(temp_for_over_voltage>30)
 					lcd_write_1bit(0x0,3,ENABLE);//闪电符号亮
 				else
@@ -3471,6 +3710,11 @@ void display(void)
 							
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," VA\r\n");					
 						}break;
 						case state1://有功
 						{
@@ -3478,6 +3722,11 @@ void display(void)
 							
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," W\r\n");			
 						}break;
 						case state2://无功
 						{
@@ -3485,6 +3734,11 @@ void display(void)
 							
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," var\r\n");			
 						}break;
 						default:break;
 					}
@@ -3495,35 +3749,50 @@ void display(void)
 							readstmdata2=power_factor;
 							showdata1=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata1,2,1);
+							
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.1f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," PF\r\n");	
 						}break;
 						case state1://DPF
 						{
 							readstmdata2=d_power_factor;
 							showdata1=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata1,2,1);
+							
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.1f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," DPF\r\n");	
 						}break;
 						case state2://THD%f
 						{
 							readstmdata2=THD_f_power;
 							showdata1=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata1,2,10);
+							
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.1f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," THD%f_P\r\n");	
 						}break;
 						case state3://THD%r
 						{
 							readstmdata2=THD_r_power;
 							showdata1=deal_1(readstmdata2,2);
 							propershow=lcd_show_num(showdata1,2,10);
+							
+							strcat(Tstr,"S ");
+							sprintf(tempStr,"%.1f",showdata2);
+							strcat(Tstr,tempStr);
+							strcat(Tstr," THD%r_P\r\n");	
 						}break;
 						default:break;
 					}
 				}
 				else if(longparamstatus != state0)
-				{//当在电能状态
-					if(timer_1s_blink == 1)
-					{
-						timer_1s_blink = 0;
-						lcd_show_num(powertimer,2,10);
-					}
+				{//当在电能状态					
 					switch(paramstatus)
 					{
 						case state0://处理KWh
@@ -3531,26 +3800,56 @@ void display(void)
 							readstmdata1=kWh;
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," KWh\r\n");	
 						}break;
 						case state1://处理KVAh
 						{
 							readstmdata1=kVAh;
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," KVAh\r\n");	
 						}break;
 						case state2://处理Kvarh
 						{
 							readstmdata1=kVarh;
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," Kvarh\r\n");	
 						}break;
 						case state3://处理KgCO2
 						{
 							readstmdata1=abcde;
 							showdata1=deal_1(readstmdata1,1);
 							propershow=lcd_show_num(showdata1,1,10);
+							
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," KgCO2\r\n");	
 						}break;
 						default:break;
+					}
+					if(timer_1s_blink == 1)
+					{
+						timer_1s_blink = 0;
+						lcd_show_num(powertimer,2,10);
+						
+						strcat(Tstr,"S ");
+						sprintf(tempStr,"%d",powertimer);
+						strcat(Tstr,tempStr);
+						strcat(Tstr," Sec\r\n");	
 					}
 				}
 				else if(peakstatus != state0)
@@ -3687,7 +3986,7 @@ void display(void)
 			}break;
 			case KEY_VALUE_8://mV/V(DC/AC)
 			{
-				if(funcstatus ==state0)//DCVmV
+				if(funcstatus ==state0)//DCVmV   20160826出来的时MV*10的数值
 				{
 					read_dta_data = receive_f;//ReadDTAValue(ReadResult);//从DTA0660读取数据
 					read_dta_data = (read_dta_data-SaveData.Value.Cal_VmV_zero[rangestatus])*SaveData.Value.Cal_VmV_gain[rangestatus];//20160803Lea 新增MCU内部校准
@@ -3703,8 +4002,8 @@ void display(void)
 							
 							if(autostatus==state1)//自动挡
 							{
-								if((RxBuffer[4] == 0) && (receive_data<=6200))//receive_data是receive_f的绝对值
-									lcd_show_dta_num(showdata1,1);
+								if((RxBuffer[4] == 0) && (fabs(showdata1)<=6200))//receive_data是receive_f的绝对值
+									lcd_show_dta_num(showdata1,1);													
 								else
 								{
 									lcd_show_Line(1);
@@ -3713,13 +4012,18 @@ void display(void)
 							}
 							else//手动挡
 							{
-								if((RxBuffer[4] == 0) && (receive_data<=6200))
+								if((RxBuffer[4] == 0) && (fabs(showdata1)<=6200))
 								{
-									lcd_show_dta_num(showdata1,1);
+									lcd_show_dta_num(showdata1,1);	
 								}
 								else
 									lcd_show_OL(1);
-							}
+							}						
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1/10);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," DCmV\r\n");
+							
 							lcd_write_1bit(0x06,0,ENABLE);//.亮
 						}break;
 						case state1://6.000V
@@ -3728,7 +4032,7 @@ void display(void)
 							
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 1) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 1) && (fabs(showdata1)<=6200) && (fabs(showdata1)>=580))
 									lcd_show_dta_num(showdata1,1);
 								else
 								{
@@ -3741,23 +4045,28 @@ void display(void)
 							}
 							else
 							{
-								if((RxBuffer[4] == 1) && (receive_data<=6200))
+								if((RxBuffer[4] == 1) && (fabs(showdata1)<=6200))
 								{
 									lcd_show_dta_num(showdata1,1);
 								}
 								else
 									lcd_show_OL(1);
-							}
+							}						
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1/1000);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," DCV\r\n");
+							
 							lcd_write_1bit(0x02,0,ENABLE);//.亮
 						}break;
 						case state2://60.00V
 						{
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 2) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 2) && (fabs(showdata1)<=6200) && (fabs(showdata1)>=580))
 								{
 									lcd_show_dta_num(showdata1,1);
-									temp_for_over_voltage=receive_data/100.0f;
+									temp_for_over_voltage=showdata1/100.0f;
 								}
 								else
 								{
@@ -3770,24 +4079,29 @@ void display(void)
 							}
 							else
 							{
-								if((RxBuffer[4] == 2) && (receive_data<=6200))
+								if((RxBuffer[4] == 2) && (fabs(showdata1)<=6200))
 								{
 									lcd_show_dta_num(showdata1,1);
-									temp_for_over_voltage=receive_data/100.0f;
+									temp_for_over_voltage=showdata1/100.0f;
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1/100);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," DCV\r\n");
+							
 							lcd_write_1bit(0x04,0,ENABLE);//.亮
 						}break;
 						case state3://600.0V
 						{
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 3) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 3) && (fabs(showdata1)<=6200) && (fabs(showdata1)>=580))
 								{
 									lcd_show_dta_num(showdata1,1);
-									temp_for_over_voltage=receive_data/10.0f;
+									temp_for_over_voltage=showdata1/10.0f;
 								}
 								else
 								{
@@ -3800,24 +4114,29 @@ void display(void)
 							}
 							else
 							{
-								if((RxBuffer[4] == 3) && (receive_data<=6200))
+								if((RxBuffer[4] == 3) && (fabs(showdata1)<=6200))
 								{
 									lcd_show_dta_num(showdata1,1);
-									temp_for_over_voltage=receive_data/10.0f;
+									temp_for_over_voltage=showdata1/10.0f;
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1/10);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," DCV\r\n");
+							
 							lcd_write_1bit(0x06,0,ENABLE);//.亮
 						}break;
 						case state4://1000V
 						{
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 4) && (receive_data>=580) && (receive_data<=1000))
+								if((RxBuffer[4] == 4) && (fabs(showdata1)>=580) && (fabs(showdata1)<=1000))
 								{
 									lcd_show_dta_num(showdata1,1);
-									temp_for_over_voltage=receive_data;
+									temp_for_over_voltage=showdata1;
 								}
 								else
 								{
@@ -3828,7 +4147,7 @@ void display(void)
 							}
 							else
 							{
-								if((RxBuffer[4] == 4) && (receive_data<=1000))
+								if((RxBuffer[4] == 4) && (fabs(showdata1)<=1000))
 								{
 									lcd_show_dta_num(showdata1,1);
 									temp_for_over_voltage=receive_data;
@@ -3836,6 +4155,11 @@ void display(void)
 								else
 									lcd_show_OL(1);
 							}
+							strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.0f",showdata1);
+							strcat(Tstr,tempStr);	
+							strcat(Tstr," DCV\r\n");
+							
 						}break;
 						default:break;
 					}
@@ -3848,7 +4172,8 @@ void display(void)
 				{
 					if(paramstatus == state0)//正常ACV
 					{ 
-						read_dta_data = receive_f;//ReadDTAValue(ReadResult);//从DTA0660读取数据
+						read_dta_data = receive_f;
+						read_dta_data = (read_dta_data-SaveData.Value.Cal_VmV_zero[rangestatus+1])*SaveData.Value.Cal_VmV_gain[rangestatus+1];//20160818Lea 新增ACV校准
 						showdata1=deal_1(read_dta_data,1);
 						temp_for_over_voltage=0;
 						switch(rangestatus)
@@ -3857,7 +4182,7 @@ void display(void)
 							{
 								if(autostatus==state1)
 								{
-									if((RxBuffer[4] == 0) && (receive_data<=6200))
+									if((RxBuffer[4] == 0) && (fabs(showdata1)<=6200))
 										lcd_show_dta_num(showdata1,1);
 									else
 									{
@@ -3867,13 +4192,18 @@ void display(void)
 								}
 								else
 								{
-									if((RxBuffer[4] == 0) && (receive_data<=6200))
+									if((RxBuffer[4] == 0) && (fabs(showdata1)<=6200))
 									{
 										lcd_show_dta_num(showdata1,1);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1/1000);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								
 								lcd_write_1bit(0x02,0,ENABLE);//.亮
 							}break;
 							case state1://60.00V
@@ -3904,6 +4234,11 @@ void display(void)
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1/100);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								
 								lcd_write_1bit(0x04,0,ENABLE);//.亮
 							}break;
 							case state2://600.0V
@@ -3934,6 +4269,11 @@ void display(void)
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1/10);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								
 								lcd_write_1bit(0x06,0,ENABLE);//.亮
 							}break;
 							case state3://1000V
@@ -3962,6 +4302,11 @@ void display(void)
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.0f",showdata1);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," ACV\r\n");
+								
 							}break;
 							default:break;
 						}
@@ -3983,7 +4328,7 @@ void display(void)
 								lcd_write_1bit(0x1A,1,DISABLE);//M
 								if(autostatus==state1)
 								{
-									if(read_dta_data<=99.99f)
+									if(showdata1<=99.99f)
 										propershow=lcd_show_num(showdata1,1,2);
 									else
 									{
@@ -3993,13 +4338,18 @@ void display(void)
 								}
 								else
 								{
-									if(read_dta_data<=99.99)
+									if(showdata1<=99.99)
 									{
 										propershow=lcd_show_num(showdata1,1,2);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," Hz\r\n");
+								
 								lcd_write_1bit(0x04,0,ENABLE);//.亮
 							}break;
 							case state1://999.9Hz
@@ -4008,7 +4358,7 @@ void display(void)
 								lcd_write_1bit(0x1A,1,DISABLE);//M
 								if(autostatus==state1)
 								{
-									if((read_dta_data<=999.9) && (read_dta_data>99.99))
+									if((showdata1<=999.9) && (showdata1>99.99))
 										propershow=lcd_show_num(showdata1,1,3);
 									else
 									{
@@ -4021,13 +4371,18 @@ void display(void)
 								}
 								else
 								{
-									if(read_dta_data<=999.9)
+									if(showdata1<=999.9)
 									{
 										propershow=lcd_show_num(showdata1,1,3);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," Hz\r\n");
+								
 								lcd_write_1bit(0x06,0,ENABLE);//.亮
 							}break;
 							case state2://9.999kHz
@@ -4037,26 +4392,31 @@ void display(void)
 								showdata1/=1000;
 								if(autostatus==state1)
 								{
-									if((read_dta_data/1000<=9.999)  && (read_dta_data>999.9))
+									if((showdata1<=9.999)  && (showdata1>0.999))
 										propershow=lcd_show_num(showdata1,1,1);
 									else
 									{
 										lcd_show_Line(1);
-										if(read_dta_data<=999.9)
+										if(showdata1<=0.999)
 											rangestatus--;
-										else if(read_dta_data/1000>9.999)
+										else if(showdata1>9.999)
 											rangestatus++;
 									}
 								}
 								else
 								{
-									if(read_dta_data/1000<=9.999)
+									if(showdata1<=9.999)
 									{
 										propershow=lcd_show_num(showdata1,1,1);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," KHz\r\n");
+								
 								lcd_write_1bit(0x02,0,ENABLE);//.亮
 							}break;
 							case state3://99.99kHz
@@ -4066,26 +4426,31 @@ void display(void)
 								showdata1/=1000;
 								if(autostatus==state1)
 								{
-									if((read_dta_data/1000<=99.99) && (read_dta_data/1000>9.999))
+									if((showdata1<=99.99) && (showdata1>9.999))
 										propershow=lcd_show_num(showdata1,1,2);
 									else
 									{
 										lcd_show_Line(1);
-										if(read_dta_data/1000<=9.999)
+										if(showdata1<=9.999)
 											rangestatus--;
-										else if(read_dta_data/1000>99.99)
+										else if(showdata1>99.99)
 											rangestatus++;
 									}
 								}
 								else
 								{
-									if(read_dta_data/1000<=99.99)
+									if(showdata1<=99.99)
 									{
 										propershow=lcd_show_num(showdata1,1,2);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.2f",showdata1);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," KHz\r\n");
+								
 								lcd_write_1bit(0x04,0,ENABLE);//.亮
 							}break;
 							case state4://999.9kHz
@@ -4095,26 +4460,31 @@ void display(void)
 								showdata1/=1000;
 								if(autostatus==state1)
 								{
-									if((read_dta_data/1000<=999.9) && (read_dta_data/1000>99.99))
+									if((showdata1<=999.9) && (showdata1>99.99))
 										propershow=lcd_show_num(showdata1,1,3);
 									else
 									{
 										lcd_show_Line(1);
-										if(read_dta_data/1000<=99.99)
+										if(showdata1<=99.99)
 											rangestatus--;
-										else if(read_dta_data/1000>999.9)
+										else if(showdata1>999.9)
 											rangestatus++;
 									}
 								}
 								else
 								{
-									if(read_dta_data/1000<=999.9)
+									if(showdata1<=999.9)
 									{
 										propershow=lcd_show_num(showdata1,1,3);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								//strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.1f",showdata1);
+								strcpy(Tstr,tempStr);	
+								strcat(Tstr," KHz\r\n");
+								
 								lcd_write_1bit(0x06,0,ENABLE);//.亮
 							}break;
 							case state5://9.999MHz
@@ -4122,31 +4492,36 @@ void display(void)
 								lcd_write_1bit(0x1B,1,DISABLE);//k(2)
 								lcd_write_1bit(0x1A,1,ENABLE);//M
 								showdata1/=1000;
-								showdata1/=1000;
+								showdata1/=1000;//......
 								if(autostatus==state1)
 								{
-									if((read_dta_data/1000/1000<=9.999) && (read_dta_data/1000>999.9))
+									if((showdata1<=9.999) && (showdata1>0.999))
 										propershow=lcd_show_num(showdata1,1,1);
 									else
 									{
-										if(read_dta_data/1000<=999.9)
+										if(showdata1<=0.999)
 										{
 											lcd_show_Line(1);
 											rangestatus--;
 										}
-										else if(read_dta_data/1000/1000>9.999)
+										else if(showdata1>9.999)
 											lcd_show_OL(1);
 									}
 								}
 								else
 								{
-									if(read_dta_data/1000/1000<=9.999)
+									if(showdata1<=9.999)
 									{
 										propershow=lcd_show_num(showdata1,1,1);
 									}
 									else
 										lcd_show_OL(1);
 								}
+								strcpy(Tstr,"M ");
+								sprintf(tempStr,"%.3f",showdata1);
+								strcat(Tstr,tempStr);	
+								strcat(Tstr," MHz\r\n");
+								
 								lcd_write_1bit(0x02,0,ENABLE);//.亮
 							}break;
 							default:break;
@@ -4157,6 +4532,10 @@ void display(void)
 						read_dta_data = receive_f1;//从DTA0660读取数据
 						showdata2=deal_1(read_dta_data,2);
 						propershow=lcd_show_num(showdata2,2,2);//占空比
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata2);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," %%\r\n");
 					}
 				}
 			}break;
@@ -4170,11 +4549,19 @@ void display(void)
 					//	BUZZER_Open(1);
 					//else BUZZER_Close();
 					if(showdata1<=600)
+					{
 						propershow=lcd_show_num(showdata1,1,3);
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," Ohm\r\n");
+					}
 					else 
 					{
 						lcd_show_OL(1);
 						lcd_write_1bit(0x06,0,ENABLE);//.亮
+							//strcpy(Tstr,"M ");					
+							strcat(Tstr," OL\r\n");
 					}
 				}
 				else if(funcstatus ==state1)//DIODE
@@ -4182,11 +4569,19 @@ void display(void)
 					read_dta_data = receive_f;//ReadDTAValue(ReadResult);//从DTA0660读取数据
 					showdata1=deal_1(read_dta_data,1);
 					if(showdata1<=3)
+					{
 						propershow=lcd_show_num(showdata1,1,1);
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," V_DIODE\r\n");
+					}						
 					else 
 					{
 						lcd_show_OL(1);
 						lcd_write_1bit(0x02,0,ENABLE);//.亮
+							//strcpy(Tstr,"M ");						
+							strcpy(Tstr," OL\r\n");
 					}
 				}
 			}break;
@@ -4197,8 +4592,8 @@ void display(void)
 					read_dta_data = receive_f;//ReadDTAValue(ReadResult);//从DTA0660读取数据
 					read_dta_data = (read_dta_data-SaveData.Value.Cal_ohm_zero[rangestatus])*SaveData.Value.Cal_ohm_gain[rangestatus];//20160802Lea 新增MCU内部校准
 					ohm_value = read_dta_data;//内部保存测量结果，用于校准和通讯
-					
 					showdata1=deal_1(read_dta_data,1);
+					
 					switch(rangestatus)
 					{
 						case state0://600.0Ω
@@ -4208,7 +4603,7 @@ void display(void)
 
 							if(autostatus==state1)//自动挡
 							{
-								if((RxBuffer[4] == 0) && (receive_data<=6200))
+								if((RxBuffer[4] == 0) && (showdata1<=6200))
 									lcd_show_dta_num(showdata1,1);
 								else
 								{
@@ -4219,13 +4614,18 @@ void display(void)
 							}
 							else//手动挡
 							{
-								if(receive_data<=6200)
+								if(showdata1<=6200)
 								{
 									lcd_show_dta_num(showdata1,1);
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1/10);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," Ohm\r\n");
+							
 							lcd_write_1bit(0x06,0,ENABLE);//.亮
 						}break;
 						case state1://6.000kΩ
@@ -4234,7 +4634,7 @@ void display(void)
 							lcd_write_1bit(0x1A,1,DISABLE);//M
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 1) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 1) && (showdata1<=6200) && (showdata1>=580))
 									lcd_show_dta_num(showdata1,1);
 								else
 								{
@@ -4247,13 +4647,18 @@ void display(void)
 							}
 							else
 							{
-								if(receive_data<=6200)
+								if(showdata1<=6200)
 								{
 									lcd_show_dta_num(showdata1,1);
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1/1000);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," KOhm\r\n");
+							
 							lcd_write_1bit(0x02,0,ENABLE);//.亮
 						}break;
 						case state2://60.00kΩ
@@ -4262,7 +4667,7 @@ void display(void)
 							lcd_write_1bit(0x1A,1,DISABLE);//M
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 2) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 2) && (showdata1<=6200) && (showdata1>=580))
 									lcd_show_dta_num(showdata1,1);
 								else
 								{
@@ -4275,13 +4680,18 @@ void display(void)
 							}
 							else
 							{
-								if(receive_data<=6200)
+								if(showdata1<=6200)
 								{
 									lcd_show_dta_num(showdata1,1);
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1/1000);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," KOhm\r\n");
+							
 							lcd_write_1bit(0x04,0,ENABLE);//.亮
 						}break;
 						case state3://600.0kΩ
@@ -4290,7 +4700,7 @@ void display(void)
 							lcd_write_1bit(0x1A,1,DISABLE);//M
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 3) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 3) && (showdata1<=6200) && (showdata1>=580))
 									lcd_show_dta_num(showdata1,1);
 								else
 								{
@@ -4303,13 +4713,18 @@ void display(void)
 							}
 							else
 							{
-								if(receive_data<=6200)
+								if(showdata1<=6200)
 								{
 									lcd_show_dta_num(showdata1,1);// *1.0101  做电阻软件教主测试 
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1/10);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," KOhm\r\n");
+							
 							lcd_write_1bit(0x06,0,ENABLE);//.亮
 						}break;
 						case state4://6.000MΩ
@@ -4318,7 +4733,7 @@ void display(void)
 							lcd_write_1bit(0x1A,1,ENABLE);//M
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 4) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 4) && (showdata1<=6200) && (showdata1>=580))
 									lcd_show_dta_num(showdata1,1);
 								else
 								{
@@ -4331,13 +4746,18 @@ void display(void)
 							}
 							else
 							{
-								if(receive_data<=6200)
+								if(showdata1<=6200)
 								{
 									lcd_show_dta_num(showdata1,1);
 								}
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1/1000);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," MOhm\r\n");
+							
 							lcd_write_1bit(0x02,0,ENABLE);//.亮
 						}break;
 						case state5://60.00MΩ
@@ -4346,7 +4766,7 @@ void display(void)
 							lcd_write_1bit(0x1A,1,ENABLE);//M
 							if(autostatus==state1)
 							{
-								if((RxBuffer[4] == 5) && (receive_data<=6200) && (receive_data>=580))
+								if((RxBuffer[4] == 5) && (showdata1<=6200) && (showdata1>=580))
 								{
 									lcd_show_dta_num(showdata1,1);
 								}
@@ -4363,7 +4783,7 @@ void display(void)
 							}
 							else
 							{
-								if(receive_data<=6200)
+								if(showdata1<=6200)
 								{
 									lcd_show_dta_num(showdata1,1);
 //									lcd_write_1bit(0x04,0,ENABLE);//.亮
@@ -4371,6 +4791,11 @@ void display(void)
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1/100);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," MOhm\r\n");
+							
 							lcd_write_1bit(0x04,0,ENABLE);//.亮
 						}break;
 						default:break;
@@ -4442,22 +4867,27 @@ void display(void)
 							lcd_write_1bit(0x19,2,DISABLE);//u灭
 							if(autostatus==state1)//自动挡
 							{
-								if(read_dta_data<=6.000)
+								if(showdata1<=6.000)
 									propershow=lcd_show_num(showdata1,1,1);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data>6.000)
+									if(showdata1>6.000)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data<=6.000)
+								if(showdata1<=6.000)
 									propershow=lcd_show_num(showdata1,1,1);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," nF\r\n");
+							
 							lcd_write_1bit(0x02,0,ENABLE);//.亮
 						}break;
 						case state1://60.00n
@@ -4467,24 +4897,29 @@ void display(void)
 							lcd_write_1bit(0x19,2,DISABLE);//u灭
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data<=60.00) && (read_dta_data>6.000))
+								if((showdata1<=60.00) && (showdata1>6.000))
 									propershow=lcd_show_num(showdata1,1,2);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data<=6.000)
+									if(showdata1<=6.000)
 										rangestatus--;
-									else if(read_dta_data>60.00)
+									else if(showdata1>60.00)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data<=60.00)
+								if(showdata1<=60.00)
 									propershow=lcd_show_num(showdata1,1,2);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," nF\r\n");
+							
 							lcd_write_1bit(0x04,0,ENABLE);//.亮
 						}break;
 						case state2://600.0n
@@ -4494,24 +4929,29 @@ void display(void)
 							lcd_write_1bit(0x19,2,DISABLE);//u灭
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data<=600.0) && (read_dta_data>60.00))
+								if((showdata1<=600.0) && (showdata1>60.00))
 									propershow=lcd_show_num(showdata1,1,3);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data<=60.00)
+									if(showdata1<=60.00)
 										rangestatus--;
-									else if(read_dta_data>600.0)
+									else if(showdata1>600.0)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data<=600.0)
+								if(showdata1<=600.0)
 									propershow=lcd_show_num(showdata1,1,3);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," nF\r\n");
+							
 							lcd_write_1bit(0x06,0,ENABLE);//.亮
 						}break;
 						case state3://6.000u
@@ -4522,24 +4962,29 @@ void display(void)
 							showdata1/=1000;
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data/1000<=6.000) && (read_dta_data>600.0))
+								if((showdata1<=6.000) && (showdata1>0.6))
 									propershow=lcd_show_num(showdata1,1,1);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data<=600.0)
+									if(showdata1<=0.6)
 										rangestatus--;
-									else if(read_dta_data/1000>6.000)
+									else if(showdata1>6.000)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data/1000<=6.000)
+								if(showdata1<=6.000)
 									propershow=lcd_show_num(showdata1,1,1);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," uF\r\n");
+							
 							lcd_write_1bit(0x02,0,ENABLE);//.亮
 						}break;
 						case state4://60.00u
@@ -4550,24 +4995,29 @@ void display(void)
 							showdata1/=1000;
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data/1000<=60.00) && (read_dta_data/1000>6.000))
+								if((showdata1<=60.00) && (showdata1>6.000))
 									propershow=lcd_show_num(showdata1,1,2);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data/1000<=6.000)
+									if(showdata1<=6.000)
 										rangestatus--;
-									else if(read_dta_data/1000>60.00)
+									else if(showdata1)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data/1000<=60.00)
+								if(showdata1<=60.00)
 									propershow=lcd_show_num(showdata1,1,2);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," uF\r\n");
+							
 							lcd_write_1bit(0x04,0,ENABLE);//.亮
 						}break;
 						case state5://600.0u
@@ -4578,24 +5028,29 @@ void display(void)
 							showdata1/=1000;
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data/1000<=600.0)  && (read_dta_data/1000>60.00))
+								if((showdata1<=600.0)  && (showdata1>60.00))
 									propershow=lcd_show_num(showdata1,1,3);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data/1000<=60.00)
+									if(showdata1<=60.00)
 										rangestatus--;
-									else if(read_dta_data/1000>600.0)
+									else if(showdata1>600.0)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data/1000<=600.0)
+								if(showdata1<=600.0)
 									propershow=lcd_show_num(showdata1,1,3);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.1f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," uF\r\n");
+							
 							lcd_write_1bit(0x06,0,ENABLE);//.亮
 						}break;
 						case state6://6.000m
@@ -4607,24 +5062,29 @@ void display(void)
 							showdata1/=1000;
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data/1000/1000<=6.000) && (read_dta_data/1000>600.0))
+								if((showdata1<=6.000) && (showdata1>0.6))
 									propershow=lcd_show_num(showdata1,1,1);
 								else
 								{
 									lcd_show_Line(1);
-									if(read_dta_data/1000<=600.0)
+									if(showdata1<=0.6)
 										rangestatus--;
-									else if(read_dta_data/1000/1000>6.000)
+									else if(showdata1>6.000)
 										rangestatus++;
 								}
 							}
 							else//手动挡
 							{
-								if(read_dta_data/1000/1000<=6.000)
+								if(showdata1<=6.000)
 									propershow=lcd_show_num(showdata1,1,1);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.3f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," mF\r\n");
+							
 							lcd_write_1bit(0x02,0,ENABLE);//.亮
 						}break;
 						case state7://60.00m
@@ -4636,11 +5096,11 @@ void display(void)
 							showdata1/=1000;
 							if(autostatus==state1)//自动挡
 							{
-								if((read_dta_data/1000/1000<=60.00) && (read_dta_data/1000/1000>=6.000))
+								if((showdata1<=60.00) && (showdata1>=6.000))
 									propershow=lcd_show_num(showdata1,1,2);
 								else
 								{
-									if(read_dta_data/1000/1000<=6.000)
+									if(showdata1<=6.000)
 									{
 										lcd_show_Line(1);
 										rangestatus--;
@@ -4651,11 +5111,16 @@ void display(void)
 							}
 							else//手动挡
 							{
-								if(read_dta_data/1000/1000<=60.00)
+								if(showdata1<=60.00)
 									propershow=lcd_show_num(showdata1,1,2);
 								else
 									lcd_show_OL(1);
 							}
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," uF\r\n");
+							
 							lcd_write_1bit(0x04,0,ENABLE);//.亮
 						}break;
 						default:break;
@@ -4666,9 +5131,17 @@ void display(void)
 					read_dta_data = receive_f;//ReadDTAValue(ReadResult);//从DTA0660读取数据
 					showdata1=deal_1(read_dta_data,2);
 					propershow=lcd_show_num(showdata1,2,2);
-					if(propershow==0)
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," C\r\n");
+					if(propershow==0)//防止超过位数。
 					{
 						propershow=lcd_show_num(showdata1,2,3);
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," C\r\n");
 					}
 				}
 				else if(funcstatus ==state3)//Temp(F)
@@ -4676,9 +5149,17 @@ void display(void)
 					read_dta_data = receive_f;//ReadDTAValue(ReadResult)*1.8+32;;//从DTA0660读取数据
 					showdata1=deal_1(read_dta_data,2);
 					propershow=lcd_show_num(showdata1,2,2);
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," F\r\n");
 					if(propershow==0)
 					{
 						propershow=lcd_show_num(showdata1,2,3);
+							//strcpy(Tstr,"M ");
+							sprintf(tempStr,"%.2f",showdata1);
+							strcpy(Tstr,tempStr);	
+							strcat(Tstr," F\r\n");
 					}
 				}
 			}break;

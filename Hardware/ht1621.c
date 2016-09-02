@@ -715,7 +715,7 @@ void lcd_show_dta_num(float data,u8 n)
 			case 9:show_buf[i]|=char_tab[9];break;
 			default:break;
 		}
-	}
+	} 
 	
 	if(data>9999)
 		lcd_show_OL(n);

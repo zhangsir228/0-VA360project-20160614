@@ -112,7 +112,7 @@ float voltage_mean,current_mean;
 float voltage_mean_temp ,current_mean_temp;//20160616 新增用于电压电流平均值的滤波
 
 float voltage_effective_tab[20]={0},current_effective_tab[20]={0},active_power_tab[20]={0}; //2016-07-25 lea  换用窗口滤波 加快数值更新速度 
-float voltage_mean_tab[20]={0},current_mean_tab[20]={0};
+float voltage_mean_tab[64]={0},current_mean_tab[64]={0};
 char  Window_num=10;//窗口滤波大小;
 
 
@@ -175,22 +175,17 @@ void dealwith_information(void)
 						if(Sysflag.Calonce==1)//校准模式
 						{
 							Sysflag.Calonce	=0;
-							temp_mean=0;
-							for(Tloop=0;Tloop<datasize;Tloop++)
+		
+							if(voltage_mean<2)//零点
 							{
-								temp_mean+=(int16_t)(RAMsave.K4_tab.InjectedConvData[Tloop]&0xFFFF);
-							}
-							temp_mean=temp_mean/datasize;					
-							
-							if(temp_mean<2000)//零点
-							{
-								SaveData.Value.cal_6VD_zero=temp_mean;
+								SaveData.Value.cal_6VD_zero=voltage_mean/SaveData.Value.cal_6VD_gain+SaveData.Value.cal_6VD_zero;
 								sprintf(chardata, "set 6VD_zero %.4f", SaveData.Value.cal_6VD_zero);
-								printf(chardata); updata_flash();
+								printf(chardata); 
+								updata_flash();
 							}							
 							else//增益
 							{
-								SaveData.Value.cal_6VD_gain=5.0f/(temp_mean-SaveData.Value.cal_6VD_zero);
+								SaveData.Value.cal_6VD_gain=5.0f/(voltage_mean/SaveData.Value.cal_6VD_gain);
 								sprintf(chardata, "set 6VD_gain %.4f", SaveData.Value.cal_6VD_gain);
 								printf(chardata); 
 								updata_flash();
@@ -203,22 +198,17 @@ void dealwith_information(void)
 						if(Sysflag.Calonce==1)//校准模式
 						{
 							Sysflag.Calonce	=0;
-							temp_mean=0;
-							for(Tloop=0;Tloop<datasize;Tloop++)
+							
+							if(voltage_mean<20)//零点
 							{
-								temp_mean+=(int16_t)(RAMsave.K4_tab.InjectedConvData[Tloop]&0xFFFF);
-							}
-							temp_mean=temp_mean/datasize;					
-									
-							if(temp_mean<2000)//零点
-							{
-								SaveData.Value.cal_60VD_zero=temp_mean;
+								SaveData.Value.cal_60VD_zero=voltage_mean/SaveData.Value.cal_60VD_gain+SaveData.Value.cal_60VD_zero;
 								sprintf(chardata, "set 60VD_zero %.4f", SaveData.Value.cal_60VD_zero);
 								printf(chardata); updata_flash();
 							}							
 							else//增益
 							{
-								SaveData.Value.cal_60VD_gain=50.0f/(temp_mean-SaveData.Value.cal_60VD_zero);
+								
+								SaveData.Value.cal_60VD_gain=50.0f/(voltage_mean/SaveData.Value.cal_60VD_gain);
 								sprintf(chardata, "set 60VD_gain %.4f", SaveData.Value.cal_60VD_gain);
 								printf(chardata); 
 								updata_flash();
@@ -232,22 +222,16 @@ void dealwith_information(void)
 						if(Sysflag.Calonce==1)//校准模式
 						{
 							Sysflag.Calonce	=0;
-							temp_mean=0;
-							for(Tloop=0;Tloop<datasize;Tloop++)
+						
+							if(voltage_mean<200)//零点
 							{
-								temp_mean+=(int16_t)(RAMsave.K4_tab.InjectedConvData[Tloop]&0xFFFF);
-							}
-							temp_mean=temp_mean/datasize;					
-									
-							if(temp_mean<2000)//零点
-							{
-								SaveData.Value.cal_600VD_zero=temp_mean;
+								SaveData.Value.cal_600VD_zero=voltage_mean/SaveData.Value.cal_600VD_gain+SaveData.Value.cal_600VD_zero;
 								sprintf(chardata, "set 600VD_zero %.4f", SaveData.Value.cal_600VD_zero);
 								printf(chardata);updata_flash(); 
 							}							
 							else//增益
 							{
-								SaveData.Value.cal_600VD_gain=500.0f/(temp_mean-SaveData.Value.cal_600VD_zero);
+								SaveData.Value.cal_600VD_gain=500.0f/(voltage_mean/SaveData.Value.cal_600VD_gain);
 								sprintf(chardata, "set 600VD_gain %.4f", SaveData.Value.cal_600VD_gain);
 								printf(chardata); 
 								updata_flash();
@@ -354,8 +338,8 @@ void dealwith_information(void)
 		current_mean = current_mean_sum / datasize;
 		
 		//窗口滤波电流平均值
-		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num);
-		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num);
+		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num+10);
+		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num+10);
 
 		
 		//电压、电流、功率有效值计算，再算另一部分——求均、开根（V/A）、求均（W）
@@ -373,8 +357,9 @@ void dealwith_information(void)
 //		current_effective_sum += current_temp;
 //		active_power_sum += power_temp;		
 
-		if(SaveData.Value.cal_adjv==0)//
-		{//0 校准模式下电流校正显示 
+		if(SaveData.Value.cal_adjv==0)//在上面电流非校准模式下已经会做校正了，这里是为了
+		{															//在校准模式下修改这个值为0，可以看到当前的校准效果，正常运行时该值为1
+			//0 校准模式下电流校正显示 
 			current_mean = Adj_Nline(current_mean);
 		}
 		
@@ -639,17 +624,21 @@ void FFT(void)
 //					printf("V=%2.5f V  ,  ", RAMsave.K4_tab.Output[ii]);
 //					printf("Phase=%2.5f 度  ，  ", phase_angle[ii]);
 //					printf("THD=%2.5f(百分数) \r\n\r\n", THD[ii]*100);
+					
+//					printf("%d----Fhz=%2.2f  V=%2.5f V  ,  ,  Phase=%2.5f 度  ，  THD=%2.5f(百分数) \r\n\r\n",ii, \
+//												temp_frequency,RAMsave.K4_tab.Output[ii],phase_angle[ii],THD[ii]*100);
 				}
 			}
 		}
 	}
 
+	
 /*******************************************电流FFT******************************************************/	
 	if(((RotaryKeyValue==KEY_VALUE_6) && (paramstatus != state0)) || ((RotaryKeyValue==KEY_VALUE_7) && (paramstatus == state1)))//if(pause_flag==0 && af_flag==0)
 	{
 		for(ii=0;ii<fftSize;ii++)
 		{
-			RAMsave.Input[2*ii] = 0.0f+ (float)SDADC2_value[ii];					//手动添加了一个数值为10的直流分量
+			RAMsave.Input[2*ii] = 0.0f+ (float)SDADC2_value[ii];					//X手动添加了一个数值为10的直流分量
 			RAMsave.Input[2*ii+1] = 0;
 		}
 		arm_cfft_radix4_f32(&S,RAMsave.Input);
@@ -847,7 +836,7 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 	
 	if(Data_tab==current_mean_tab)//电流滤波的容许误差放大一点
 	 {
-		if(fabs(New_Data-Data_tab[0])>fabs(Data_tab[0]*0.2))//若偏差值较大则填充滤波寄存器
+		if(fabs(New_Data-Data_tab[num-1]) > 1/*fabs(Data_tab[num-1]*0.08)*/)//若偏差值较大则填充滤波寄存器
 		{
 			for(i=0;i<num;i++)
 			{
@@ -865,7 +854,7 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 	}
 	else
 	{
-		if(fabs(New_Data-Data_tab[0])>fabs(Data_tab[0]*0.01))//若偏差值较大则填充滤波寄存器
+		if(fabs(New_Data-Data_tab[num-1]) > (0.01*pow(10,rangenum))/*fabs(Data_tab[num-1]*0.02)*/)//若偏差值超过当前档位的两个字。
 		{
 			for(i=0;i<num;i++)
 			{

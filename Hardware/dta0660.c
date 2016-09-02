@@ -163,7 +163,7 @@ void DTA0660_Init(void)
 	
 	ClrCS//将CS置为低电平
 	while(Read_RDY() != RESET);//等待RDY为低电平
-	delay_ms(200);/*delay_ms(1000);*///2015-3-29：等待DTA将上电初始化数据发过来，以免造成后面数据接收混乱
+	delay_ms(500);/*delay_ms(1000);*///2015-3-29：等待DTA将上电初始化数据发过来，以免造成后面数据接收混乱
 }
 
 /****************************************************************************
@@ -347,7 +347,7 @@ float ReadDTAValue(u8 command)
 				temp= (float)receive_data* positive_negative;
 			}
 			
-			else if(funcnum==DCVmV)//已验证
+			else if(funcnum==DCVmV)//已验证  20160826出来的时MV*10的数值
 			{//2015-7-7：删掉多余的
 				temp= (float)receive_data* positive_negative;
 			}
@@ -366,17 +366,6 @@ float ReadDTAValue(u8 command)
 			else if(funcnum==Ohm)//已验证10-4，输出数据单位：欧姆
 			{
 				temp= receive_data;
-//				if(RxBuffer[4]==0)
-//					temp= temp/ 10;
-//				else if(RxBuffer[4]==1);
-//				else if(RxBuffer[4]==2)
-//					temp= temp* 10;
-//				else if(RxBuffer[4]==3)
-//					temp= temp* 100;
-//				else if(RxBuffer[4]==4)
-//					temp= temp* 1000;
-//				else if(RxBuffer[4]==5)
-//					temp= temp* 10000;
 			}
 			else if(funcnum==Cont)//已验证10-4，输出数据单位：欧姆
 			{

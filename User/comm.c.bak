@@ -8,6 +8,8 @@
 #include "dta0660.h"
 #include "buzzer_led.h"
 #include "stm32f37x_lp_modes.h"
+#include "powercontrol.h"
+#include "userVAinteraction.h"
 
 #define name_to_str(data)  (#data)
 
@@ -18,10 +20,13 @@ extern uint8_t 	Rx2Buffer[];
 extern uint8_t	Rx2Counter;
 extern uint8_t 	Flag_Rx2End;
 
-
+extern void display_bt_state(void);/*显示bluetooth状态*/
 
 char tempR[50],tempS[50],tempT[50],tempU[50],tempV[50],tempW[50];
 
+uint8_t IsReading = 0;//是否在持续读取模式下
+uint8_t T2s = 0;	//两秒间隔连续输出标志
+char     Tstr[128] = {0};//待发送数组  在userVAinteraction中根据显示部分填充。
 
 typedef struct
 {
@@ -52,7 +57,7 @@ const char *CMDmap1[50]={
 					"dta_eeprom_write", //27初始化DTA配置参数
 					"sleep",			//28 进入休眠模式
 					"dta0660_poweroff",//29  DTA0660待机
-					"",	
+					"bt_pwr",//30 控制蓝牙开关	
 	
 			};
 
@@ -68,49 +73,49 @@ const char *CMDmap2[100]={
           "end",			"end",//16 结束读取命令
           "run",			"run",//18
           "state",		"state",//20 program_out数组当前状态
-			"goon",			"goon",		//22 持续读取命令
-			"cel",      "c",		//24
-			"fah",      "f",		//26
-			"mv",				"mv",		//28
-			"v",				"v",		//30
-			"ma",				"ma",		//32
-			"tck",			"tck",//34
-			"tcj",			"tcj",//36
-			"tct",			"tct",//38
-			"tce",			"tce",//40
-			"tcr",			"tcr",//42
-			"tcs",			"tcs",//44
-			"tcb",			"tcb",//46
-			"tcn",			"tcn",//48
-			"initialflash",			"tcx",//50  51没用
-			
-			"fact",			"model",//52生产工厂 53型号  
-			"sn",				"ver",//54序列号  55版本号  
-			"calmode",	"normode",//56校准模式  57正常模式
-			"setkey",			"tcx",//58置位一次按键值
-			"cal_600a_zero","cal_600a_gain",//60  	//61
-			"y0","sdadc1",	//62	//63
-			"cal_6va_zero",		"cal_6va_gain",		//64	//65
-			"cal_60va_zero",	"cal_60va_gain",	//66	//67
-			"cal_600va_zero",	"cal_600va_gain",	//68	//69						
-			"cal_6vd_zero",		"cal_6vd_gain",			//70	//71 直流校准测试  6VDC档
-			"cal_60vd_zero",	"cal_60vd_gain",		//72	//73
-			"cal_600vd_zero",	"cal_600vd_gain",		//74	//75
-			"cal_a_err",			//76 在对应电流A处校正偏差值 cal_A_errN    
-			"cal_a_zero",			//77  在对应电流处校正零点偏差值	
-			"cal_a_gain",			//78	在某个较大电流时校准线性段的增益
-			"cal1800a",				//79	设置在DC1800A处的电压值为大电流校准电压起始点
-			"cal_adjv",				//80
-			"daout",								//81 设置DAC输出电压
-			"up",								//82 向上校准DTA电压
-			"down",								//83 向下校准DTA电压
-			"five",								//84
-			"sdadc2",								//85
-			"",								//86
-			"",								//87
-			"",								//88
-			"",								//89
-			"",								//90
+					"goon",			"goon",		//22 持续读取命令
+					"cel",      "c",		//24
+					"fah",      "f",		//26
+					"mv",				"mv",		//28
+					"v",				"v",		//30
+					"ma",				"ma",		//32
+					"tck",			"tck",//34
+					"tcj",			"tcj",//36
+					"tct",			"tct",//38
+					"tce",			"tce",//40
+					"tcr",			"tcr",//42
+					"tcs",			"tcs",//44
+					"tcb",			"tcb",//46
+					"tcn",			"tcn",//48
+					"initialflash",			"tcx",//50 初始化校准参数  51没用
+					
+					"fact",						"model",//52生产工厂 53型号  
+					"sn",							"ver",//54序列号  55版本号  
+					"calmode",				"normode",//56校准模式  57正常模式
+					"setkey",					"tcx",//58置位一次按键值
+					"cal_600a_zero",	"cal_600a_gain",//60  	//61
+					"y0","sdadc1",								//62	//63
+					"cal_6va_zero",		"cal_6va_gain",		//64	//65
+					"cal_60va_zero",	"cal_60va_gain",	//66	//67
+					"cal_600va_zero",	"cal_600va_gain",	//68	//69						
+					"cal_6vd_zero",		"cal_6vd_gain",			//70	//71 直流校准测试  6VDC档
+					"cal_60vd_zero",	"cal_60vd_gain",		//72	//73
+					"cal_600vd_zero",	"cal_600vd_gain",		//74	//75
+					"cal_a_err",			//76 在对应电流A处校正偏差值 cal_A_errN    
+					"cal_a_zero",			//77  在对应电流处校正零点偏差值	
+					"cal_a_gain",			//78	在某个较大电流时校准线性段的增益
+					"cal1800a",				//79	设置在DC1800A处的电压值为大电流校准电压起始点
+					"cal_adjv",				//80
+					"daout",					//81 设置DAC输出电压
+					"up",							//82 向上校准DTA电压
+					"down",						//83 向下校准DTA电压
+					"five",						//84
+					"sdadc2",					//85
+					"",								//86
+					"",								//87
+					"",								//88
+					"",								//89
+					"",								//90
 		 };
 
 const char *CMDmap3[]={
@@ -362,7 +367,7 @@ void Communicate(void)
 	 Rx2Counter=Rx2Counter-Buf_temp_count;
 	 i=0;j=0;
     while((((Rx2Buffer[0]<0x20)||(Rx2Buffer[0]>0x7d)))&&(Rx2Counter>0))
-	{
+		{
 	  for(i=0;i<Rx2Counter;i++)
 	  {Rx2Buffer[i]=Rx2Buffer[i+1];}
 	  Rx2Counter--;
@@ -595,22 +600,24 @@ void Communicate(void)
 		{
 			switch(tempT1)
 			{
-				case 0xfe:
-				{
-					for(i=0;i<1024;i++)
-					{				
-						printf("%.4f\r\n",(float)(SDADC2_value[i]));
-					}
+				case -1://输出当前显示值
+				{				
+					strcat(str,Tstr);//
+
 					break;
 				}
-				case 85://SDADC2
+				case 16://16 结束读取命令
 				{
-					for(i=0;i<1024;i++)
-					{				
-						printf("%.4f\r\n",(float)(SDADC2_value[i]));
-					}
+					IsReading = 0;
 					break;
 				}
+				
+				case 22://22 持续读取命令
+				{
+					IsReading = 1;
+					break;
+				}
+				
 				
 				case 63://SDADC1
 				{
@@ -620,27 +627,16 @@ void Communicate(void)
 					}
 					break;
 				}
-					//SaveData.Value.cal_A_a1=0.000640519;
-					//SaveData.Value.cal_A_t1=1484.56402;
-					//SaveData.Value.cal_A_y0=64.17008;
-				case 60://				"a1"//60
+				
+				case 85://SDADC2
 				{
-					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_a1);
-					//strcat(str,chardata);
+					for(i=0;i<1024;i++)
+					{				
+						printf("%.4f\r\n",(float)(SDADC2_value[i]));
+					}
 					break;
 				}
-				case 61://					"t1"//61
-				{
-					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_t1);
-					//strcat(str,chardata);
-					break;
-				}
-				case 62://					"y0"//62
-				{
-					//sprintf(chardata, " %.10f", SaveData.Value.cal_A_y0);
-					//strcat(str,chardata);
-					break;
-				}
+				
 				default:	break;	
 			}
 			break;
@@ -836,7 +832,7 @@ void Communicate(void)
 			//		"sn",				"ver",//54序列号  55版本号  
 			switch(tempT1)
 			{
-				case 50:
+				case 50://initialflash
 				{//初始化Flash中保存的参数，防止由于以外出错用户无法恢复。
 					if(tempR[0]==0x31) //指令格式   fact:initialflash 1
 					{
@@ -1027,10 +1023,29 @@ void Communicate(void)
 		}
 		case 29://DTA0660待机
 		{
-			Send(command,command);		
+			Send(PowerOff,PowerOff);		
 			break;
 		}
-		
+		case 30://30 控制蓝牙开关	"bt_pwr",
+		{
+			CMD_analyze_R(tempR); 
+			input_data=tp.numb_f[0];
+			
+			if(input_data == 1)
+			{
+				btstatus = state1;
+				Power_On_Bt();
+				strcat(str,"Power_On_Bt!");
+			}
+			else
+			{
+				btstatus = state0;
+				Power_Off_Bt();
+				strcat(str,"Power_Off_Bt!");
+			}
+			display_bt_state();//显示蓝牙符号
+			break;
+		}
 		default:break;
 
 	}
@@ -1048,31 +1063,45 @@ void Communication_Service()
 	uint8_t temp_nm[12];
 	uint8_t i=0,j=0;
 	
+	
+	
 	if(Flag_Rx2End)
 	{
 		Flag_Rx2End=0;
 		Communicate(); 		
 	}
 	
-//	if(T05_4>=2)//此处为数据输出间隔 0.5*4=2S
-//	{
-//		T05_4=0;
-//			
-//			strcat(Ostr,"\r\n");
-//			Uart_send_string(Ostr);
-//			
-//			
-//		}
-//	}
+	if(T2s>=2)//此处为数据输出间隔 0.5*4=2S
+	{
+		T2s=0;
+		if(IsReading==1)//若允许持续输出
+		{
+			if(Tstr[0] != 0x00)
+			{
+				printf(Tstr);	
+				strcpy(Tstr,"\0");
+			}
+			
+		}
+	}
 	
 }
 
 
-//主要用于DTA的校准指令
-void DTA_CAL(void)
+
+
+//串口输出 
+//将待输出字符串整合到数组中
+void BT_format(float data,char* danwei,char* str)
 {
-	
+	sprintf(str,"%.4",data);
+	strcat(str," ");
+	strcat(str,danwei);
+
+	//strcat(str,"10.1 mv");
+
 }
+
 
 
 

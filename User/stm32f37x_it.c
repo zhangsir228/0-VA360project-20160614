@@ -73,6 +73,8 @@ extern  uint32_t CCR4_Val;//TIM58 周期定时脉冲个数
 
 extern uint8_t VadENA;
 
+extern uint8_t T2s;	//两秒间隔连续输出标志
+
 u8 dta_temp=0,cs_temp=0;
 
 u8 rdy;
@@ -307,10 +309,8 @@ void TIM5_IRQHandler(void)
 				VadENA=1;
 				TIM_Cmd(TIM19, ENABLE);
 				//printf("*converting!*\r\n");
-			}
-				
+			}			
 		}
-
 	}
 		
 
@@ -514,6 +514,7 @@ void TIM12_IRQHandler(void)
     TIM_ClearITPendingBit(TIM12, TIM_IT_Update);
 		powertimer++;
 		powertimer_1s_flag=1;
+	
 	}
 }
 
@@ -533,6 +534,7 @@ void TIM13_IRQHandler(void)
   {
     TIM_ClearITPendingBit(TIM13, TIM_IT_Update);
 		timer_1s_flag_for_Standby=1;
+		T2s++;//两秒蓝牙输出标志
 	}
 }
 
@@ -546,7 +548,7 @@ void TIM4_IRQHandler(void)
 		Rx2Reset--;if(Rx2Reset<=0){Rx2Reset=0;Rx2Counter=0;}//用于无通信时重置接收计数器
 		if(longshort==0)
 		{
-			if(buzzer_counter<500)
+			if(buzzer_counter<200)
 			{
 				BUZZER_Toggle();
 				buzzer_counter++;

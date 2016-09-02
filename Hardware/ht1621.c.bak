@@ -768,4 +768,9 @@ void lcd_show_____(u8 n)
 	u8 show_buf[4]={g,g,g,g};
 	lcd_show_data(show_buf,n);
 }
+void lcd_show_Cal(u8 n)
+{
+	u8 show_buf[3]={CC,AA,LL};
+	lcd_show_data(show_buf,n);
+}
 /***************************************************end file*************************************************/

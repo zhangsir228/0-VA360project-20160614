@@ -59,7 +59,7 @@ void TIM19_Config(void)
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; 
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;                
 //  TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Disable;                  
-  TIM_OCInitStructure.TIM_Pulse = SystemCoreClock/100/SAMPLING_FREQ/2;	//保证从0向上计数时，在TIM_Period/2处产生一个上升沿,保证在定时器频率下，
+  TIM_OCInitStructure.TIM_Pulse = SystemCoreClock/(15+1)/SAMPLING_FREQ/2;	//保证从0向上计数时，在TIM_Period/2处产生一个上升沿,保证在定时器频率下，
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;        			//每个周期触发SDADC一次，触发频率为SAMPLING_FREQ
   TIM_OC2Init(TIM19, &TIM_OCInitStructure);
 	
@@ -96,8 +96,8 @@ u8 SDADC1_Config(void)
 //	PWR_SDADCAnalogCmd(PWR_SDADCAnalog_3, ENABLE);
   
   /* Set the SDADC divider: The SDADC should run @6MHz */
-  /* If Sysclk is 72MHz, SDADC divider should be 12 */
-  RCC_SDADCCLKConfig(RCC_SDADCCLK_SYSCLK_Div12);
+  /* If Sysclk is 72MHz, SDADC divider should be 12 *///若修改主频（24M/4=6M） 这里的分频也要修改，不要忘记！！！！
+  RCC_SDADCCLKConfig(RCC_SDADCCLK_SYSCLK_Div4/*RCC_SDADCCLK_SYSCLK_Div12*/);
 	
 	/* GPIOE/B Peripheral clock enable */
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOA, ENABLE);
@@ -283,7 +283,7 @@ void SDADC2_Gain(uint32_t SDADC2_Gain)
 	SDADC_InjectedSynchroSDADC1(SDADC2,ENABLE);
 	SDADC_FastConversionCmd(SDADC2,ENABLE);
 	
-	DMA_ClearITPendingBit(DMA2_IT_GL3);//清空DMA中断			
+	//DMA_ClearITPendingBit(DMA2_IT_GL3);//清空DMA中断			
 	
 	SDADC_InitModeCmd(SDADC2, DISABLE);
 	
