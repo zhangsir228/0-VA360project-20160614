@@ -23,7 +23,7 @@
 const boolean  DAT=1;	//Ğ´Êı¾İ
 const boolean  COM=0;	//Ğ´ÃüÁî
 
-#define ht1621_delay	delay_us(10);
+#define ht1621_delay	delay_us(2);//delay_us(10)
 
 //float abs(float __x);
 

@@ -113,7 +113,7 @@ float voltage_mean_temp ,current_mean_temp;//20160616 新增用于电压电流平均值的滤
 
 float voltage_effective_tab[20]={0},current_effective_tab[20]={0},active_power_tab[20]={0}; //2016-07-25 lea  换用窗口滤波 加快数值更新速度 
 float voltage_mean_tab[64]={0},current_mean_tab[64]={0};
-char  Window_num=10;//窗口滤波大小;
+char  Window_num=20;//窗口滤波大小;
 
 
 u8 timer_1s_blink;
@@ -122,6 +122,22 @@ float kWh_sum,kVAh_sum,kVarh_sum,KgCO2_sum;
 uint8_t VadENA=0;
 
 float testAdjV=0;
+
+//快速排序测试数组
+float PXtest[10] = 
+		{
+			1.1,
+			5.6,
+			6.7,
+			2.3,
+			4.8,
+			9.7,
+			2.8,
+			1.7,
+			2.4,
+			7.8,	
+		};
+
 
 float Current_multiplication=2.0f/0.6f;
 void dealwith_information(void)
@@ -172,11 +188,9 @@ void dealwith_information(void)
 				{					
 					if(rangenum ==0)
 					{
-						if(Sysflag.Calonce==1)//校准模式
+						if(Sysflag.Calonce>0)//校准模式
 						{
-							Sysflag.Calonce	=0;
-		
-							if(voltage_mean<2)//零点
+							if(Sysflag.Calonce==1)//零点
 							{
 								SaveData.Value.cal_6VD_zero=voltage_mean/SaveData.Value.cal_6VD_gain+SaveData.Value.cal_6VD_zero;
 								sprintf(chardata, "set 6VD_zero %.4f", SaveData.Value.cal_6VD_zero);
@@ -186,20 +200,20 @@ void dealwith_information(void)
 							else//增益
 							{
 								SaveData.Value.cal_6VD_gain=5.0f/(voltage_mean/SaveData.Value.cal_6VD_gain);
-								sprintf(chardata, "set 6VD_gain %.4f", SaveData.Value.cal_6VD_gain);
+								if(SaveData.Value.cal_6VD_gain<0)SaveData.Value.cal_6VD_gain=1;
+								sprintf(chardata, "set 6VD_gain %.4f", SaveData.Value.cal_6VD_gain);								
 								printf(chardata); 
 								updata_flash();
 							}
+							Sysflag.Calonce	=0;
 						}					
 						SDADC1_value[t]=(float)((SDADC1_value[t]-SaveData.Value.cal_6VD_zero)*SaveData.Value.cal_6VD_gain);	//						
 					}
 					else if(rangenum ==1)
 					{
-						if(Sysflag.Calonce==1)//校准模式
-						{
-							Sysflag.Calonce	=0;
-							
-							if(voltage_mean<20)//零点
+						if(Sysflag.Calonce > 0)//校准模式
+						{						
+							if(Sysflag.Calonce==1)//零点
 							{
 								SaveData.Value.cal_60VD_zero=voltage_mean/SaveData.Value.cal_60VD_gain+SaveData.Value.cal_60VD_zero;
 								sprintf(chardata, "set 60VD_zero %.4f", SaveData.Value.cal_60VD_zero);
@@ -212,18 +226,17 @@ void dealwith_information(void)
 								sprintf(chardata, "set 60VD_gain %.4f", SaveData.Value.cal_60VD_gain);
 								printf(chardata); 
 								updata_flash();
-							}					
+							}			
+							Sysflag.Calonce	=0;		
 						}
 						
 						SDADC1_value[t]=(float)((SDADC1_value[t]-SaveData.Value.cal_60VD_zero)*SaveData.Value.cal_60VD_gain);							
 					}
 					else if(rangenum ==2)
 					{
-						if(Sysflag.Calonce==1)//校准模式
+						if(Sysflag.Calonce > 0)//校准模式
 						{
-							Sysflag.Calonce	=0;
-						
-							if(voltage_mean<200)//零点
+							if(Sysflag.Calonce==1)//零点
 							{
 								SaveData.Value.cal_600VD_zero=voltage_mean/SaveData.Value.cal_600VD_gain+SaveData.Value.cal_600VD_zero;
 								sprintf(chardata, "set 600VD_zero %.4f", SaveData.Value.cal_600VD_zero);
@@ -235,7 +248,8 @@ void dealwith_information(void)
 								sprintf(chardata, "set 600VD_gain %.4f", SaveData.Value.cal_600VD_gain);
 								printf(chardata); 
 								updata_flash();
-							}					
+							}	
+							Sysflag.Calonce	=0;							
 						}
 						
 						SDADC1_value[t]=(float)((SDADC1_value[t]-SaveData.Value.cal_600VD_zero)*SaveData.Value.cal_600VD_gain);							
@@ -338,8 +352,8 @@ void dealwith_information(void)
 		current_mean = current_mean_sum / datasize;
 		
 		//窗口滤波电流平均值
-		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num+10);
-		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num+10);
+		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num+20);
+		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num+20);
 
 		
 		//电压、电流、功率有效值计算，再算另一部分——求均、开根（V/A）、求均（W）
@@ -363,7 +377,7 @@ void dealwith_information(void)
 			current_mean = Adj_Nline(current_mean);
 		}
 		
-		count=5;
+		count=5;//原来为多次测量后计算一次取平均值，换到统一函数做窗口滤波。
 		//count++;
 		//计数addcount后，已经得到经过均值滤波后的电压和电流有效值、有功功率
 		if(count == addcount)
@@ -373,8 +387,8 @@ void dealwith_information(void)
 //			current_effective=current_effective_sum / 5;//addcount;
 //			active_power=active_power_sum / 5;//addcount;//平均后的 有功功率值
 			
-			voltage_effective = Windows_Filter(voltage_temp,voltage_effective_tab,Window_num);
-			current_effective = Windows_Filter(current_temp,current_effective_tab,Window_num);
+			voltage_effective = Windows_Filter(voltage_temp,voltage_effective_tab,Window_num+10);
+			current_effective = Windows_Filter(current_temp,current_effective_tab,Window_num+10);
 			active_power 	  = Windows_Filter(power_temp,  active_power_tab,     Window_num);
 
 			//printf("ve,ce:%.4f,%.4f\r\n",voltage_effective,current_effective);
@@ -545,6 +559,7 @@ void dealwith_information(void)
 }
 
 
+
 //2015-10-30JEFF：电压、电流测量时暂时还是为stm32测量得到的电压值
 void FFT(void)
 {
@@ -625,8 +640,8 @@ void FFT(void)
 //					printf("Phase=%2.5f 度  ，  ", phase_angle[ii]);
 //					printf("THD=%2.5f(百分数) \r\n\r\n", THD[ii]*100);
 					
-					printf("%d----Fhz=%2.2f  V=%2.5f V  ,  ,  Phase=%2.5f 度  ，  THD=%2.5f(百分数) \r\n\r\n",ii, \
-												temp_frequency,RAMsave.K4_tab.Output[ii],phase_angle[ii],THD[ii]*100);
+//					printf("%d----Fhz=%2.2f  V=%2.5f V  ,  ,  Phase=%2.5f 度  ，  THD=%2.5f(百分数) \r\n\r\n",ii, \
+//												temp_frequency,RAMsave.K4_tab.Output[ii],phase_angle[ii],THD[ii]*100);
 				}
 			}
 		}
@@ -647,6 +662,7 @@ void FFT(void)
 //		printf("---------------------电流-----------------------------\r\n");
 //		
 //		printf("电流频率分辨率-Fhz=%2.2f \r\n", (float32_t)SAMPLING_FREQ/fftSize);
+		THDA2sum = 0;
 		for(ii=0;ii<fftSize/2;ii++)
 		{
 			if(RAMsave.K4_tab.Output[ii]/fftSize>0.000001f)
@@ -714,6 +730,7 @@ void FFT(void)
 //		printf("---------------------功率-----------------------------\r\n");
 
 //		printf("功率频率分辨率-Fhz=%2.2f \r\n", (float32_t)SAMPLING_FREQ/fftSize);
+		THDP2sum = 0;
 		for(ii=0;ii<fftSize/2;ii++)
 		{
 			if(RAMsave.K4_tab.Output[ii]/fftSize>0.000001f)
@@ -820,6 +837,59 @@ uint8_t get_formed1024(void)
 }
 
 
+
+//插入排序
+
+void PXinsert(float *a,int n)
+{ 
+	char i,j; 
+	float temp;
+
+	for(i=1;i<n;i++) 
+	{ 
+		temp=a[i]; /*temp为要插入的元素*/ 
+		j=i-1; 
+		while(j>=0&&temp<a[j]) 
+		{ /*从a[i-1]开始找比a[i]小的数，同时把数组元素向后移*/ 
+			a[j+1]=a[j]; 
+			j--; 
+		} 
+		a[j+1]=temp; /*插入*/ 
+	} 
+} 
+
+//快速排序法
+void quick(float *a,int i,int j) 
+{ 
+	int m,n; 
+	float k,temp; 
+
+	m=i; 
+	n=j; 
+
+	k=a[(i+j)/2]; /*选取的参照*/ 
+
+	do 
+	{ 
+		while(a[m]<k&&m<j) m++; /* 从左到右找比k大的元素*/ 
+		while(a[n]>k&&n>i) n--; /* 从右到左找比k小的元素*/ 
+		if(m<=n) 
+		{ /*若找到且满足条件，则交换*/ 
+			temp=a[m]; 
+			a[m]=a[n]; 
+			a[n]=temp; 
+			m++; 
+			n--; 
+		} 
+	}while(m<=n); 
+
+	if(m<j) quick(a,m,j); /*运用递归*/ 
+	if(n>i) quick(a,i,n); 
+
+}
+
+
+
 /***************************************************************************************************/
 //将一个浮点数传给一个浮点数组并返回平均值
 //特殊情况：若该浮点数与数组中第一个数[0]的差值大于 [0]*0.2  则用该数值填充当前数组
@@ -835,8 +905,8 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 	float value=0;
 	
 	if(Data_tab==current_mean_tab)//电流滤波的容许误差放大一点
-	 {
-		if(fabs(New_Data-Data_tab[num-1]) > 1/*fabs(Data_tab[num-1]*0.08)*/)//若偏差值较大则填充滤波寄存器
+	{
+		if(fabs(New_Data-Data_tab[num/2]) > 2.5/*fabs(Data_tab[num-1]*0.08)*/)//若偏差值较大则填充滤波寄存器
 		{
 			for(i=0;i<num;i++)
 			{
@@ -850,11 +920,14 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 				Data_tab[i] = Data_tab[i-1];
 			}	
 			Data_tab[0]=New_Data;
-		}		
+		}
+		//test 测试新的滤波算法		
+		
+		
 	}
 	else
 	{
-		if(fabs(New_Data-Data_tab[num-1]) > (0.01*pow(10,rangenum))/*fabs(Data_tab[num-1]*0.02)*/)//若偏差值超过当前档位的两个字。
+		if(fabs(New_Data-Data_tab[num/2]) > (0.02*pow(10,rangenum))/*fabs(Data_tab[num-1]*0.02)*/)//若偏差值超过当前档位的二十个字。
 		{
 			for(i=0;i<num;i++)
 			{
@@ -871,7 +944,10 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 		}
 	}
 	
-	
+	//PXtest
+	//quick(PXtest,0,9);
+	quick(Data_tab,0,num-1);
+	//
 	for(i=0;i<num;i++)
 	{
 		value +=Data_tab[i];
@@ -879,7 +955,6 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 	
 	return value/num;
 }
-
 
 
 

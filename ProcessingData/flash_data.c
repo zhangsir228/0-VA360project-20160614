@@ -56,20 +56,20 @@ void Default_flash(void)
 	SaveData.Value.cal_600VA_zero=0;
 	SaveData.Value.cal_600VA_gain=1;
 	
-	SaveData.Value.cal_6VD_zero=0;
-	SaveData.Value.cal_6VD_gain=1;
-	SaveData.Value.cal_60VD_zero=0;
-	SaveData.Value.cal_60VD_gain=1;
-	SaveData.Value.cal_600VD_zero=0;
-	SaveData.Value.cal_600VD_gain=1;
+	SaveData.Value.cal_6VD_zero=-415.644073;
+	SaveData.Value.cal_6VD_gain=0.000283658475;
+	SaveData.Value.cal_60VD_zero=-417.363678;
+	SaveData.Value.cal_60VD_gain=0.00787606463;
+	SaveData.Value.cal_600VD_zero=-417.82489;
+	SaveData.Value.cal_600VD_gain=0.0680495873;
 	
 	
-	SaveData.Value.cal_600A_zero=-90; //600A档校准线
-	SaveData.Value.cal_600A_gain=0.0360;
+	SaveData.Value.cal_600A_zero=319.617615; //600A档校准线
+	SaveData.Value.cal_600A_gain=0.0518837385;
 	SaveData.Value.cal_A_y0=1.5688;
 	
-	SaveData.Value.cal_A1_zero=-44;	 //2000A档校准线
-	SaveData.Value.cal_A1_gain=0.072;
+	SaveData.Value.cal_A1_zero=164.322266;	 //2000A档校准线
+	SaveData.Value.cal_A1_gain=0.103888966;
 	SaveData.Value.cal_A2_zero=0;
 	SaveData.Value.cal_A2_gain=1;
 	
@@ -81,7 +81,7 @@ void Default_flash(void)
 	strcpy(SaveData.Value.VAsn,"123456789");
 	strcpy(SaveData.Value.VAmodel,"VA362");
 	strcpy(SaveData.Value.VAfact,"V&A");
-	strcpy(SaveData.Value.VAver,"V1.2");	
+	strcpy(SaveData.Value.VAver,"V1.3");	
 
 
 //	float CalA_data[8] ={
@@ -104,7 +104,7 @@ void Default_flash(void)
 	SaveData.Value.CalA_data[7]=2469.98;
 		
 	
-	//处事换DTA0660相关校准档位参数
+	//初始化DTA0660相关校准档位参数
 	for(i=0;i<5;i++) 
 	{
 		SaveData.Value.Cal_VmV_zero[i] = 0;

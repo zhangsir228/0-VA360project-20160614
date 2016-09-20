@@ -94,17 +94,17 @@ void Default_flash(void)
 //		2600, //2800 以下两组数据未经测量
 //		2750, //3000
 //	};
-	SaveData.Value.CalA_data[0]=1604.11;
-	SaveData.Value.CalA_data[1]=1796.22;
-	SaveData.Value.CalA_data[2]=1980.33;
-	SaveData.Value.CalA_data[3]=2158.44;
-	SaveData.Value.CalA_data[4]=2317.55;
-	SaveData.Value.CalA_data[5]=2441.66;
-	SaveData.Value.CalA_data[6]=2600.77;
-	SaveData.Value.CalA_data[7]=2750.88;
+	SaveData.Value.CalA_data[0]=1593.57;
+	SaveData.Value.CalA_data[1]=1782.27;
+	SaveData.Value.CalA_data[2]=1961.04;
+	SaveData.Value.CalA_data[3]=2085.61;
+	SaveData.Value.CalA_data[4]=2238.41;
+	SaveData.Value.CalA_data[5]=2330.60;
+	SaveData.Value.CalA_data[6]=2409.98;
+	SaveData.Value.CalA_data[7]=2469.98;
 		
 	
-	//处事换DTA0660相关校准档位参数
+	//初始化DTA0660相关校准档位参数
 	for(i=0;i<5;i++) 
 	{
 		SaveData.Value.Cal_VmV_zero[i] = 0;

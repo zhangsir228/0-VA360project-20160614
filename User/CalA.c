@@ -37,7 +37,7 @@ float CalA_temp[8] ={0,0,0,0,0,0,0,0};
 float Adj_Nline(float Value)
 {
 	float new_value=0;
-	uint8_t i=0;
+	int8_t i=0;
 	
 	if(Value>1500)
 	{

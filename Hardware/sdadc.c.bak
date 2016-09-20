@@ -96,8 +96,8 @@ u8 SDADC1_Config(void)
 //	PWR_SDADCAnalogCmd(PWR_SDADCAnalog_3, ENABLE);
   
   /* Set the SDADC divider: The SDADC should run @6MHz */
-  /* If Sysclk is 72MHz, SDADC divider should be 12 */
-  RCC_SDADCCLKConfig(RCC_SDADCCLK_SYSCLK_Div12);
+  /* If Sysclk is 72MHz, SDADC divider should be 12 *///若修改主频（24M/4=6M） 这里的分频也要修改，不要忘记！！！！
+  RCC_SDADCCLKConfig(RCC_SDADCCLK_SYSCLK_Div4/*RCC_SDADCCLK_SYSCLK_Div12*/);
 	
 	/* GPIOE/B Peripheral clock enable */
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOA, ENABLE);
@@ -156,8 +156,8 @@ u8 SDADC1_Config(void)
      clock must be already enabled */
      //SDADC_VREFSelect(SDADC_VREF_VDDA);//SDADC_VREF_Ext
 	
-	//SDADC_VREFSelect(SDADC_VREF_Ext);//现在使用外部参考  修改需将外部电路断开
-	SDADC_VREFSelect(SDADC_VREF_VREFINT2);//SDADC_VREF_Ext
+	SDADC_VREFSelect(SDADC_VREF_Ext);//现在使用外部参考，如果修改需将外部电路断开
+	//qq SDADC_VREFSelect(SDADC_VREF_VREFINT2);//SDADC_VREF_Ext
   /* Insert delay equal to ~10 ms (4 ms required) */
 	
   delay_ms(50);

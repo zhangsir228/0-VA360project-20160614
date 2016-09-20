@@ -29,8 +29,8 @@ void PowerControl_Init(void)
 	GPIO_InitStructure.GPIO_OType=GPIO_OType_PP;//推挽输出	
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	//GPIO_SetBits(GPIOA,GPIO_Pin_5);//外围电源开
-	GPIO_ResetBits(GPIOA,GPIO_Pin_5);//外围电源关
+	GPIO_SetBits(GPIOA,GPIO_Pin_5);//外围电源开
+	//GPIO_ResetBits(GPIOA,GPIO_Pin_5);//外围电源关
 	GPIO_SetBits(GPIOA,GPIO_Pin_6);//BT电源关
 	//GPIO_ResetBits(GPIOA,GPIO_Pin_6);//BT电源开
 	

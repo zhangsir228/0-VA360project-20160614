@@ -447,8 +447,11 @@ void TIM3_IRQHandler(void)
 		/*旋转开关处理程序*/
 		if(KeyValue != RotaryKeyValue_before)//有扫到旋转开关按键值与之前不同，应是真有开关变化
 		{
+			
+			//lcd_show_Cal(1);delay_ms(500);//test  显示CAL   用于启动选档测试
+			
 			iii++;
-			if(iii > 2)
+			if(iii > 0)//20160913 修改 之前时2  这里作为防抖动会导致偶尔的换挡检测不到，这里将换挡滤波移除。
 			{
 				u8 temp=KEY_NULL;
 				temp = OnceRotaryKey()&0x0F;

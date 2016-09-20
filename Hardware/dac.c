@@ -42,8 +42,8 @@ void DAC_Config(void)
 }
 
 //设置通道1输出电压
-//vol:0~3300,代表0~3.3V  //3.613 
-void Dac1_Set_Vol(u16 vol)
+//vol:0~Vref,单位mV  //1.8   //3.613 
+void Dac1_Set_Vol(u16 vol) //目前模拟参考电压有变，这里因为已经校准过了 就没有再做修改。
 {
 	float temp=vol;
 	temp/=1000;

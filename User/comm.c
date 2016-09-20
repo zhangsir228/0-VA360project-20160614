@@ -700,14 +700,14 @@ void Communicate(void)
 					Sysflag.Calonce	=1;
 					break;
 				}	
-				case 68://600 zero
+				case 68://600 zero   //不需要做交流校准 这些没用
 				{
 					if(rangenum == 2)
 					{
-						SaveData.Value.cal_600VA_zero=voltage_effective*10;
-						sprintf(chardata, "set 600VA_zero %.4f", SaveData.Value.cal_600VA_zero);
-						strcat(str,chardata);
-						updata_flash();
+//						SaveData.Value.cal_600VA_zero=voltage_effective*10;
+//						sprintf(chardata, "set 600VA_zero %.4f", SaveData.Value.cal_600VA_zero);
+//						strcat(str,chardata);
+//						updata_flash();
 					}
 							
 					break;
@@ -716,10 +716,10 @@ void Communicate(void)
 				{
 					if(rangenum == 2)
 					{
-						SaveData.Value.cal_600VA_gain=5.0/(voltage_effective*10-SaveData.Value.cal_600VA_zero);
-						sprintf(chardata, "set 600VA_gain %.4f", SaveData.Value.cal_600VA_gain);
-						strcat(str,chardata);
-						updata_flash();
+//						SaveData.Value.cal_600VA_gain=5.0/(voltage_effective*10-SaveData.Value.cal_600VA_zero);
+//						sprintf(chardata, "set 600VA_gain %.4f", SaveData.Value.cal_600VA_gain);
+//						strcat(str,chardata);
+//						updata_flash();
 					}
 					break;
 				}	
@@ -730,7 +730,7 @@ void Communicate(void)
 				}
 				case 71://6D gain
 				{					
-					Sysflag.Calonce	=1;
+					Sysflag.Calonce	=2;
 					break;
 				}	
 				case 72://60D zero
@@ -740,7 +740,7 @@ void Communicate(void)
 				}
 				case 73://60D gain
 				{					
-					Sysflag.Calonce	=1;
+					Sysflag.Calonce	=2;
 					break;
 				}	
 				case 74://600D zero
@@ -750,7 +750,7 @@ void Communicate(void)
 				}
 				case 75://600D gain
 				{					
-					Sysflag.Calonce	=1;
+					Sysflag.Calonce	=2;
 					break;
 				}	
 				
@@ -832,11 +832,12 @@ void Communicate(void)
 			//		"sn",				"ver",//54序列号  55版本号  
 			switch(tempT1)
 			{
-				case 50://initialflash
+				case 50://initialflash     //fact:initialflash 1  初始化
 				{//初始化Flash中保存的参数，防止由于以外出错用户无法恢复。
 					if(tempR[0]==0x31) //指令格式   fact:initialflash 1
 					{
 						Default_flash();
+						WriteEeprom();
 						strcat(str,"Write default value to flash, This Machine need calibration to use.\r\n");
 					}			
 					break;
@@ -898,7 +899,7 @@ void Communicate(void)
 			}
 			break;
 		}
-		case 24://24  大电流曲线校准  ex:  cala:1800  cala:2400
+		case 24://24  大电流曲线校准  ex:  cala:ma 1800  cala:ma 2400
 		{
 			//			//大电流校准6个点
 			//			float CalA_point[8]={1600,1800,2000,2200,2400,2600,2800,3000};

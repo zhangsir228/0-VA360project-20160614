@@ -725,92 +725,109 @@ void manipulate(void)
 					}break;
 					case KEY_VALUE_2://REL    //20160727  lea  修改逻辑为按键后一直显示为相对值 而不是只显示一次。 
 					{
-						if((ShortKey_flag == 1) && (peakstatus == state0) && (phasestatus == state0) && (holdstatus==state0))
-						{//在REL出现短按，并且处于非Peak、Phase、HOLD状态下
-							ShortKey_flag=0;
-							max_minstatus=state0;
-							longparamstatus=state0;
-							switch(relstatus)
+						if(Is_Cal_Mode == 1)//校准模式下REL作为DCV零点校准功能
+						{
+							if(RotaryKeyValue==KEY_VALUE_6)//V+A 档位 
 							{
-								case state0:relstatus = state1;break;//正常值变为相对值
-								case state1:relstatus = state0;break;//相对值变为正常值
-								default:break;
-							}
-							display_rel_state();
-							display_max_min_state();	
-							
-							if(relstatus != state0)//在相对值状态读一个测量值   //20160727 lea 这里的测量值都使用的临时传递变量，其他档位的还没有做相应的修改，留意以下！！！
-							{
-								if(funcstatus ==state0)//AC V+A
+								if(funcstatus ==state1)//DC
 								{
-									rel_data1=REL_voltage_effective-fabs(REL_voltage_mean);
-									rel_data2=REL_current_effective-fabs(REL_current_mean);
+									Sysflag.Calonce	=1;
+									BUZZER_Open(0);delay_ms(1000);
+									BUZZER_Open(0);delay_ms(1000);
 								}
-								else if(funcstatus ==state1)//DC V+A
-								{
-									rel_data1=REL_voltage_mean;
-									rel_data2=REL_current_mean;
-								}
-								else if(funcstatus ==state2)//AC+DC V+A
-								{
-									rel_data1=REL_voltage_effective;
-									rel_data2=REL_current_effective;
-								}								
 							}
 						}
-						else if((LongKey_flag == 1) && (peakstatus==state0) && (paramstatus == state0) && (longparamstatus==state0) && (holdstatus==state0))
-						{//在REL出现长按，并且处于非Peak、Param、LongParam、HOLD状态下
-							LongKey_flag=0;
-							max_minstatus=state0;
-							relstatus=state0;
-							rangestatus=state0;
-							paramstatus=state0;
-							autostatus=state1;
-							phaseABCstatus=state0;
-							
-							switch(phasestatus)
-							{
-								case state0:phasestatus = state1;break;//正常值变为Phase
-								case state1:phasestatus = state0;break;//Phase变为正常值
-								default:break;
-							}
-							
-							switch(phasestatus)
-							{
-								case state0://正常值
+						else//正常状态
+						{
+							if((ShortKey_flag == 1) && (peakstatus == state0) && (phasestatus == state0) && (holdstatus==state0))
+							{//在REL出现短按，并且处于非Peak、Phase、HOLD状态下
+								ShortKey_flag=0;
+								max_minstatus=state0;
+								longparamstatus=state0;
+								switch(relstatus)
 								{
-									lcd_write_1bit(0x1B,3,DISABLE);//L1-L2-L3
-									lcd_write_1bit(0x18,3,ENABLE);//V（3）亮
-									lcd_write_1bit(0x15,3,ENABLE);//A（2）亮
-									TIM_Cmd(TIM14, DISABLE);//0.5s定时关闭
-								}break;
-								case state1://PHASE
+									case state0:relstatus = state1;break;//正常值变为相对值
+									case state1:relstatus = state0;break;//相对值变为正常值
+									default:break;
+								}
+								display_rel_state();
+								display_max_min_state();	
+								
+								if(relstatus != state0)//在相对值状态读一个测量值   //20160727 lea 这里的测量值都使用的临时传递变量，其他档位的还没有做相应的修改，留意一下！！！
 								{
-									lcd_write_1bit(0x0,2,DISABLE);//第一行负号灭
-									lcd_write_1bit(0xA,2,DISABLE);//第二行负号灭
-									lcd_write_1bit(0x1B,3,ENABLE);//L1-L2-L3
-									lcd_write_1bit(0x18,3,DISABLE);//V（3）灭
-									lcd_write_1bit(0x15,3,DISABLE);//A（2）灭
-									lcd_show_None(1);
-									lcd_show_None(2);
-									TIM_Cmd(TIM14, ENABLE);//0.5s定时开启
-									
-									TIM5CH4_CAPTURE_STA=0;//定时器5捕获状态，未捕获到时为0，A相0x40，B or C相0x80
-									
-									COMP_Cmd(COMP_Selection_COMP1, DISABLE);//关闭比较器 20160603lea
-									TIM_ClearITPendingBit(TIM5, TIM_IT_CC4);//清比较器中断
-									
-									TIM_Cmd(TIM19, ENABLE);//20160602lea 进入phase 模式后比较器 用于触发采样相位时间  
-																				//所以本来用来过零点触发AC采样的现在时直接开始采样，抖动会厉害一点
-									
-								}break;
-								default:break;
+									if(funcstatus ==state0)//AC V+A
+									{
+										rel_data1=REL_voltage_effective-REL_voltage_mean;//fabs(REL_voltage_mean);//20160901
+										rel_data2=REL_current_effective-REL_current_mean;//fabs(REL_current_mean);
+									}
+									else if(funcstatus ==state1)//DC V+A
+									{
+										rel_data1=REL_voltage_mean;
+										rel_data2=REL_current_mean;
+									}
+									else if(funcstatus ==state2)//AC+DC V+A
+									{
+										rel_data1=REL_voltage_effective;
+										rel_data2=REL_current_effective;
+									}								
+								}
 							}
-							
-							display_rel_state();
-							display_max_min_state();
-							display_range_state();
+							else if((LongKey_flag == 1) && (peakstatus==state0) && (paramstatus == state0) && (longparamstatus==state0) && (holdstatus==state0))
+							{//在REL出现长按，并且处于非Peak、Param、LongParam、HOLD状态下
+								LongKey_flag=0;
+								max_minstatus=state0;
+								relstatus=state0;
+								rangestatus=state0;
+								paramstatus=state0;
+								autostatus=state1;
+								phaseABCstatus=state0;
+								
+								switch(phasestatus)
+								{
+									case state0:phasestatus = state1;break;//正常值变为Phase
+									case state1:phasestatus = state0;break;//Phase变为正常值
+									default:break;
+								}
+								
+								switch(phasestatus)
+								{
+									case state0://正常值
+									{
+										lcd_write_1bit(0x1B,3,DISABLE);//L1-L2-L3
+										lcd_write_1bit(0x18,3,ENABLE);//V（3）亮
+										lcd_write_1bit(0x15,3,ENABLE);//A（2）亮
+										TIM_Cmd(TIM14, DISABLE);//0.5s定时关闭
+									}break;
+									case state1://PHASE
+									{
+										lcd_write_1bit(0x0,2,DISABLE);//第一行负号灭
+										lcd_write_1bit(0xA,2,DISABLE);//第二行负号灭
+										lcd_write_1bit(0x1B,3,ENABLE);//L1-L2-L3
+										lcd_write_1bit(0x18,3,DISABLE);//V（3）灭
+										lcd_write_1bit(0x15,3,DISABLE);//A（2）灭
+										lcd_show_None(1);
+										lcd_show_None(2);
+										TIM_Cmd(TIM14, ENABLE);//0.5s定时开启
+										
+										TIM5CH4_CAPTURE_STA=0;//定时器5捕获状态，未捕获到时为0，A相0x40，B or C相0x80
+										
+										COMP_Cmd(COMP_Selection_COMP1, DISABLE);//关闭比较器 20160603lea
+										TIM_ClearITPendingBit(TIM5, TIM_IT_CC4);//清比较器中断
+										
+										TIM_Cmd(TIM19, ENABLE);//20160602lea 进入phase 模式后比较器 用于触发采样相位时间  
+																					//所以本来用来过零点触发AC采样的现在时直接开始采样，抖动会厉害一点
+										
+									}break;
+									default:break;
+								}
+								
+								display_rel_state();
+								display_max_min_state();
+								display_range_state();
+							}
 						}
+						
+						
 					}break;
 					case KEY_VALUE_3://RANGE
 					{
@@ -913,8 +930,8 @@ void manipulate(void)
 					}break;
 					case KEY_VALUE_4://PARAM
 					{
-						if((ShortKey_flag == 1) && (peakstatus == state0) && (phasestatus == state0) && (holdstatus==state0))
-						{//在PARAM出现短按，并且处于非Peak、Phase、HOLD状态下
+						if((ShortKey_flag == 1) && (peakstatus == state0) && (phasestatus == state0) && (holdstatus==state0) && (funcstatus == state0))
+						{//在PARAM出现短按，并且处于非Peak、Phase、HOLD状态下  20160909 新增 AC档下
 							ShortKey_flag=0;
 							max_minstatus=state0;
 							relstatus=state0;
@@ -1006,7 +1023,7 @@ void manipulate(void)
 							{
 								if(funcstatus ==state1)//DC
 								{
-									Sysflag.Calonce	=1;
+									Sysflag.Calonce	=2;
 									BUZZER_Open(0);delay_ms(1000);
 									BUZZER_Open(0);delay_ms(1000);
 								}
@@ -1739,44 +1756,60 @@ void manipulate(void)
 					}break;
 					case KEY_VALUE_2://REL
 					{
-						if((ShortKey_flag == 1) && (holdstatus==state0))
-						{//在REL出现短按，并且处于非HOLD状态下
-							ShortKey_flag=0;
-							max_minstatus=state0;
-							
-							switch(relstatus)
-							{
-								case state0:relstatus = state1;break;//正常值变为相对值
-								case state1:relstatus = state0;break;//相对值变为正常值
-								default:break;
+						if(Is_Cal_Mode == 1)//校准模式下REL作为VmV零点校准功能
+						{
+							if(rangestatus==state4)//1000V档有点不一样 满值是1000
+							{				
+									SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];						
 							}
-							display_rel_state();
-							display_max_min_state();
-							
-							if(relstatus != state0)//在相对值状态读一个测量值
-								//rel_data1 = receive_f;//20160808这里直接获取该值并不能抵消校正以后的显示值，注意每个档位都存在这个问题。需要修改
-							{
-								if(paramstatus == state0)
-								{
-									if(funcstatus ==state0)//DCVmV
-									{
-										rel_data1 = (receive_f-SaveData.Value.Cal_VmV_zero[rangestatus])*SaveData.Value.Cal_VmV_gain[rangestatus];
-									}
-									else if(funcstatus ==state1)//ACV
-									{
-										rel_data1 = (receive_f-SaveData.Value.Cal_VmV_zero[rangestatus+1])*SaveData.Value.Cal_VmV_gain[rangestatus+1];
-									}
-								}
-								else if(paramstatus == state1)
-								{//Hz档
-									rel_data1 = receive_f;//receive_f= ReadDTAValue(ReadFreq);
-								}
-								else if(paramstatus == state2)
-								{//Duty档
-									rel_data2 = receive_f;//receive_f1= ReadDTAValue(ReadDuty);
-								}
+							else
+							{						
+									SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];							
 							}
+							updata_flash();	//保存数据
 						}
+						else
+						{
+							if((ShortKey_flag == 1) && (holdstatus==state0))
+							{//在REL出现短按，并且处于非HOLD状态下
+								ShortKey_flag=0;
+								max_minstatus=state0;
+								
+								switch(relstatus)
+								{
+									case state0:relstatus = state1;break;//正常值变为相对值
+									case state1:relstatus = state0;break;//相对值变为正常值
+									default:break;
+								}
+								display_rel_state();
+								display_max_min_state();
+								
+								if(relstatus != state0)//在相对值状态读一个测量值
+									//rel_data1 = receive_f;//20160808这里直接获取该值并不能抵消校正以后的显示值，注意每个档位都存在这个问题。需要修改
+								{
+									if(paramstatus == state0)
+									{
+										if(funcstatus ==state0)//DCVmV
+										{
+											rel_data1 = (receive_f-SaveData.Value.Cal_VmV_zero[rangestatus])*SaveData.Value.Cal_VmV_gain[rangestatus];
+										}
+										else if(funcstatus ==state1)//ACV
+										{
+											rel_data1 = (receive_f-SaveData.Value.Cal_VmV_zero[rangestatus+1])*SaveData.Value.Cal_VmV_gain[rangestatus+1];
+										}
+									}
+									else if(paramstatus == state1)
+									{//Hz档
+										rel_data1 = receive_f;//receive_f= ReadDTAValue(ReadFreq);
+									}
+									else if(paramstatus == state2)
+									{//Duty档
+										rel_data2 = receive_f;//receive_f1= ReadDTAValue(ReadDuty);
+									}
+								}
+							}
+						}							
+						
 					}break;
 					case KEY_VALUE_3://RANGE
 					{
@@ -1987,29 +2020,13 @@ void manipulate(void)
 						if(Is_Cal_Mode == 1)//校准模式下hold作为VmV校准功能
 						{
 							if(rangestatus==state4)//1000V档有点不一样 满值是1000
-							{
-								if(VmV_value<200)//0 
-								{
-									SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];
-								}
-								else if(VmV_value>500)//500
-								{
+							{							
 									SaveData.Value.Cal_VmV_gain[rangestatus]= 1000*SaveData.Value.Cal_VmV_gain[rangestatus]/VmV_value;
-								}
 							}
 							else
-							{
-								if(VmV_value<1000)//0 
-								{
-									SaveData.Value.Cal_VmV_zero[rangestatus]=VmV_value/SaveData.Value.Cal_VmV_gain[rangestatus]+SaveData.Value.Cal_VmV_zero[rangestatus];
-								}
-								else if(VmV_value>3500)//5000
-								{
+							{							
 									SaveData.Value.Cal_VmV_gain[rangestatus]= 5000*SaveData.Value.Cal_VmV_gain[rangestatus]/VmV_value;
-								}
-							}
-							
-							
+							}		
 							updata_flash();	//保存数据	
 						}
 						else//正常状态
@@ -2288,8 +2305,10 @@ void manipulate(void)
 						{
 							switch(funcstatus)
 							{
-								case state0://Ohm
+								case state0://Ohm 校准电阻零点
 								{
+									SaveData.Value.Cal_ohm_zero[rangestatus]=ohm_value/SaveData.Value.Cal_ohm_gain[rangestatus]+SaveData.Value.Cal_ohm_zero[rangestatus];
+									updata_flash();	//保存数据	
 									break;
 								}
 								case state1://Cap
@@ -2499,16 +2518,9 @@ void manipulate(void)
 						{
 							switch(funcstatus)
 							{
-								case state0://Ohm
-								{
-									if(ohm_value<100)//0 Ω
-									{
-										SaveData.Value.Cal_ohm_zero[rangestatus]=ohm_value/SaveData.Value.Cal_ohm_gain[rangestatus]+SaveData.Value.Cal_ohm_zero[rangestatus];
-									}
-									else if(ohm_value>3500)//500 Ω
-									{
-										SaveData.Value.Cal_ohm_gain[rangestatus]= 5000*SaveData.Value.Cal_ohm_gain[rangestatus]/ohm_value;
-									}
+								case state0://Ohm  校准电阻增益
+								{							
+									SaveData.Value.Cal_ohm_gain[rangestatus]= 5000*SaveData.Value.Cal_ohm_gain[rangestatus]/ohm_value;
 									updata_flash();	//保存数据	
 									break;
 								}

@@ -51,6 +51,8 @@
 //
 //20160801 	新增 mV_V档，电阻挡软件校准。
 
+//20160909  修改 将按键校准部分个档位的零点和增益校准分开，分别为rel 按键和hold按键 （右边的上下两个按键，上面零点下面增益。）
+
 
 uint8_t Is_Cal_Mode = 0;//2016-07-22 Lea 定义全局校准模式标志  为了将校准功能步奏都集成到按键操作上
 uint8_t OnOffState = 0; //开关机状态 0：关机休眠状态   1：开机运行状态
@@ -75,6 +77,9 @@ void start_configration(void)
 		
 	delay_init();//延时函数初始化，可以使用delay_ms(u16 nms),delay_us(u32 nus)
 	NVIC_Configuration();//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
+	
+	PowerControl_Init(); //总电源，蓝牙电源，钳头供电电源；换挡间隙的外部中断
+	
 	HT1621_Init();
 	lcd_clr();
 	lcd_full_test();
@@ -86,13 +91,10 @@ void start_configration(void)
 	TIM19_Config();//采样触发、采样频率配置
 	TIM5_2_Compare_Capture_Init();//COMP比较器、定时器配置，用于基频捕获，内含TIM5比较器捕获中断
 	
-	DTA0660_Init();//内含Usart1-DTA0660通信串口中断，用于单片机与DTA通信
 	TIM12_Config_1s();//1s定时器，内含TIM12-1s中断：秒表显示闪烁
 	TIM14_Config_0_5s();//0.5s定时器，内含TIM14-0.5s中断：相序测量闪烁
-
-	PowerControl_Init(); //总电源，蓝牙电源，钳头供电电源；换挡间隙的外部中断
 	
-
+	DTA0660_Init();//内含Usart1-DTA0660通信串口中断，用于单片机与DTA通信
 	
 	DAC_Config();//新增DAC输出驱动钳头
 	Dac1_Set_Vol(1400);
@@ -102,13 +104,17 @@ void start_configration(void)
 	//2016-07-25 增加内部校准  启动时的按键检测  确定是否进入校准模式
 	SoftKeyValue = OnceSoftKey();//无消抖的获取按键值  ScanKey();//
 	if(SoftKeyValue==KEY_VALUE_5)//启动检测到func按键 置位校准标志位
-	{
-		SoftKeyValue = KEY_NULL;		
-		Is_Cal_Mode = 1;
-		
+	{	
+		Is_Cal_Mode = 1;		
 		lcd_clr();
 		lcd_show_Cal(1);delay_ms(2000);//显示CAL进入校准状态
+		LongKey_flag = 0;
 	}
+//	//test调试校准模式;
+//	Is_Cal_Mode = 1;
+//	SoftKeyValue = KEY_NULL;
+//	LongKey_flag = 0;
+//	
 	
 	//旋转开关位置预检测
 	EXTI->IMR &= ~Keyboard_EXTI_Line;//屏蔽来自线上的中断请求，防止在定时器扫描矩阵键盘时进入此中断

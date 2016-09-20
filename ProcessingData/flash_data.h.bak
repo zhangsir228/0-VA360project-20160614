@@ -13,7 +13,7 @@
 #define true 	1
 
 #define NewFlash_addr						((uint32_t)0x0803fff0) 		/*if not 0xaa55aa55 should be reset*/
-#define NewFlash_value					((uint32_t)0xaa55aa5a)
+#define NewFlash_value					((uint32_t)0xaa55aa56)
 #define FLASH_PAGE_SIZE         ((uint32_t)0x00000800)   /* FLASH Page Size */
 #define FLASH_USER_START_ADDR   ((uint32_t)0x0803f800)   /* Start @ of user Flash area */
 #define FLASH_USER_END_ADDR     ((uint32_t)0x08040000)   /* End @ of user Flash area */

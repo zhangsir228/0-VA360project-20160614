@@ -169,7 +169,7 @@ void Init_Keyboard_Interrupt(void)
 	
 	/* Enable and set EXTI9_5 Interrupt to the lowest priority */
 	  NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-	  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x02;
+	  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
 	  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
 	  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	  NVIC_Init(&NVIC_InitStructure);

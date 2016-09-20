@@ -39,7 +39,7 @@ const u8 eeprom_init[]={//V1.8版本DTA0660
 0x41,0x00,0x03,0x08,0x41,0x00,0x03,0x05,0x41,0x00,0x03,0x05,0x0D,0x00,0x02,0x20,
 0x00,0x80,0x00,0x80,0x00,0x80,0x00,0x80,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x5A,0xC6,0xCE,0x0F,0x0F,0x02,0x00,0x00
-};															  //0xFD.1  该位置=1决定DTA0660蜂鸣器仅在通断测试时响 
+};															  														 //0xFD.1  该位置=1决定DTA0660蜂鸣器仅在通断测试时响 
 
 uint8_t RxCounter = 0;
 
@@ -163,7 +163,7 @@ void DTA0660_Init(void)
 	
 	ClrCS//将CS置为低电平
 	while(Read_RDY() != RESET);//等待RDY为低电平
-	delay_ms(500);/*delay_ms(1000);*///2015-3-29：等待DTA将上电初始化数据发过来，以免造成后面数据接收混乱
+	delay_ms(900);/*delay_ms(1000);*///2015-3-29：等待DTA将上电初始化数据发过来，以免造成后面数据接收混乱
 }
 
 /****************************************************************************
@@ -347,7 +347,7 @@ float ReadDTAValue(u8 command)
 				temp= (float)receive_data* positive_negative;
 			}
 			
-			else if(funcnum==DCVmV)//已验证
+			else if(funcnum==DCVmV)//已验证  20160826出来的时MV*10的数值
 			{//2015-7-7：删掉多余的
 				temp= (float)receive_data* positive_negative;
 			}
