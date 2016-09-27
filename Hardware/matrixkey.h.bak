@@ -27,9 +27,6 @@
 #define Interrupt_Scan   //中断扫描模式 ,要在NVIC在中打开对应中断 
 /*可以自己定义其它扫描方式*/ 
 
-/* 长按时间 */
-#define        KEY_LONG_PERIOD         	100  
-
 //#define DELAY_COUNT    0x0FFFF 
 
 /* 键盘控制引脚定义 */  

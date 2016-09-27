@@ -33,8 +33,7 @@
 #define        KEY_STATE_LONG           3
 //#define        KEY_STATE_CONTINUE      	4
 #define        KEY_STATE_RELEASE        5
-/* 长按时间 */
-#define        KEY_LONG_PERIOD         	100      
+    
 //#define        KEY_CONTINUE_PERIOD      50        /* 500ms */
 
 boolean RotaryKeyChanged_flag = 0;
@@ -169,7 +168,7 @@ void Init_Keyboard_Interrupt(void)
 	
 	/* Enable and set EXTI9_5 Interrupt to the lowest priority */
 	  NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-	  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
+	  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
 	  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
 	  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	  NVIC_Init(&NVIC_InitStructure);
@@ -374,7 +373,7 @@ u8 ScanKey(void)
 					KeyTemp |= KEY_LONG;//保存按键长按标志(0x40)，KeyTemp的8位数为：0100####
 					LastKey = KeyTemp;//保存键值和长按标志，以便在释放状态返回键值
 //					KeyState = KEY_STATE_CONTINUE;//进入按键连发状态（意思是一直长按着，比长按时间长）
-					KeyState = KEY_STATE_INIT;//20160830 Lea 长按计数达到后就初始化计数变量
+					KeyState = KEY_STATE_RELEASE;//20160830 Lea 长按计数达到后就等待下一次跳到释放处理部分  然后中断中就会执行超时操作
 				}
 			}
 			else

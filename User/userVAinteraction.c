@@ -100,7 +100,7 @@ void MeasureModeChange(void)
 {
 		if(RotaryKeyValue <= 0x07)//STM32测量，开启STM32相应外设
 		{
-			Power_On_Current();//PC15=1
+			//Power_On_Current();//PC15=1  //20160927  U2也是用这里供电，这个保持常开，不然后会影响电压输入
 			
 			SDADC_Cmd(SDADC1, ENABLE);
 			SDADC_Cmd(SDADC2, ENABLE);	
@@ -116,7 +116,7 @@ void MeasureModeChange(void)
 		}
 		else if((RotaryKeyValue >= 0x08) && (RotaryKeyValue != KEY_NULL))//DTA0660测量，关闭STM32相应外设
 		{
-			Power_Off_Current();//PC15=0
+			//Power_Off_Current();//PC15=0
 			
 			SDADC_Cmd(SDADC1, DISABLE);
 			SDADC_Cmd(SDADC2, DISABLE);
@@ -169,6 +169,9 @@ void MeasureFunctionSelection(void)
 		
 		case KEY_VALUE_7://W
 		{
+			SDADC1_Config();//采样配置，内含DMA2-SDADC数据DMA中断
+			TIM19_Config();//采样触发、采样频率配置
+			
 			FunctionSet(ACV);//设定功能：交流电压
 		}
 		break;
@@ -316,7 +319,7 @@ void DataProcessing(void)
 					}break;
 					case state2://处理Temp(C)
 					{
-						receive_f= ReadDTAValue(ReadResult);
+						receive_f= ReadDTAValue(ReadResult)-5;//20160927 临时修正
 					}break;
 					case state3://处理Temp(F)
 					{
@@ -3724,7 +3727,16 @@ void display(void)
 						{
 							readstmdata1=apparent_power;//VA
 							
-							showdata1=deal_1(readstmdata1,1);
+							showdata1=deal_1(readstmdata1,1);						
+							if(abs(showdata1)>9999)
+							{
+								showdata1/=1000;
+								lcd_write_1bit(0x08,0,ENABLE);//3K符号亮
+							}
+							else
+							{
+								lcd_write_1bit(0x08,0,DISABLE);//3K符号灭
+							}
 							propershow=lcd_show_num(showdata1,1,10);
 							
 							strcpy(Tstr,"M ");
@@ -3737,6 +3749,15 @@ void display(void)
 							readstmdata1=active_power;//W
 							
 							showdata1=deal_1(readstmdata1,1);
+							if(abs(showdata1)>9999)
+							{
+								showdata1/=1000;
+								lcd_write_1bit(0x08,0,ENABLE);//3K符号亮
+							}
+							else
+							{
+								lcd_write_1bit(0x08,0,DISABLE);//3K符号灭
+							}
 							propershow=lcd_show_num(showdata1,1,10);
 							
 							strcpy(Tstr,"M ");
@@ -3748,7 +3769,16 @@ void display(void)
 						{
 							readstmdata1=reactive_power;//var
 							
-							showdata1=deal_1(readstmdata1,1);
+							showdata1=deal_1(readstmdata1,1);						
+							if(abs(showdata1)>9999)
+							{
+								showdata1/=1000;
+								lcd_write_1bit(0x08,0,ENABLE);//3K符号亮
+							}
+							else
+							{
+								lcd_write_1bit(0x08,0,DISABLE);//3K符号灭
+							}
 							propershow=lcd_show_num(showdata1,1,10);
 							
 							strcpy(Tstr,"M ");

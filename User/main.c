@@ -79,7 +79,7 @@ void start_configration(void)
 	NVIC_Configuration();//设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 	
 	PowerControl_Init(); //总电源，蓝牙电源，钳头供电电源；换挡间隙的外部中断
-	
+	delay_ms(20);
 	HT1621_Init();
 	lcd_clr();
 	lcd_full_test();
@@ -102,7 +102,7 @@ void start_configration(void)
 	TIM13_Config_1s_Standby();//内含1s中断，计数1800次为30min，进入Standby模式
 	
 	//2016-07-25 增加内部校准  启动时的按键检测  确定是否进入校准模式
-	SoftKeyValue = OnceSoftKey();//无消抖的获取按键值  ScanKey();//
+	SoftKeyValue = OnceSoftKey();//无消抖的获取按键值 
 	if(SoftKeyValue==KEY_VALUE_5)//启动检测到func按键 置位校准标志位
 	{	
 		Is_Cal_Mode = 1;		
@@ -129,8 +129,10 @@ int main(void)
 //	u16 times=0;
 //	float num;
 	start_configration();
-			
+		
 	//WriteEeprom();
+	
+	
 	//Self_Calibration();//在电阻档自检线路和放大器
 	
 //	//液晶全亮

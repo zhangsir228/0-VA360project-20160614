@@ -38,6 +38,7 @@
 #include "comp.h"
 #include "buzzer_led.h"
 #include "userVAinteraction.h"
+#include "matrixkey.h"
 /** @addtogroup Template_Project
   * @{
   */
@@ -404,7 +405,6 @@ void USART2_IRQHandler(void)
 /**********************************************************/
 /*旋钮旋动间中断，主要用于休眠唤醒*/
 /*********************************************/
-
 void EXTI2_TS_IRQHandler(void)
 {
 	uint16_t i=0;
@@ -476,8 +476,8 @@ void TIM3_IRQHandler(void)
 		{
 			jjj++;
 			KeyValue = ScanKey();
-			/*开关抖动处理程序*/
-			if(((KeyValue&0x0F) == KEY_NULL) && jjj > 100+6)//表示无软按键,100表示长按检测次数  （长按键检测阀值为100 所以这里的超时应该大于100）
+			/*开关抖动处理程序*/																									 
+			if(((KeyValue&0x0F) == KEY_NULL) && jjj > (KEY_LONG_PERIOD+6)/*100+6*/)//表示无软按键,100表示长按检测次数  （长按键检测阀值为100 所以这里的超时应该大于100）
 			{
 				jjj=0;
 				KEY_LINE_write_high_all();
@@ -497,8 +497,10 @@ void TIM3_IRQHandler(void)
 				if((KeyValue&0xF0)==0x90)//0x90=0b10010000
 					ShortKey_flag = 1;
 				else if((KeyValue&0xF0)==KEY_LONG)
+				{
 					LongKey_flag = 1;
-				
+				}
+					
 				KEY_LINE_write_high_all();
 				KeyValue = KEY_NULL;//按键值、状态清零
 				TIM_Cmd(TIM3, DISABLE);//同时关闭定时器

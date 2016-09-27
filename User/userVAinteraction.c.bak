@@ -78,10 +78,14 @@ void Data_init(void)//包含MCU测量电流电压值传递给相对值
 	REL_current_effective=current_effective;
 	REL_current_mean=current_mean;
 	
-	voltage_effective=0;
-	voltage_mean=0;
-	current_effective=0;
-	current_mean=0;
+	if(Is_Cal_Mode == 0)//20160909 修改 校准模式下不清空电压电流值
+	{
+		voltage_effective=0;
+		voltage_mean=0;
+		current_effective=0;
+		current_mean=0;
+	}
+	
 
 	temp_for_over_voltage=0;
 
@@ -165,6 +169,9 @@ void MeasureFunctionSelection(void)
 		
 		case KEY_VALUE_7://W
 		{
+			SDADC1_Config();//采样配置，内含DMA2-SDADC数据DMA中断
+			TIM19_Config();//采样触发、采样频率配置
+			
 			FunctionSet(ACV);//设定功能：交流电压
 		}
 		break;
@@ -312,7 +319,7 @@ void DataProcessing(void)
 					}break;
 					case state2://处理Temp(C)
 					{
-						receive_f= ReadDTAValue(ReadResult);
+						receive_f= ReadDTAValue(ReadResult)-5;//20160927 临时修正
 					}break;
 					case state3://处理Temp(F)
 					{
@@ -3720,7 +3727,16 @@ void display(void)
 						{
 							readstmdata1=apparent_power;//VA
 							
-							showdata1=deal_1(readstmdata1,1);
+							showdata1=deal_1(readstmdata1,1);						
+							if(abs(showdata1)>9999)
+							{
+								showdata1/=1000;
+								lcd_write_1bit(0x08,0,ENABLE);//3K符号亮
+							}
+							else
+							{
+								lcd_write_1bit(0x08,0,DISABLE);//3K符号灭
+							}
 							propershow=lcd_show_num(showdata1,1,10);
 							
 							strcpy(Tstr,"M ");
@@ -3733,6 +3749,15 @@ void display(void)
 							readstmdata1=active_power;//W
 							
 							showdata1=deal_1(readstmdata1,1);
+							if(abs(showdata1)>9999)
+							{
+								showdata1/=1000;
+								lcd_write_1bit(0x08,0,ENABLE);//3K符号亮
+							}
+							else
+							{
+								lcd_write_1bit(0x08,0,DISABLE);//3K符号灭
+							}
 							propershow=lcd_show_num(showdata1,1,10);
 							
 							strcpy(Tstr,"M ");
@@ -3744,7 +3769,16 @@ void display(void)
 						{
 							readstmdata1=reactive_power;//var
 							
-							showdata1=deal_1(readstmdata1,1);
+							showdata1=deal_1(readstmdata1,1);						
+							if(abs(showdata1)>9999)
+							{
+								showdata1/=1000;
+								lcd_write_1bit(0x08,0,ENABLE);//3K符号亮
+							}
+							else
+							{
+								lcd_write_1bit(0x08,0,DISABLE);//3K符号灭
+							}
 							propershow=lcd_show_num(showdata1,1,10);
 							
 							strcpy(Tstr,"M ");

@@ -38,6 +38,7 @@
 #include "comp.h"
 #include "buzzer_led.h"
 #include "userVAinteraction.h"
+#include "matrixkey.h"
 /** @addtogroup Template_Project
   * @{
   */
@@ -448,7 +449,7 @@ void TIM3_IRQHandler(void)
 		if(KeyValue != RotaryKeyValue_before)//有扫到旋转开关按键值与之前不同，应是真有开关变化
 		{
 			
-			lcd_show_Cal(1);delay_ms(500);//test  显示CAL   用于启动选档测试
+			//lcd_show_Cal(1);delay_ms(500);//test  显示CAL   用于启动选档测试
 			
 			iii++;
 			if(iii > 0)//20160913 修改 之前时2  这里作为防抖动会导致偶尔的换挡检测不到，这里将换挡滤波移除。
@@ -476,8 +477,8 @@ void TIM3_IRQHandler(void)
 		{
 			jjj++;
 			KeyValue = ScanKey();
-			/*开关抖动处理程序*/
-			if(((KeyValue&0x0F) == KEY_NULL) && jjj > 100+6)//表示无软按键,100表示长按检测次数  （长按键检测阀值为100 所以这里的超时应该大于100）
+			/*开关抖动处理程序*/																									 
+			if(((KeyValue&0x0F) == KEY_NULL) && jjj > (KEY_LONG_PERIOD+6)/*100+6*/)//表示无软按键,100表示长按检测次数  （长按键检测阀值为100 所以这里的超时应该大于100）
 			{
 				jjj=0;
 				KEY_LINE_write_high_all();
@@ -497,8 +498,10 @@ void TIM3_IRQHandler(void)
 				if((KeyValue&0xF0)==0x90)//0x90=0b10010000
 					ShortKey_flag = 1;
 				else if((KeyValue&0xF0)==KEY_LONG)
+				{
 					LongKey_flag = 1;
-				
+				}
+					
 				KEY_LINE_write_high_all();
 				KeyValue = KEY_NULL;//按键值、状态清零
 				TIM_Cmd(TIM3, DISABLE);//同时关闭定时器

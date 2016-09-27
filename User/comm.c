@@ -837,7 +837,6 @@ void Communicate(void)
 					if(tempR[0]==0x31) //÷∏¡Ó∏Ò Ω   fact:initialflash 1
 					{
 						Default_flash();
-						WriteEeprom();
 						strcat(str,"Write default value to flash, This Machine need calibration to use.\r\n");
 					}			
 					break;

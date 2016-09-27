@@ -287,7 +287,7 @@ void SDADC2_Gain(uint32_t SDADC2_Gain)
 	
 	SDADC_InitModeCmd(SDADC2, DISABLE);
 	
-	TIM_Cmd(TIM19, ENABLE);
+	//TIM_Cmd(TIM19, ENABLE);
 }
 
 /**************************************************end file**************************************************/

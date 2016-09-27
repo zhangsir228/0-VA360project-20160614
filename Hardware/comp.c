@@ -37,17 +37,17 @@ static void COMP_Config(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 	
-	//设置PA6复用方式
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 ;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; 
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;//GPIO_PuPd_UP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
-	GPIO_PinAFConfig(GPIOA,GPIO_PinSource6,GPIO_AF_8);    
-	
-	
+//	//设置PA6复用方式  引脚作为蓝牙开关，这里仅作为comp1_out测试，注意关掉
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 ;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; 
+//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;//GPIO_PuPd_UP;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+//  GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	
+//	GPIO_PinAFConfig(GPIOA,GPIO_PinSource6,GPIO_AF_8);    
+//	
+//	
   /* COMP Peripheral clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
   

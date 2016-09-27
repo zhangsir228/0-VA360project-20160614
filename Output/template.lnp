@@ -1,7 +1,6 @@
 --cpu Cortex-M4.fp
 "..\output\main.o"
 "..\output\uservainteraction.o"
-"..\output\stm32f37x_it.o"
 "..\output\system_stm32f37x.o"
 "..\output\comm.o"
 "..\output\cala.o"
@@ -26,6 +25,7 @@
 "..\output\stm32f37x_lp_modes.o"
 "..\output\stmdataprocess326.o"
 "..\output\flash_data.o"
+"..\output\stm32f37x_it.o"
 "..\output\matrixkey.o"
 "..\output\ht1621.o"
 "..\output\dta0660.o"

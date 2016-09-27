@@ -111,9 +111,9 @@ float voltage_effective_sum=0,current_effective_sum=0,active_power_sum=0;//¶à´ÎÀ
 float voltage_mean,current_mean;
 float voltage_mean_temp ,current_mean_temp;//20160616 ĞÂÔöÓÃÓÚµçÑ¹µçÁ÷Æ½¾ùÖµµÄÂË²¨
 
-float voltage_effective_tab[20]={0},current_effective_tab[20]={0},active_power_tab[20]={0}; //2016-07-25 lea  »»ÓÃ´°¿ÚÂË²¨ ¼Ó¿ìÊıÖµ¸üĞÂËÙ¶È 
+float voltage_effective_tab[64]={0},current_effective_tab[64]={0},active_power_tab[64]={0}; //2016-07-25 lea  »»ÓÃ´°¿ÚÂË²¨ ¼Ó¿ìÊıÖµ¸üĞÂËÙ¶È 
 float voltage_mean_tab[64]={0},current_mean_tab[64]={0};
-char  Window_num=20;//´°¿ÚÂË²¨´óĞ¡;
+char  Window_num=40;//´°¿ÚÂË²¨´óĞ¡;
 
 
 u8 timer_1s_blink;
@@ -352,8 +352,8 @@ void dealwith_information(void)
 		current_mean = current_mean_sum / datasize;
 		
 		//´°¿ÚÂË²¨µçÁ÷Æ½¾ùÖµ
-		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num+20);
-		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num+20);
+		voltage_mean = Windows_Filter(voltage_mean,voltage_mean_tab,Window_num+10);
+		current_mean = Windows_Filter(current_mean,current_mean_tab,Window_num+10);
 
 		
 		//µçÑ¹¡¢µçÁ÷¡¢¹¦ÂÊÓĞĞ§Öµ¼ÆËã£¬ÔÙËãÁíÒ»²¿·Ö¡ª¡ªÇó¾ù¡¢¿ª¸ù£¨V/A£©¡¢Çó¾ù£¨W£©
@@ -387,8 +387,8 @@ void dealwith_information(void)
 //			current_effective=current_effective_sum / 5;//addcount;
 //			active_power=active_power_sum / 5;//addcount;//Æ½¾ùºóµÄ ÓĞ¹¦¹¦ÂÊÖµ
 			
-			voltage_effective = Windows_Filter(voltage_temp,voltage_effective_tab,Window_num+10);
-			current_effective = Windows_Filter(current_temp,current_effective_tab,Window_num+10);
+			voltage_effective = Windows_Filter(voltage_temp,voltage_effective_tab,Window_num);
+			current_effective = Windows_Filter(current_temp,current_effective_tab,Window_num);
 			active_power 	  = Windows_Filter(power_temp,  active_power_tab,     Window_num);
 
 			//printf("ve,ce:%.4f,%.4f\r\n",voltage_effective,current_effective);
@@ -491,7 +491,8 @@ void dealwith_information(void)
 				
 				//µçÑ¹×ÜĞ³²¨»û±äÂÊ(THD%r%f)
 				if(voltage_effective< voltage_foudamental_effective)
-					voltage_effective= voltage_foudamental_effective;
+					//voltage_effective= voltage_foudamental_effective;
+				voltage_foudamental_effective = voltage_effective;
 				
 				if(voltage_effective == 0)	THD_r_voltage=0;
 				//else	THD_r_voltage= sqrt((voltage_effective* voltage_effective- voltage_foudamental_effective* voltage_foudamental_effective)/(voltage_effective* voltage_effective));		
@@ -503,7 +504,8 @@ void dealwith_information(void)
 				
 				//µçÁ÷×ÜĞ³²¨»û±äÂÊ(THD%r%f)
 				if(current_effective< current_foudamental_effective)
-					current_effective= current_foudamental_effective;
+					//current_effective= current_foudamental_effective;
+				current_foudamental_effective = current_effective;
 				
 				if(current_effective == 0)	THD_r_current=0;
 				//else	THD_r_current= sqrt((current_effective* current_effective- current_foudamental_effective* current_foudamental_effective)/(current_effective* current_effective));
@@ -515,7 +517,8 @@ void dealwith_information(void)
 				
 				//¹¦ÂÊ×ÜĞ³²¨»û±äÂÊ(THD%r%f)
 				if(active_power< power_foudamental_effective)
-					active_power= power_foudamental_effective;
+					//active_power= power_foudamental_effective;
+				power_foudamental_effective = active_power;
 				
 				if(active_power == 0)	THD_r_power=0;
 				//else	THD_r_power= sqrt((active_power* active_power- power_foudamental_effective* power_foudamental_effective)/(active_power* active_power));
@@ -533,19 +536,28 @@ void dealwith_information(void)
 			}
 		}
 		
-		if(funcstatus ==state0)//ac
+		if(RotaryKeyValue == KEY_VALUE_6)//V+A µµÎ»
 		{
-			VadENA=0;//SDADC·ÇÊ¹ÄÜ±êÖ¾´«µİµ½±È½ÏÖĞÖĞ¶Ï£¬¹ıÁãµã¿ªÊ¼ADC²É¼¯
-			if(phasestatus != state0)
+			if(funcstatus ==state0)//ac
+			{
+				VadENA=0;//SDADC·ÇÊ¹ÄÜ±êÖ¾´«µİµ½±È½ÏÖĞÖĞ¶Ï£¬¹ıÁãµã¿ªÊ¼ADC²É¼¯
+				if(phasestatus != state0)
+				{
+					TIM_Cmd(TIM19, ENABLE);
+				}
+				//TIM_Cmd(TIM19, ENABLE);//test  ²âÊÔÊ±´ò¿ªACÖ±½Ó²âÁ¿
+			}
+			else if((funcstatus ==state1)||(funcstatus ==state2))//ACDC V+A   
 			{
 				TIM_Cmd(TIM19, ENABLE);
 			}
-			//TIM_Cmd(TIM19, ENABLE);//test  ²âÊÔÊ±´ò¿ªACÖ±½Ó²âÁ¿
 		}
-		else if((funcstatus ==state1)||(funcstatus ==state2))//ACDC V+A   
+		else if(RotaryKeyValue == KEY_VALUE_7)//W µµÎ»
 		{
-			TIM_Cmd(TIM19, ENABLE);
+			VadENA=0;//SDADC·ÇÊ¹ÄÜ±êÖ¾´«µİµ½±È½ÏÖĞÖĞ¶Ï£¬¹ıÁãµã¿ªÊ¼ADC²É¼¯ ÓÉTIM5 ±È½ÏÆ÷ÖĞ¶ÏÀïÃæ´¥·¢¶¨Ê±Æ÷
+			
 		}
+		
 		//VadENA=0;//SDADC·ÇÊ¹ÄÜ±êÖ¾´«µİµ½±È½ÏÖĞÖĞ¶Ï£¬¹ıÁãµã¿ªÊ¼ADC²É¼¯
 		//TIM_Cmd(TIM19, ENABLE);
 		
@@ -903,8 +915,9 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 {
 	char i=0;
 	float value=0;
+	float T_tab[64];
 	
-	if(Data_tab==current_mean_tab)//µçÁ÷ÂË²¨µÄÈİĞíÎó²î·Å´óÒ»µã
+	if((Data_tab==current_mean_tab)||(Data_tab==current_effective_tab))//µçÁ÷ÂË²¨µÄÈİĞíÎó²î·Å´óÒ»µã
 	{
 		if(fabs(New_Data-Data_tab[num/2]) > 2.5/*fabs(Data_tab[num-1]*0.08)*/)//ÈôÆ«²îÖµ½Ï´óÔòÌî³äÂË²¨¼Ä´æÆ÷
 		{
@@ -927,7 +940,7 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 	}
 	else
 	{
-		if(fabs(New_Data-Data_tab[num/2]) > (0.02*pow(10,rangenum))/*fabs(Data_tab[num-1]*0.02)*/)//ÈôÆ«²îÖµ³¬¹ıµ±Ç°µµÎ»µÄ¶şÊ®¸ö×Ö¡£
+		if(fabs(New_Data-Data_tab[num/2]) > (0.03*pow(10,rangenum))/*fabs(Data_tab[num-1]*0.02)*/)//ÈôÆ«²îÖµ³¬¹ıµ±Ç°µµÎ»µÄ¶şÊ®¸ö×Ö¡£
 		{
 			for(i=0;i<num;i++)
 			{
@@ -946,14 +959,18 @@ float Windows_Filter(float New_Data,float *Data_tab,char num)
 	
 	//PXtest
 	//quick(PXtest,0,9);
-	quick(Data_tab,0,num-1);
-	//
 	for(i=0;i<num;i++)
 	{
-		value +=Data_tab[i];
+		T_tab[i] = Data_tab[i];
+	}
+	quick(T_tab,0,num-1);
+	//
+	for(i=5;i<num-5;i++)
+	{
+		value +=T_tab[i];
 	}
 	
-	return value/num;
+	return value/(num-10);
 }
 
 

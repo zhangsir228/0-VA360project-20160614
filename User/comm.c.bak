@@ -832,7 +832,7 @@ void Communicate(void)
 			//		"sn",				"ver",//54序列号  55版本号  
 			switch(tempT1)
 			{
-				case 50://initialflash
+				case 50://initialflash     //fact:initialflash 1  初始化
 				{//初始化Flash中保存的参数，防止由于以外出错用户无法恢复。
 					if(tempR[0]==0x31) //指令格式   fact:initialflash 1
 					{

@@ -2,6 +2,7 @@
 
 #include "flash_data.h"
 #include "ht1621.h"
+#include "dta0660.h"
 
 defFlashCal SaveData;
 
@@ -37,6 +38,8 @@ void Default_flash(void)
 {
 	uint8_t i=0;
 	uint8_t show_buf[4]={EE,EE,EE,EE};
+	
+	WriteEeprom();
 	
 	FLASH_Unlock();
 	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR); 

@@ -387,6 +387,11 @@
               <FilePath>.\userVAinteraction.c</FilePath>
             </File>
             <File>
+              <FileName>stm32f37x_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\stm32f37x_it.c</FilePath>
+            </File>
+            <File>
               <FileName>system_stm32f37x.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\system_stm32f37x.c</FilePath>
@@ -530,11 +535,6 @@
               <FileName>flash_data.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\ProcessingData\flash_data.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f37x_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\stm32f37x_it.c</FilePath>
             </File>
             <File>
               <FileName>flash_data.h</FileName>
